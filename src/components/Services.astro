@@ -12,31 +12,21 @@ import ventosaterapia from '../assets/img/ventosaterapia.webp';
 import reflexologia from '../assets/img/reflexologia.jpg';
 
 /**
- * Os tratamentos como índice editorial, e não como grelha de cartões.
+ * Os quatro tratamentos em linha, em cartões navy altos sobre fundo claro.
+ * É a única secção com fotografias — quem tem fotografia mostra-a; quem
+ * ainda não tem fica com o slot identificado.
  *
- * Quatro cartões lado a lado liam-se como uma tabela de produtos e obrigavam
- * cada fotografia a ser pequena. Aqui a secção divide-se em duas colunas: a
- * fotografia grande à esquerda, fixa enquanto se rola, e à direita a lista
- * dos tratamentos separada por filetes. Passar o rato (ou focar pelo
- * teclado) num item troca a fotografia — uma imagem de cada vez, em tamanho
- * que se vê, em vez de quatro miniaturas ao mesmo tempo.
- *
- * O texto de cada tratamento vive dentro do respectivo item e abre com ele:
- * quem só passa os olhos lê os nomes, quem quer saber mais para o cursor.
- *
- * Sem JS a coluna da imagem mostra a primeira fotografia e a lista continua
- * a ser uma lista legível com todo o texto visível — o CSS trata do estado
- * :hover/:focus-within sem precisar de script para a troca de imagem.
- *
- * Em ecrã estreito não há duas colunas: cada item leva a sua própria
- * fotografia por cima do texto, empilhados.
+ * Com quatro colunas, o cartão só pode crescer para baixo: é por isso que
+ * cada um leva dois parágrafos e não um. A folga entre eles é maior do que
+ * a do resto da página de propósito — quatro colunas encostadas liam-se
+ * como uma tabela.
  */
 
 /*
  * O tipo e o texto dos tratamentos vivem em `src/i18n/content.ts`: o
  * português continua a sair do JSON editável, o inglês da tradução ao lado.
  *
- * TODO(cliente): o segundo parágrafo de cada item (`detail`) foi redigido
+ * TODO(cliente): o segundo parágrafo de cada cartão (`detail`) foi redigido
  * aqui e está por validar pela terapeuta, nas duas línguas. É deliberadamente
  * descritivo — nenhuma frase diz que a técnica trata ou melhora seja o que
  * for, porque isso é afirmação clínica e só pode sair de quem exerce.
@@ -52,93 +42,50 @@ const fotos: Record<string, ImageMetadata> = {
   reflexologia,
 };
 
-/* A fotografia grande ocupa perto de metade da secção em desktop; ao alto
-   passa a largura inteira. */
-const SIZES = '(min-width: 1000px) 46vw, 100vw';
+// Quatro em linha no desktop, dois em tablet, um em telemóvel.
+const SIZES = '(min-width: 1000px) 25vw, (min-width: 640px) 50vw, 100vw';
 ---
 
-<section
-  class="section section-lg surface-white tratamentos"
-  id="servicos"
-  aria-labelledby="servicos-titulo"
->
+<section class="section surface-white tratamentos" id="servicos" aria-labelledby="servicos-titulo">
   <div class="container tratamentos__container">
-    <div class="section-head-editorial">
+    <div class="tratamentos__head">
       <div>
         <p class="eyebrow reveal">{t('services.eyebrow')}</p>
         <h2 class="h2 reveal" id="servicos-titulo">{t('services.title')}</h2>
       </div>
-      <p class="lead reveal" style="--reveal-delay:80ms">
+      <p class="tratamentos__intro reveal" style="--reveal-delay:80ms">
         {t('services.intro')}
       </p>
     </div>
 
-    <div class="indice-trat">
-      {/* --- Coluna da fotografia ---
-          Uma pilha de imagens sobrepostas: todas carregadas, só a activa
-          visível. A troca é uma transição de opacidade, não um carregamento,
-          por isso não há espera nem salto de layout. */}
-      <div class="indice-trat__palco" aria-hidden="true">
-        <div class="indice-trat__moldura ratio-retrato">
-          {
-            tratamentos.map((s, i) => (
-              <div class="indice-trat__chapa" data-foto={i}>
-                {s.image && fotos[s.image] ? (
-                  <Image
-                    class="indice-trat__img"
-                    src={fotos[s.image]}
-                    alt=""
-                    widths={[400, 640, 900, 1120]}
-                    sizes={SIZES}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                ) : (
-                  <Placeholder label={s.photo} ratio="3 / 4" seed={i} />
-                )}
-              </div>
-            ))
-          }
-        </div>
-      </div>
-
-      {/* --- Coluna da lista --- */}
-      <ol class="indice-trat__lista lista-filete" data-stagger="90">
-        {
-          tratamentos.map((s, i) => (
-            <li class="reveal" id={`trat-${slugify(s.anchor ?? s.name)}`}>
-              <div class="trat" data-item={i} tabindex="0">
-                <span class="indice trat__num">{String(i + 1).padStart(2, '0')}</span>
-
-                <div class="trat__corpo">
-                  <h3 class="h3 trat__nome">{s.name}</h3>
-                  <p class="trat__desc">{s.description}</p>
-                  {s.detail && <p class="trat__detalhe">{s.detail}</p>}
-                </div>
-
-                {/* Ao alto a fotografia vive dentro do próprio item: a
-                    coluna fixa da esquerda não existe nesse tamanho. */}
-                <div class="trat__foto-movel ratio-paisagem">
-                  {s.image && fotos[s.image] ? (
-                    <Image
-                      class="indice-trat__img"
-                      src={fotos[s.image]}
-                      alt={s.alt ?? ''}
-                      widths={[400, 640, 900]}
-                      sizes="100vw"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : (
-                    <Placeholder label={s.photo} ratio="3 / 2" seed={i} />
-                  )}
-                </div>
-              </div>
-            </li>
-          ))
-        }
-      </ol>
-    </div>
+    <ul class="tratamentos__grid" data-stagger="90">
+      {
+        tratamentos.map((s, i) => (
+          <li class="trat reveal" id={`trat-${slugify(s.anchor ?? s.name)}`}>
+            <span class="zoom-alvo trat__foto">
+              {s.image && fotos[s.image] ? (
+                <Image
+                  class="trat__img"
+                  src={fotos[s.image]}
+                  alt={s.alt ?? ''}
+                  widths={[400, 640, 900, 1120]}
+                  sizes={SIZES}
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <Placeholder label={s.photo} ratio="1 / 1" seed={i} />
+              )}
+            </span>
+            <div class="trat__corpo">
+              <h3 class="h3 trat__nome">{s.name}</h3>
+              <p class="trat__desc">{s.description}</p>
+              {s.detail && <p class="trat__detalhe">{s.detail}</p>}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
 
     <div class="tratamentos__cta reveal">
       <p class="tratamentos__nota">{t('services.note')}</p>
@@ -148,219 +95,196 @@ const SIZES = '(min-width: 1000px) 46vw, 100vw';
 </section>
 
 <style>
+  /* Única secção mais larga do que os 1200 da casa: com quatro colunas e
+     dois parágrafos por cartão, a medida de linha dentro do container normal
+     caía para dois dígitos de caracteres. O título acompanha a largura para
+     nada ficar desalinhado. */
   .tratamentos__container {
     max-width: 1340px;
   }
 
-  /* --- A grelha de duas colunas -----------------------------------------
-     Ao alto é uma coluna só e a fotografia grande desaparece: cada item
-     traz a sua. A partir de 1000px abrem-se as duas colunas e a fotografia
-     passa a ser uma só, partilhada. */
-  .indice-trat {
+  .tratamentos__head {
     display: grid;
-    gap: clamp(2rem, 5vw, 5rem);
+    gap: var(--spacing-s5);
+    align-items: end;
+    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
   }
 
-  .indice-trat__palco {
-    display: none;
+  .tratamentos__head .eyebrow {
+    margin-bottom: var(--spacing-s3);
   }
 
-  @media (min-width: 1000px) {
-    .indice-trat {
-      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-      align-items: start;
-    }
-
-    .indice-trat__palco {
-      display: block;
-      /* Acompanha a leitura da lista em vez de fugir para cima. */
-      position: sticky;
-      top: calc(var(--header-h) + var(--spacing-s6));
-    }
-
-    .trat__foto-movel {
-      display: none;
-    }
+  .tratamentos__intro {
+    max-width: 46ch;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-muted);
   }
 
-  .indice-trat__moldura {
-    position: relative;
-    overflow: hidden;
-    border-radius: var(--radius-md);
-    background-color: var(--color-mist);
-  }
-
-  /* Todas empilhadas no mesmo sítio; só a activa tem opacidade. */
-  .indice-trat__chapa {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity var(--dur-slow) var(--ease);
-  }
-
-  /* A primeira é a que se vê em repouso — e é também a que fica quando
-     nada está em foco. */
-  .indice-trat__chapa[data-foto='0'] {
-    opacity: 1;
-  }
-
-  .indice-trat__moldura :global(.indice-trat__img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .indice-trat__moldura :global(.ph) {
-    width: 100%;
-    height: 100%;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  /* --- A lista ---------------------------------------------------------- */
-  .indice-trat__lista {
+  .tratamentos__grid {
+    display: grid;
+    gap: clamp(1.25rem, 2.2vw, 2rem);
+    grid-template-columns: 1fr;
+    list-style: none;
     margin: 0;
     padding: 0;
   }
 
-  /* Herda a estrutura de .item-filete mas com o texto a ocupar a coluna
-     do meio e o número à cabeça. */
+  /* Fundo claro, cartões navy: a fotografia é a única coisa colorida em cada
+     cartão e o navy por baixo dela põe-na a arder, coisa que o cartão branco
+     não fazia. */
   .trat {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: clamp(1rem, 2.4vw, 2rem);
-    padding-block: clamp(1.5rem, 2.8vw, 2.25rem);
-    cursor: default;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background-color: var(--color-navy-deep);
+    box-shadow: var(--shadow-1);
     transition:
-      padding-inline var(--dur) var(--ease),
-      opacity var(--dur) var(--ease);
+      translate var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease);
   }
 
-  .trat:focus-visible {
-    outline: 2px solid var(--color-teal);
-    outline-offset: 4px;
-    border-radius: var(--radius-sm);
+  .trat:hover,
+  .trat:focus-within {
+    translate: 0 -3px;
+    box-shadow: var(--shadow-3);
   }
 
-  .trat__num {
-    padding-top: 0.55em;
+  /* A entrada é um desenrolar, não um fade: a fotografia descobre-se de
+     cima para baixo enquanto o cartão sobe. Um gesto diferente do resto da
+     página, porque este é o único sítio com imagem.
+     O recorte vive na fotografia e nunca no `li`: um `clip-path` no próprio
+     elemento observado zera a sua área de intersecção e o observador nunca
+     lhe chegava a pôr o `.is-visible` — ficavam invisíveis para sempre. */
+  .trat__foto {
+    position: relative;
+    clip-path: inset(0 0 100% 0);
+  }
+
+  .trat.is-visible .trat__foto {
+    animation: desenrolar 900ms var(--ease) calc(var(--reveal-delay, 0ms) + 120ms) both;
+  }
+
+  @keyframes desenrolar {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  .trat__foto::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-navy-deep) 34%, transparent),
+      color-mix(in srgb, var(--color-teal-deep) 46%, transparent)
+    );
+    opacity: 1;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .trat:hover .trat__foto::after,
+  .trat:focus-within .trat__foto::after {
+    opacity: 0;
+  }
+
+  /* O placeholder traz o seu próprio raio; aqui o corte é do cartão. */
+  .trat :global(.ph) {
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .trat__foto {
+    display: block;
+  }
+
+  /* Quadrada, e não 4/3: dá mais um terço de altura à fotografia sem a
+     esticar mais do que os originais aguentam. Duas destas fotografias têm
+     pouco mais de 500 px de largura — num recorte mais alto do que 1:1 a
+     zona aproveitada já não chegava para ecrãs retina. */
+  .trat :global(.trat__img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    background-color: var(--color-mist);
   }
 
   .trat__corpo {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: var(--spacing-s3);
-    min-width: 0;
+    padding: clamp(1.25rem, 1.9vw, 1.625rem);
   }
 
   .trat__nome {
-    color: var(--brand);
-    transition: color var(--dur) var(--ease);
+    font-size: clamp(1.1875rem, 1.5vw, 1.375rem);
+    color: var(--color-ivory);
   }
 
   .trat__desc {
-    max-width: 52ch;
     font-size: 0.9375rem;
-    line-height: 1.7;
-    color: var(--color-muted);
+    line-height: 1.65;
+    color: color-mix(in srgb, var(--color-ivory) 82%, transparent);
   }
 
+  /* O segundo parágrafo — o que é e como decorre — recua um tom e fica
+     separado por um filete, para se ler como nota e não como continuação. */
   .trat__detalhe {
-    max-width: 52ch;
+    margin-top: var(--spacing-s2);
+    padding-top: var(--spacing-s4);
+    border-top: 1px solid color-mix(in srgb, var(--color-ivory) 16%, transparent);
     font-size: 0.875rem;
-    line-height: 1.7;
-    color: color-mix(in srgb, var(--color-muted) 82%, transparent);
+    line-height: 1.65;
+    color: color-mix(in srgb, var(--color-ivory) 64%, transparent);
   }
 
-  /* Fotografia dentro do item — só ao alto. */
-  .trat__foto-movel {
-    grid-column: 1 / -1;
-    overflow: hidden;
-    border-radius: var(--radius-md);
-    background-color: var(--color-mist);
-  }
-
-  .trat__foto-movel :global(.indice-trat__img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .trat__foto-movel :global(.ph) {
-    width: 100%;
-    height: 100%;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  /* --- O estado activo --------------------------------------------------
-     Só onde há rato e duas colunas. O item em foco desloca-se para dentro
-     e os outros esmorecem; a fotografia correspondente sobe ao cimo da
-     pilha. Tudo em CSS: `:has()` deixa o palco reagir ao item da lista sem
-     uma linha de JavaScript. */
-  @media (hover: hover) and (min-width: 1000px) {
-    .indice-trat__lista:hover .trat,
-    .indice-trat__lista:focus-within .trat {
-      opacity: 0.45;
-    }
-
-    .indice-trat__lista .trat:hover,
-    .indice-trat__lista .trat:focus-visible {
-      opacity: 1;
-      padding-inline: var(--spacing-s4) 0;
-    }
-
-    .trat:hover .trat__nome,
-    .trat:focus-visible .trat__nome {
-      color: var(--color-teal-deep);
-    }
-
-    /* A chapa activa: quando um item está em foco, a chapa com o mesmo
-       índice aparece e a primeira (a de repouso) apaga-se. */
-    .indice-trat:has(.trat[data-item='0']:hover) .indice-trat__chapa[data-foto='0'],
-    .indice-trat:has(.trat[data-item='0']:focus-visible) .indice-trat__chapa[data-foto='0'],
-    .indice-trat:has(.trat[data-item='1']:hover) .indice-trat__chapa[data-foto='1'],
-    .indice-trat:has(.trat[data-item='1']:focus-visible) .indice-trat__chapa[data-foto='1'],
-    .indice-trat:has(.trat[data-item='2']:hover) .indice-trat__chapa[data-foto='2'],
-    .indice-trat:has(.trat[data-item='2']:focus-visible) .indice-trat__chapa[data-foto='2'],
-    .indice-trat:has(.trat[data-item='3']:hover) .indice-trat__chapa[data-foto='3'],
-    .indice-trat:has(.trat[data-item='3']:focus-visible) .indice-trat__chapa[data-foto='3'] {
-      opacity: 1;
-    }
-
-    .indice-trat:has(.trat[data-item='1']:hover) .indice-trat__chapa[data-foto='0'],
-    .indice-trat:has(.trat[data-item='1']:focus-visible) .indice-trat__chapa[data-foto='0'],
-    .indice-trat:has(.trat[data-item='2']:hover) .indice-trat__chapa[data-foto='0'],
-    .indice-trat:has(.trat[data-item='2']:focus-visible) .indice-trat__chapa[data-foto='0'],
-    .indice-trat:has(.trat[data-item='3']:hover) .indice-trat__chapa[data-foto='0'],
-    .indice-trat:has(.trat[data-item='3']:focus-visible) .indice-trat__chapa[data-foto='0'] {
-      opacity: 0;
-    }
-  }
-
-  /* --- Remate ----------------------------------------------------------- */
-  .tratamentos__cta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--spacing-s5);
-    margin-top: clamp(2.5rem, 5vw, 4rem);
-    padding-top: var(--spacing-s6);
-    border-top: 1px solid var(--hairline-cool);
-  }
-
-  .tratamentos__nota {
-    max-width: 52ch;
-    font-size: 0.875rem;
-    line-height: 1.7;
-    color: var(--color-muted);
+  /* Sem JS — ou com movimento reduzido — a fotografia está simplesmente lá. */
+  :global(.no-js) .trat__foto {
+    clip-path: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .indice-trat__chapa,
-    .trat {
-      transition: none;
+    .trat__foto,
+    .trat.is-visible .trat__foto {
+      clip-path: none;
+      animation: none;
+    }
+  }
+
+  .tratamentos__cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-s4);
+    margin-top: clamp(2rem, 4vw, 3rem);
+    text-align: center;
+  }
+
+  .tratamentos__nota {
+    max-width: 44ch;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-muted);
+  }
+
+  @media (min-width: 640px) {
+    .tratamentos__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .tratamentos__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 </style>

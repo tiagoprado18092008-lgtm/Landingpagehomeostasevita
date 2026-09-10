@@ -31,3 +31,7 @@ Nova pasta/
 .claude/
 
 .vercel
+
+# Despejos de sessoes no painel de DNS da Amen, material de trabalho.
+dns-page.md
+dns-state.json

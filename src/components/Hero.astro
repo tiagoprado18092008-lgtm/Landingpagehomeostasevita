@@ -35,9 +35,8 @@ const alta = await getImage({
  * é navy da marca (não preto neutro) — a pele fica quente no centro e a
  * imagem arrefece nas bordas, ligando-se à paleta do resto da página.
  *
- * A composição é assimétrica: o texto ocupa a coluna esquerda e assenta no
- * terço inferior, deixando a direita e o alto da fotografia livres. O véu
- * acompanha-o em diagonal, em vez de escurecer a imagem toda.
+ * A composição é centrada: o bloco de texto assenta no meio do ecrã, sobre
+ * a fotografia, e o véu escurece de forma simétrica a partir do centro.
  *
  * A cédula profissional não vem aqui: vive na faixa `Credentials`, logo
  * a seguir, e repeti-la seria ruído.
@@ -78,8 +77,7 @@ const alta = await getImage({
       </p>
 
       <h1 class="hero__titulo">
-        {t('hero.title')}<br />
-        <em>{t('hero.titleEm')}</em> {t('hero.titleEnd')}
+        {t('hero.titleA')}{t('hero.titleB')}
       </h1>
 
       <p class="hero__sub">{t('hero.sub')}</p>
@@ -115,7 +113,7 @@ const alta = await getImage({
     position: relative;
     isolation: isolate;
     display: grid;
-    align-content: end;
+    align-content: center;
     min-height: max(560px, 100svh);
     padding-block: calc(var(--header-h) + clamp(2rem, 6vh, 4rem))
       clamp(4.5rem, 12vh, 8.5rem);
@@ -147,38 +145,31 @@ const alta = await getImage({
     animation: hv-assentar 2600ms var(--ease) both;
   }
 
-  /* Três camadas, cada uma com um trabalho:
-     1. leito — escurece só a mancha onde o texto assenta;
-     2. bordas — encosta ao header em cima e entrega à faixa branca em baixo;
-     3. vinheta — fecha os cantos e tira o brilho da pele desfocada. */
-  /* O véu deixou de ser um leito central que escurecia a imagem toda. Como
-     o texto vive agora no canto inferior esquerdo, a sombra vai buscá-lo
-     ali: pesa à esquerda e em baixo, e larga a fotografia à direita, que
-     fica visível de verdade em vez de ficar debaixo de cinzento. */
+  /* Duas camadas: um radial que assenta o texto no centro sem apagar os
+     cantos da fotografia, e um gradiente vertical que encosta ao header em
+     cima e entrega à faixa clara em baixo. */
   .hero__veu {
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(
-        100deg,
-        rgba(3, 18, 42, 0.78) 0%,
-        rgba(3, 18, 42, 0.56) 32%,
-        rgba(3, 18, 42, 0.16) 62%,
-        rgba(3, 18, 42, 0.06) 100%
+      radial-gradient(
+        130% 100% at 50% 50%,
+        rgba(3, 18, 42, 0.34) 0%,
+        rgba(3, 18, 42, 0.58) 55%,
+        rgba(3, 18, 42, 0.76) 100%
       ),
       linear-gradient(
         180deg,
-        rgba(3, 18, 42, 0.44) 0%,
-        rgba(3, 18, 42, 0) 26%,
-        rgba(3, 18, 42, 0) 52%,
-        rgba(3, 18, 42, 0.6) 100%
+        rgba(3, 18, 42, 0.46) 0%,
+        rgba(3, 18, 42, 0.08) 30%,
+        rgba(3, 18, 42, 0.08) 62%,
+        rgba(3, 18, 42, 0.55) 100%
       );
   }
 
   /* --- Conteúdo -------------------------------------------------------- */
-  /* Grelha assimétrica: o texto ocupa a coluna da esquerda e a direita fica
-     deliberadamente vazia, para a fotografia respirar. Não é espaço
-     desperdiçado — é o que separa uma composição de um texto centrado. */
+  /* Bloco centrado no eixo do ecrã: título, subtítulo e botões partilham o
+     mesmo eixo, e a fotografia respira à volta em vez de por um lado só. */
   .hero__conteudo {
     position: relative;
     z-index: 1;
@@ -187,22 +178,18 @@ const alta = await getImage({
     max-width: var(--container);
     margin-inline: auto;
     padding-inline: var(--gutter);
+    justify-items: center;
+    text-align: center;
     color: var(--color-ivory);
   }
 
-  @media (min-width: 900px) {
-    .hero__conteudo {
-      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    }
-  }
-
   .hero__texto {
-    max-width: 46rem;
+    max-width: 62rem;
   }
 
   /* Assinatura: um filete curto antes da linha de contexto. */
   .hero__kicker {
-    display: flex;
+    display: none;
     align-items: center;
     gap: var(--spacing-s3);
     margin: 0 0 clamp(1.25rem, 2.4vw, 1.75rem);
@@ -223,8 +210,6 @@ const alta = await getImage({
 
   /* A ousadia gasta-se toda aqui: a serifa da marca em tamanho de cartaz,
      leve, com a entrelinha fechada para as duas linhas formarem bloco. */
-  /* A ousadia gasta-se toda aqui. O itálico na segunda linha é o único
-     ornamento — dá inflexão sem acrescentar peça. */
   .hero__titulo {
     font-family: var(--font-serif);
     font-weight: 500;
@@ -232,19 +217,14 @@ const alta = await getImage({
     line-height: 0.98;
     letter-spacing: -0.008em;
     text-wrap: balance;
+    text-align: center;
     color: var(--color-ivory);
     text-shadow: 0 2px 44px rgba(3, 18, 42, 0.45);
   }
 
-  .hero__titulo em {
-    font-style: italic;
-    font-weight: 500;
-    color: color-mix(in srgb, var(--color-teal-soft) 62%, var(--color-ivory));
-  }
-
   .hero__sub {
     max-width: 42ch;
-    margin: clamp(1.5rem, 2.8vw, 2.25rem) 0 0;
+    margin: clamp(1.5rem, 2.8vw, 2.25rem) auto 0;
     font-size: clamp(1.0625rem, 0.5vw + 0.95rem, 1.1875rem);
     line-height: 1.6;
     color: color-mix(in srgb, var(--color-ivory) 93%, transparent);
@@ -255,6 +235,7 @@ const alta = await getImage({
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
     gap: var(--spacing-s3);
     margin-top: clamp(2rem, 3.4vw, 3rem);
   }
@@ -375,10 +356,8 @@ const alta = await getImage({
   /* --- Ecrãs estreitos --------------------------------------------------
      A quebra forçada só serve o título de duas linhas largas; abaixo de
      768px o texto reparte-se sozinho, com equilíbrio. */
-  /* No telemóvel a leitura inverte-se: a fotografia ocupa a metade de cima,
-     onde as agulhas se veem inteiras, e o texto assenta em baixo, sobre a
-     zona escura. O véu deixa de ser um leito central e passa a ser uma
-     maré que sobe. */
+  /* No telemóvel a fotografia ocupa a metade de cima, onde as agulhas se
+     veem inteiras, e o véu sobe como uma maré para o texto ler em baixo. */
   @media (max-width: 767px), (max-aspect-ratio: 4 / 5) {
     .hero {
       padding-block: calc(var(--header-h) + clamp(1.5rem, 5vh, 3rem))
