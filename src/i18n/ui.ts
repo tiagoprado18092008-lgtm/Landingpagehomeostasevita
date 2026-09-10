@@ -40,7 +40,7 @@ const pt = {
   'nav.closeMenu': 'Fechar menu',
 
   // --- Hero ---
-  /* O enunciado do hero deixou de repetir o nome da clínica — esse vive no
+  /* O enunciado do hero deixou de repetir o nome do espaço — esse vive no
      header, no emblema e na linha de contexto por cima do título. Aqui
      diz-se o que a pessoa vem procurar. `titleEm` sai em itálico.
      titleA/titleB ficam: continuam a servir o <title> da página. */
@@ -49,15 +49,15 @@ const pt = {
   'hero.titleEm': 'se constrói',
   'hero.titleEnd': 'consigo',
   'hero.scroll': 'Ver os tratamentos',
-  'hero.titleA': 'Homeostase Vita — Clínica',
+  'hero.titleA': 'Homeostase Vita — Espaço',
   'hero.titleB': ' de Medicina Tradicional Chinesa',
   'hero.sub':
-    'Clínica integrativa na Maia. Avaliação individual e acompanhamento continuado para dores persistentes, saúde emocional e um equilíbrio que dura.',
+    'Espaço integrativo na Maia. Avaliação individual e acompanhamento continuado para dores persistentes, saúde emocional e um equilíbrio que dura.',
   'hero.imgAlt':
     'Agulhas de acupuntura a serem colocadas nas costas de uma pessoa, durante uma sessão.',
 
   // --- Credenciais ---
-  'cred.aria': 'Credenciais da clínica',
+  'cred.aria': 'Credenciais do espaço',
   'cred.licence': 'Cédula Profissional ACSS',
   'cred.licenceValue': 'n.º',
   'cred.assessment': 'Avaliação individual',
@@ -76,7 +76,7 @@ const pt = {
   // --- Abordagem ---
   'approach.title': 'Como tratamos na Homeostase Vita',
   'approach.p1':
-    'Com raízes na Medicina Tradicional Chinesa, olhamos o corpo como um todo interligado em vez de tratar o sintoma isolado. Cada tratamento é desenhado à medida da pessoa, a partir de uma avaliação individual, e pode incluir acupuntura, fitoterapia, massagem Tui Na, ventosas, moxabustão, Gua Sha e dietética chinesa.',
+    'Com raízes na Medicina Tradicional Chinesa, olhamos o corpo como um todo interligado em vez de tratar o sintoma isolado. Cada tratamento é desenhado à medida da pessoa, a partir de uma avaliação individual, e pode incluir acupuntura, auriculoterapia, craniopuntura, moxabustão, fitoterapia e dietética chinesa.',
   'approach.p2':
     'Acompanhamos um leque alargado de queixas agudas e crónicas — dor, problemas digestivos, stress, fadiga, perturbações do sono e desequilíbrios hormonais — devolvendo o equilíbrio e cuidando da saúde a longo prazo.',
   'approach.imgAlt':
@@ -98,7 +98,7 @@ const pt = {
   'areas.eyebrow': 'Áreas de procura',
   'areas.title': 'Em que situações pode ser utilizada',
   'areas.lead':
-    'A Medicina Tradicional Chinesa pode ser utilizada na abordagem de diferentes condições de saúde, entre outras:',
+    'A Medicina Tradicional Chinesa pode ser utilizada na abordagem de diferentes condições de saúde, tais como:',
   'areas.link': 'Marcar uma avaliação',
   'areas.notice':
     'A intervenção é sempre personalizada, tendo em consideração os sintomas apresentados, as características individuais e as necessidades de cada pessoa, podendo constituir um complemento aos cuidados de saúde convencionais quando adequado.',
@@ -133,7 +133,7 @@ const pt = {
     'A observação da língua e a avaliação do pulso são elementos importantes desta avaliação, a par das questões dirigidas a cada situação.',
   'process.step3Title': 'Estratégia terapêutica',
   'process.step3Text':
-    'Da avaliação resulta uma estratégia adequada à situação, que pode integrar acupuntura, auriculoterapia, ventosaterapia ou reflexologia.',
+    'Da avaliação resulta uma estratégia adequada à situação, que pode integrar acupuntura, auriculoterapia ou craniopuntura.',
   'process.step4Title': 'Consultas de seguimento',
   'process.step4Text':
     'Permitem acompanhar a evolução e ajustar a intervenção sempre que necessário, ao longo do acompanhamento.',
@@ -312,7 +312,7 @@ const pt = {
   // --- Metadados das páginas ---
   'meta.homeTitle': 'Medicina Tradicional Chinesa na Maia | Acupuntura — Homeostase Vita',
   'meta.homeDescription':
-    'Clínica de Medicina Tradicional Chinesa na Maia: acupuntura, auriculoterapia, ventosaterapia e reflexologia. Saúde integrativa com avaliação individual e acompanhamento personalizado.',
+    'Espaço de Medicina Tradicional Chinesa na Maia: acupuntura, auriculoterapia e craniopuntura. Saúde integrativa com avaliação individual e acompanhamento personalizado.',
 } as const;
 
 export type UiKey = keyof typeof pt;
@@ -352,14 +352,14 @@ const en: Record<UiKey, string> = {
   'hero.titleEnd': 'you',
   'hero.scroll': 'See the treatments',
   'hero.titleA': 'Homeostase Vita — Traditional',
-  'hero.titleB': ' Chinese Medicine clinic',
+  'hero.titleB': ' Chinese Medicine Space',
   'hero.sub':
-    'An integrative clinic in Maia. Individual assessment and continued care for persistent pain, emotional health and balance that lasts.',
+    'An integrative space in Maia. Individual assessment and continued care for persistent pain, emotional health and balance that lasts.',
   'hero.imgAlt':
     'Acupuncture needles being placed on a person’s back during a session.',
 
   // --- Credenciais ---
-  'cred.aria': 'Clinic credentials',
+  'cred.aria': 'Space credentials',
   'cred.licence': 'ACSS professional licence',
   'cred.licenceValue': 'no.',
   'cred.assessment': 'Individual assessment',
@@ -378,7 +378,7 @@ const en: Record<UiKey, string> = {
   // --- Abordagem ---
   'approach.title': 'How we treat at Homeostase Vita',
   'approach.p1':
-    'Rooted in Traditional Chinese Medicine, we look at the body as an interconnected whole rather than treating an isolated symptom. Each treatment is designed around the person, based on an individual assessment, and may include acupuncture, herbal medicine, Tui Na massage, cupping, moxibustion, Gua Sha and Chinese dietetics.',
+    'Rooted in Traditional Chinese Medicine, we look at the body as an interconnected whole rather than treating an isolated symptom. Each treatment is designed around the person, based on an individual assessment, and may include acupuncture, auriculotherapy, craniopuncture, moxibustion, herbal medicine and Chinese dietetics.',
   'approach.p2':
     'We work with a wide range of acute and chronic complaints — pain, digestive problems, stress, fatigue, sleep disturbances and hormonal imbalances — restoring balance and caring for health over the long term.',
   'approach.imgAlt':
@@ -400,7 +400,7 @@ const en: Record<UiKey, string> = {
   'areas.eyebrow': 'Areas of care',
   'areas.title': 'Situations where it can be used',
   'areas.lead':
-    'Traditional Chinese Medicine can be used in addressing different health conditions, among others:',
+    'Traditional Chinese Medicine can be used in addressing different health conditions, such as:',
   'areas.link': 'Book an assessment',
   'areas.notice':
     'The intervention is always personalised, taking into account the symptoms presented, the individual characteristics and the needs of each person, and may serve as a complement to conventional health care where appropriate.',
@@ -436,7 +436,7 @@ const en: Record<UiKey, string> = {
     'Observation of the tongue and assessment of the pulse are important elements of this evaluation, alongside questions directed at each situation.',
   'process.step3Title': 'Therapeutic strategy',
   'process.step3Text':
-    'The assessment leads to a strategy suited to the situation, which may bring together acupuncture, auriculotherapy, cupping or reflexology.',
+    'The assessment leads to a strategy suited to the situation, which may bring together acupuncture, auriculotherapy or craniopuncture.',
   'process.step4Title': 'Follow-up consultations',
   'process.step4Text':
     'These make it possible to track progress and adjust the intervention whenever necessary, throughout the course of care.',
@@ -593,7 +593,7 @@ const en: Record<UiKey, string> = {
   'chat.quick2': 'What is the first consultation like?',
   'chat.quick2Text': 'Hello! I would like to know how the first consultation works.',
   'chat.quick3': 'Where are you?',
-  'chat.quick3Text': 'Hello! Could you tell me the clinic address?',
+  'chat.quick3Text': 'Hello! Could you tell me the address?',
   'chat.opening': 'Opening WhatsApp…',
   'chat.openWhatsapp': 'Open WhatsApp',
   'chat.tapToContinue': 'Tap to continue: ',
@@ -618,7 +618,7 @@ const en: Record<UiKey, string> = {
   // --- Metadados das páginas ---
   'meta.homeTitle': 'Traditional Chinese Medicine in Maia | Acupuncture — Homeostase Vita',
   'meta.homeDescription':
-    'Traditional Chinese Medicine clinic in Maia, Portugal: acupuncture, auriculotherapy, cupping and reflexology. Integrative health with individual assessment and personalised care.',
+    'Traditional Chinese Medicine space in Maia, Portugal: acupuncture, auriculotherapy and craniopuncture. Integrative health with individual assessment and personalised care.',
 };
 
 const dictionaries: Record<Locale, Record<UiKey, string>> = { pt, en };

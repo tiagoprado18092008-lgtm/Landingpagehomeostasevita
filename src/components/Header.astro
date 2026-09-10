@@ -6,6 +6,17 @@ import LangSwitch from './LangSwitch.astro';
 import { localeFromPath, type Locale } from '../i18n';
 import { useTranslations } from '../i18n/ui';
 
+interface Props {
+  /**
+   * O header só pode ficar transparente por cima de uma fotografia de hero.
+   * Páginas sem hero (legais, confirmações) passam `sobreFoto={false}` e o
+   * header nasce sólido — caso contrário a marca sai branca sobre fundo claro.
+   */
+  sobreFoto?: boolean;
+}
+
+const { sobreFoto = true } = Astro.props;
+
 const locale: Locale = localeFromPath(Astro.url.pathname);
 const t = useTranslations(locale);
 
@@ -25,7 +36,7 @@ const navPainel = [
 ];
 ---
 
-<header class="site-header" data-header>
+<header class="site-header" data-header data-solido={sobreFoto ? undefined : 'true'} data-sobre-foto={String(sobreFoto)}>
   <div class="site-header__inner">
     <a href="#topo" class="brand" aria-label={`${site.name} — ${t('common.homeAria')}`}>
       <Emblem size={52} loading="eager" class="brand__mark" />
@@ -444,7 +455,11 @@ const navPainel = [
   // hero, ou o painel de menu está aberto por cima de um fundo claro.
   // Guardadas em separado para que fechar o menu no topo da página devolva
   // o header ao modo transparente em vez de o deixar preso em sólido.
-  let passouHero = false;
+  // Sem fotografia por baixo (páginas legais, confirmações) o header é
+  // sólido desde o início e nunca volta ao modo claro.
+  const sobreFoto = header?.dataset.sobreFoto !== 'false';
+
+  let passouHero = !sobreFoto;
   let menuAberto = false;
 
   const aplicarHeader = () => {
@@ -457,7 +472,7 @@ const navPainel = [
     aplicarHeader();
   };
 
-  if (header) {
+  if (header && sobreFoto) {
     const sentinela = document.createElement('div');
     sentinela.setAttribute('aria-hidden', 'true');
     sentinela.style.cssText =
@@ -476,6 +491,8 @@ const navPainel = [
       passouHero = true;
     }
 
+    aplicarHeader();
+  } else {
     aplicarHeader();
   }
 

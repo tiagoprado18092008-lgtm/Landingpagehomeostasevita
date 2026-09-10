@@ -75,28 +75,16 @@ const servicesEn: Service[] = [
     alt: 'A stimulation point being placed on the outer ear of a patient.',
   },
   {
-    icon: 'cupping',
-    name: 'Cupping therapy',
-    anchor: 'Ventosaterapia',
+    icon: 'head',
+    name: 'Craniopuncture',
+    anchor: 'Craniopuntura',
     description:
-      'Application of cups to the skin, used above all in situations of muscle tension.',
+      'Stimulation of zones of the scalp, integrated into the therapeutic strategy according to the individual assessment.',
     detail:
-      'The cups create a gentle suction over the area being worked on. Circular marks on the skin for a few days are common, and they fade on their own.',
-    photo: 'photo: cupping session',
-    image: 'ventosaterapia',
-    alt: 'Cups applied along the back of a person lying on a treatment table.',
-  },
-  {
-    icon: 'foot',
-    name: 'Reflexology',
-    anchor: 'Reflexologia',
-    description:
-      'Stimulation of reflex zones of the feet, as part of an integrated approach to the body.',
-    detail:
-      'It works through manual pressure on the feet, without needles — an option for those who prefer a less invasive approach. The zones come from the same assessment that guides the other techniques.',
-    photo: 'photo: reflexology session',
-    image: 'reflexologia',
-    alt: 'Hands pressing the sole of a foot during a reflexology session.',
+      'It works with very fine needles on defined zones of the scalp. The zones chosen come from the same assessment that guides the other techniques.',
+    photo: 'photo: craniopuncture session',
+    image: 'craniopuntura',
+    alt: 'Craniopuncture needles being applied to the scalp of a person.',
   },
 ];
 
@@ -135,17 +123,17 @@ const benefitsEn: Benefit[] = [
     icon: 'lotus',
     title: 'A range of techniques',
     description:
-      'Depending on each situation, different techniques may be used, such as acupuncture, auriculotherapy, cupping or reflexology.',
+      'Depending on each situation, different techniques may be used, such as acupuncture, auriculotherapy, craniopuncture, moxibustion, herbal medicine or Chinese dietetics.',
   },
 ];
 
 const concernsEn: Concern[] = [
-  { icon: 'joints', title: 'Pain and muscle tension' },
+  { icon: 'stomach', title: 'Digestive and intestinal problems' },
   { icon: 'head', title: 'Migraines' },
-  { icon: 'stomach', title: 'Digestive and intestinal changes' },
+  { icon: 'joints', title: 'Muscle pain' },
   { icon: 'lotus', title: 'Stress, anxiety and insomnia' },
   { icon: 'energy', title: 'Allergies, rhinitis and sinusitis' },
-  { icon: 'yinyang', title: 'Lack of physical and emotional balance' },
+  { icon: 'yinyang', title: 'Imbalance' },
 ];
 
 const faqEn: FaqItem[] = [
@@ -161,7 +149,7 @@ const faqEn: FaqItem[] = [
   {
     q: 'In what situations can Traditional Chinese Medicine be used?',
     a: [
-      'Traditional Chinese Medicine can be used in addressing different health conditions, namely situations of pain, muscle tension, migraines, digestive and intestinal changes, stress, anxiety, insomnia, allergies, rhinitis and sinusitis, among others.',
+      'Traditional Chinese Medicine can be used in addressing different health conditions, such as digestive and intestinal problems, migraines, muscle pain, stress, anxiety, insomnia, allergies, rhinitis and sinusitis, and situations of imbalance.',
       'The intervention is always personalised, taking into account the symptoms presented, the individual characteristics and the needs of each person, and may serve as a complement to conventional health care where appropriate.',
     ],
   },
@@ -170,7 +158,7 @@ const faqEn: FaqItem[] = [
     a: [
       'The first consultation involves an in-depth, individual assessment, through gathering and analysing different parameters related to health, symptoms, habits and personal characteristics.',
       'Follow-up consultations make it possible to track progress and adjust the intervention whenever necessary.',
-      'According to the symptoms, characteristics and needs of each person, different therapeutic techniques of Traditional Chinese Medicine and complementary areas may be used, namely acupuncture, auriculotherapy, cupping and reflexology.',
+      'According to the symptoms, characteristics and needs of each person, different therapeutic techniques of Traditional Chinese Medicine and complementary areas may be used, namely acupuncture, auriculotherapy, craniopuncture, moxibustion, herbal medicine and Chinese dietetics.',
     ],
   },
   {
@@ -196,6 +184,32 @@ const faqEn: FaqItem[] = [
     ],
   },
 ];
+
+/**
+ * Técnicas praticadas pela terapeuta — lista mais larga do que os três
+ * tratamentos em destaque na secção de cartões, que é uma selecção e não o
+ * âmbito todo da prática.
+ */
+const techniquesPt = [
+  'Acupuntura',
+  'Auriculoterapia',
+  'Craniopuntura',
+  'Moxabustão',
+  'Fitoterapia',
+  'Dietética chinesa',
+];
+
+const techniquesEn = [
+  'Acupuncture',
+  'Auriculotherapy',
+  'Craniopuncture',
+  'Moxibustion',
+  'Herbal medicine',
+  'Chinese dietetics',
+];
+
+export const getTechniques = (locale: Locale): string[] =>
+  locale === 'en' ? techniquesEn : techniquesPt;
 
 export const getServices = (locale: Locale): Service[] =>
   locale === 'en' ? servicesEn : (servicesPt as Service[]);

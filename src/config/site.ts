@@ -45,7 +45,7 @@ export const site = {
    */
 
   /**
-   * Biografia fornecida e validada pela clínica.
+   * Biografia fornecida e validada pelo espaço.
    */
   practitioner: {
     firstName: 'Teresa',

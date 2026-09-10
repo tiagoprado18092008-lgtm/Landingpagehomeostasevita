@@ -356,8 +356,8 @@
 .note {
   font-size: var(--text-small);
   color: var(--color-muted);
-  line-height: 1.6;
-  font-weight: 350;
+  line-height: 1.65;
+  font-weight: 400;
 }
 
 /* Wordmark — capitulares largas, como no cartao e no flyer.

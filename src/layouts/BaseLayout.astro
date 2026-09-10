@@ -67,13 +67,21 @@ const clinic = {
   areaServed: { '@type': 'City', name: 'Maia' },
   medicalSpecialty: 'Alternative',
   availableService: (locale === 'en'
-    ? ['Acupuncture', 'Auriculotherapy', 'Cupping therapy', 'Dietary guidance', 'Reflexology']
+    ? [
+        'Acupuncture',
+        'Auriculotherapy',
+        'Craniopuncture',
+        'Moxibustion',
+        'Herbal medicine',
+        'Chinese dietetics',
+      ]
     : [
         'Acupuntura',
         'Auriculoterapia',
-        'Ventosaterapia',
-        'Acompanhamento alimentar',
-        'Reflexologia',
+        'Craniopuntura',
+        'Moxabustão',
+        'Fitoterapia',
+        'Dietética chinesa',
       ]
   ).map((name) => ({ '@type': 'MedicalTherapy', name })),
   sameAs: [site.social.instagram, site.social.facebook],

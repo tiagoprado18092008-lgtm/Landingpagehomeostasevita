@@ -8,18 +8,16 @@ import Placeholder from './Placeholder.astro';
 
 import acupuntura from '../assets/img/acupuntura.jpg';
 import auriculoterapia from '../assets/img/auriculoterapia.jpg';
-import ventosaterapia from '../assets/img/ventosaterapia.webp';
-import reflexologia from '../assets/img/reflexologia.jpg';
+import craniopuntura from '../assets/img/craniopuntura.jpg';
 
 /**
- * Os quatro tratamentos em linha, em cartões navy altos sobre fundo claro.
+ * Os três tratamentos em linha, em cartões navy altos sobre fundo claro.
  * É a única secção com fotografias — quem tem fotografia mostra-a; quem
  * ainda não tem fica com o slot identificado.
  *
- * Com quatro colunas, o cartão só pode crescer para baixo: é por isso que
- * cada um leva dois parágrafos e não um. A folga entre eles é maior do que
- * a do resto da página de propósito — quatro colunas encostadas liam-se
- * como uma tabela.
+ * Cada cartão leva dois parágrafos e não um. A folga entre eles é maior do
+ * que a do resto da página de propósito — colunas encostadas liam-se como
+ * uma tabela.
  */
 
 /*
@@ -38,12 +36,11 @@ const tratamentos: Service[] = getServices(locale);
 const fotos: Record<string, ImageMetadata> = {
   acupuntura,
   auriculoterapia,
-  ventosaterapia,
-  reflexologia,
+  craniopuntura,
 };
 
-// Quatro em linha no desktop, dois em tablet, um em telemóvel.
-const SIZES = '(min-width: 1000px) 25vw, (min-width: 640px) 50vw, 100vw';
+// Três em linha no desktop, dois em tablet, um em telemóvel.
+const SIZES = '(min-width: 1000px) 33vw, (min-width: 640px) 50vw, 100vw';
 ---
 
 <section class="section surface-white tratamentos" id="servicos" aria-labelledby="servicos-titulo">
@@ -95,12 +92,11 @@ const SIZES = '(min-width: 1000px) 25vw, (min-width: 640px) 50vw, 100vw';
 </section>
 
 <style>
-  /* Única secção mais larga do que os 1200 da casa: com quatro colunas e
-     dois parágrafos por cartão, a medida de linha dentro do container normal
-     caía para dois dígitos de caracteres. O título acompanha a largura para
-     nada ficar desalinhado. */
+  /* Com três colunas a medida de linha dentro do container normal já
+     respira, mas mantém-se uma folga sobre os 1200 da casa para que os
+     cartões não fiquem estreitos em ecrãs largos. */
   .tratamentos__container {
-    max-width: 1340px;
+    max-width: 1200px;
   }
 
   .tratamentos__head {
@@ -231,9 +227,9 @@ const SIZES = '(min-width: 1000px) 25vw, (min-width: 640px) 50vw, 100vw';
   }
 
   .trat__desc {
-    font-size: 0.9375rem;
-    line-height: 1.65;
-    color: color-mix(in srgb, var(--color-ivory) 82%, transparent);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: color-mix(in srgb, var(--color-ivory) 90%, transparent);
   }
 
   /* O segundo parágrafo — o que é e como decorre — recua um tom e fica
@@ -242,9 +238,9 @@ const SIZES = '(min-width: 1000px) 25vw, (min-width: 640px) 50vw, 100vw';
     margin-top: var(--spacing-s2);
     padding-top: var(--spacing-s4);
     border-top: 1px solid color-mix(in srgb, var(--color-ivory) 16%, transparent);
-    font-size: 0.875rem;
-    line-height: 1.65;
-    color: color-mix(in srgb, var(--color-ivory) 64%, transparent);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: color-mix(in srgb, var(--color-ivory) 78%, transparent);
   }
 
   /* Sem JS — ou com movimento reduzido — a fotografia está simplesmente lá. */
@@ -284,7 +280,7 @@ const SIZES = '(min-width: 1000px) 25vw, (min-width: 640px) 50vw, 100vw';
 
   @media (min-width: 1000px) {
     .tratamentos__grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 </style>

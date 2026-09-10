@@ -18,21 +18,12 @@
     "alt": "Colocação de um ponto de estímulo no pavilhão auricular de uma paciente."
   },
   {
-    "icon": "cupping",
-    "name": "Ventosaterapia",
-    "description": "Aplicação de ventosas sobre a pele, usada sobretudo em situações de tensão muscular.",
-    "detail": "As ventosas fazem uma sucção suave sobre a zona a trabalhar. É frequente ficarem marcas circulares na pele durante alguns dias, que desaparecem sozinhas.",
-    "photo": "foto: aplicação de ventosas",
-    "image": "ventosaterapia",
-    "alt": "Ventosas aplicadas ao longo das costas de uma pessoa deitada em marquesa."
-  },
-  {
-    "icon": "foot",
-    "name": "Reflexologia",
-    "description": "Estímulo de zonas reflexas dos pés, como parte de uma abordagem integrada ao organismo.",
-    "detail": "Trabalha-se por pressão manual nos pés, sem agulhas — uma opção para quem prefere uma abordagem menos invasiva. As zonas saem da mesma avaliação que orienta as restantes técnicas.",
-    "photo": "foto: sessão de reflexologia",
-    "image": "reflexologia",
-    "alt": "Mãos a pressionar a planta do pé durante uma sessão de reflexologia."
+    "icon": "head",
+    "name": "Craniopuntura",
+    "description": "Estímulo de zonas do couro cabeludo, integrado na estratégia terapêutica de acordo com a avaliação individual.",
+    "detail": "Trabalha-se com agulhas muito finas em zonas definidas do couro cabeludo. As zonas escolhidas saem da mesma avaliação que orienta as restantes técnicas.",
+    "photo": "foto: sessão de craniopuntura",
+    "image": "craniopuntura",
+    "alt": "Aplicação de agulhas de craniopuntura no couro cabeludo de uma pessoa."
   }
 ]

@@ -61,7 +61,7 @@
 
   /* ---- Escala fluida ------------------------------------------------ */
   --text-eyebrow: 0.75rem;
-  --text-small: 0.875rem;
+  --text-small: 0.9375rem;
   --text-body: clamp(1rem, 0.3vw + 0.95rem, 1.0625rem);
   --text-lead: clamp(1.0625rem, 1vw + 0.8rem, 1.25rem);
   --text-h3: clamp(1.25rem, 1.4vw, 1.5rem);

@@ -15,7 +15,7 @@ const faq = getFaq(locale);
  * As respostas ainda por confirmar não entram nos dados estruturados: não se
  * publica um placeholder como se fosse conteúdo.
  */
-/* As respostas vêm da clínica em vários parágrafos. Nos dados estruturados
+/* As respostas vêm do espaço em vários parágrafos. Nos dados estruturados
    juntam-se num texto só, que é o que o schema.org espera. */
 const answered = faq.filter((item) => !item.a.join(' ').includes('⟨TODO'));
 
@@ -153,9 +153,9 @@ const faqSchema = {
     gap: var(--spacing-s3);
     padding: 0 var(--spacing-s5) var(--spacing-s5) calc(var(--spacing-s5) + 16px + var(--spacing-s4));
     max-width: 62ch;
-    font-size: 0.9375rem;
-    line-height: 1.7;
-    color: color-mix(in srgb, #fff 78%, transparent);
+    font-size: 1rem;
+    line-height: 1.75;
+    color: color-mix(in srgb, #fff 88%, transparent);
   }
 
   /* Animação de altura onde o motor a suporta; noutros abre de imediato. */

@@ -13,7 +13,7 @@ const t = useTranslations(locale);
 
 /**
  * O chão da página, no registo da referência que a cliente escolheu: o nome
- * da clínica em serifa grande a abrir, uma etiqueta "CONTACTO" por baixo, e
+ * do espaço em serifa grande a abrir, uma etiqueta "CONTACTO" por baixo, e
  * só depois — muito mais abaixo na hierarquia — colunas de texto miúdo com
  * os dados, os links legais e as licenças.
  *
@@ -358,9 +358,10 @@ const redes = [
   .footer__aviso {
     margin-top: var(--spacing-s4);
     max-width: 46ch;
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
     font-style: italic;
-    color: color-mix(in srgb, var(--color-ivory) 58%, transparent);
+    color: color-mix(in srgb, var(--color-ivory) 75%, transparent);
   }
 
   /* Os ícones sozinhos, em quadrado de contorno fino, como na referência. */
@@ -418,7 +419,7 @@ const redes = [
     gap: 0 6px;
     margin: 0;
     min-width: 0;
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     line-height: 1.5;
     color: var(--footer-muted);
   }

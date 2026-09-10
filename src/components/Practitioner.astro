@@ -4,7 +4,7 @@ import Ambient from './Ambient.astro';
 import Icon from './Icon.astro';
 import { localeFromPath, type Locale } from '../i18n';
 import { useTranslations } from '../i18n/ui';
-import { getServices } from '../i18n/content';
+import { getTechniques } from '../i18n/content';
 
 const locale: Locale = localeFromPath(Astro.url.pathname);
 const t = useTranslations(locale);
@@ -16,11 +16,11 @@ const t = useTranslations(locale);
 const { firstName, lastName } = site.practitioner;
 
 /* A biografia vem do dicionário, para existir nas duas línguas. O `site.ts`
-   mantém o original português como fonte de verdade da clínica; quando lá
+   mantém o original português como fonte de verdade do espaço; quando lá
    estiver a `null` (por confirmar), o bloco pendente continua a aparecer. */
 const bio = site.practitioner.bio ? t('practitioner.bio') : null;
 
-const tecnicas = getServices(locale).map((s) => s.name);
+const tecnicas = getTechniques(locale);
 ---
 
 <section class="section section-lg surface-sand terapeuta tem-ambiente" id="terapeuta" aria-labelledby="terapeuta-titulo">
@@ -58,7 +58,7 @@ const tecnicas = getServices(locale).map((s) => s.name);
               </p>
               <p class="note">
                 ⟨TODO: 2 a 4 frases sobre a formação e a abordagem da Teresa, a validar
-                pela clínica antes de publicar. Não deve incluir anos de experiência nem
+                pelo espaço antes de publicar. Não deve incluir anos de experiência nem
                 formações que não estejam confirmadas.⟩
               </p>
             </div>
@@ -220,7 +220,7 @@ const tecnicas = getServices(locale).map((s) => s.name);
     padding: 6px var(--spacing-s4);
     border: 1px solid var(--hairline);
     border-radius: var(--radius-pill);
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     font-weight: 500;
     color: var(--color-navy);
   }

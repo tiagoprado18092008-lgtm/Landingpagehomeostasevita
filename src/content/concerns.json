@@ -1,8 +1,8 @@
 [
-  { "icon": "joints", "title": "Dor e tensão muscular" },
+  { "icon": "stomach", "title": "Problemas digestivos e intestinais" },
   { "icon": "head", "title": "Enxaquecas" },
-  { "icon": "stomach", "title": "Alterações digestivas e intestinais" },
+  { "icon": "joints", "title": "Dores musculares" },
   { "icon": "lotus", "title": "Stress, ansiedade e insónias" },
   { "icon": "energy", "title": "Alergias, rinite e sinusite" },
-  { "icon": "yinyang", "title": "Falta de equilíbrio físico e emocional" }
+  { "icon": "yinyang", "title": "Desequilíbrio" }
 ]
