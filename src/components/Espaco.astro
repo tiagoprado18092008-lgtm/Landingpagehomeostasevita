@@ -34,7 +34,7 @@ const t = useTranslations(locale);
 const fotos = [
   { src: sala, variante: 'larga', legenda: t('space.cap1'), alt: t('space.alt1') },
   { src: gabinete, variante: 'estreita', legenda: t('space.cap2'), alt: t('space.alt2') },
-  { src: hall, variante: 'estreita', legenda: t('space.cap3'), alt: t('space.alt3') },
+  { src: hall, variante: 'estreita', legenda: t('space.cap3'), alt: t('space.alt3'), encaixe: 'hall' },
   { src: exterior, variante: 'larga', legenda: t('space.cap4'), alt: t('space.alt4') },
 ];
 ---
@@ -53,7 +53,7 @@ const fotos = [
           <figure class={`espaco__peca espaco__peca--${f.variante} reveal reveal--scale`}>
             <span class="zoom-alvo espaco__moldura">
               <Image
-                class="espaco__img"
+                class={`espaco__img${f.encaixe ? ` espaco__img--${f.encaixe}` : ''}`}
                 src={f.src}
                 alt={f.alt}
                 format="webp"
@@ -110,6 +110,13 @@ const fotos = [
     height: 100%;
     object-fit: cover;
     object-position: center;
+  }
+
+  /* A hall é vertical e o corte apanhava de cheio a insígnia do edifício
+     ("MY COPLACE"), que é do espaço partilhado e não da Homeostase Vita.
+     Baixar o enquadramento leva o olho para o balcão e as orquídeas. */
+  .espaco :global(.espaco__img--hall) {
+    object-position: center 72%;
   }
 
   .espaco__legenda {
