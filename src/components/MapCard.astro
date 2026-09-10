@@ -1,6 +1,12 @@
 ---
 import { site } from '../config/site';
 import Icon from './Icon.astro';
+import { localeFromPath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+
 
 /**
  * Facade do mapa: o iframe do Google só é injetado depois de a pessoa
@@ -27,11 +33,11 @@ const directions = `https://www.google.com/maps/dir/?api=1&destination=${query}`
         {site.address.postalCode}&nbsp;{site.address.locality}
       </p>
       <p class="note mapcard__consent">
-        O mapa é do Google e coloca cookies de terceiros. Só carrega se autorizar.
+        {t('map.consent')}
       </p>
       <div class="mapcard__actions">
         <button type="button" class="btn btn-secondary" data-mapcard-load>
-          Carregar mapa
+          {t('map.load')}
         </button>
         <a
           href={directions}
@@ -39,7 +45,7 @@ const directions = `https://www.google.com/maps/dir/?api=1&destination=${query}`
           target="_blank"
           rel="noopener noreferrer"
         >
-          Ver rota
+          {t('map.route')}
           <Icon name="external" size={16} />
         </a>
       </div>

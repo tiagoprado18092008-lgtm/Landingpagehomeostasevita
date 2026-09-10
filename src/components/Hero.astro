@@ -4,6 +4,12 @@ import { site } from '../config/site';
 import Icon from './Icon.astro';
 import fotoLarga from '../assets/img/hero-acupuntura.jpg';
 import fotoAlta from '../assets/img/hero-acupuntura-vertical.jpg';
+import { localeFromPath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+
 
 /* Arte dirigida: o mesmo momento, dois enquadramentos.
    Em ecra largo a fotografia horizontal; no telemovel um recorte vertical
@@ -54,7 +60,7 @@ const alta = await getImage({
         sizes="100vw"
         width="1800"
         height="2903"
-        alt="Agulhas de acupuntura a serem colocadas nas costas de uma pessoa, durante uma sessão."
+        alt={t('hero.imgAlt')}
         loading="eager"
         fetchpriority="high"
         decoding="sync"
@@ -65,17 +71,15 @@ const alta = await getImage({
 
   <div class="hero__conteudo">
     <h1 class="hero__titulo">
-      Homeostase&nbsp;Vita — Clínica<br class="hero__quebra" /> de Medicina
-      Tradicional Chinesa
+      <Fragment set:html={t('hero.titleA').replace(/ /, '&nbsp;')} /><br
+        class="hero__quebra"
+      />{t('hero.titleB')}
     </h1>
 
-    <p class="hero__sub">
-      Uma clínica integrativa na Maia, com acompanhamento individual para a
-      saúde física e emocional, dores persistentes e equilíbrio duradouro.
-    </p>
+    <p class="hero__sub">{t('hero.sub')}</p>
 
     <div class="hero__acoes">
-      <a href="#marcacao" class="btn hero__btn">Marcar consulta</a>
+      <a href="#marcacao" class="btn hero__btn">{t('common.book')}</a>
       <a href={`tel:${site.phone.tel}`} class="btn hero__tel">
         <Icon name="phone" size={17} />
         {site.phone.display}
@@ -170,8 +174,8 @@ const alta = await getImage({
   /* A ousadia gasta-se toda aqui: a serifa da marca em tamanho de cartaz,
      leve, com a entrelinha fechada para as duas linhas formarem bloco. */
   .hero__titulo {
-    font-family: var(--font-wordmark);
-    font-weight: 300;
+    font-family: var(--font-serif);
+    font-weight: 500;
     font-size: clamp(2.125rem, 6.2vw, 5.5rem);
     line-height: 0.98;
     letter-spacing: -0.012em;

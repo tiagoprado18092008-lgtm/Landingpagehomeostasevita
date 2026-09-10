@@ -2,6 +2,12 @@
 import { site } from '../config/site';
 import Icon from './Icon.astro';
 import Emblem from './Emblem.astro';
+import { localeFromPath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+
 
 /**
  * Contacto a um toque, em todas as resoluções.
@@ -17,33 +23,45 @@ import Emblem from './Emblem.astro';
 
 /** Aberturas mais pedidas. O rótulo é curto; o texto é o que segue na mensagem. */
 const respostas = [
-  { label: 'Marcar consulta', texto: 'Olá! Gostaria de marcar uma consulta.' },
-  {
-    label: 'Como é a primeira consulta?',
-    texto: 'Olá! Queria saber como funciona a primeira consulta.',
-  },
-  { label: 'Onde ficam?', texto: 'Olá! Podem indicar-me a morada da clínica?' },
+  { label: t('chat.quick1'), texto: t('chat.quick1Text') },
+  { label: t('chat.quick2'), texto: t('chat.quick2Text') },
+  { label: t('chat.quick3'), texto: t('chat.quick3Text') },
 ];
+
+/* As frases que o script escreve depois de a pessoa enviar. Vão em atributo
+   para o cliente, pela mesma razão do formulário: nenhum literal de língua
+   dentro do script. */
+const textosChat = {
+  locale: locale === 'en' ? 'en-GB' : 'pt-PT',
+  opening: t('chat.opening'),
+  openWhatsapp: t('chat.openWhatsapp'),
+  tapToContinue: t('chat.tapToContinue'),
+};
 ---
 
-<div class="chat" data-chat-root data-wa={site.phone.whatsapp}>
+<div
+  class="chat"
+  data-chat-root
+  data-wa={site.phone.whatsapp}
+  data-i18n={JSON.stringify(textosChat)}
+>
   <section
     id="chat-panel"
     class="panel"
     data-chat-panel
     hidden
     role="dialog"
-    aria-label={`Conversa com a ${site.name}`}
+    aria-label={`${t('chat.dialogAria')} ${site.name}`}
   >
     <header class="panel__top">
       <span class="panel__avatar">
         <Emblem size={30} />
       </span>
       <span class="panel__id">
-        <strong class="panel__name">Assistente {site.name}</strong>
-        <span class="panel__status">Online</span>
+        <strong class="panel__name">{t('chat.assistant')} {site.name}</strong>
+        <span class="panel__status">{t('chat.online')}</span>
       </span>
-      <button type="button" class="panel__close" data-chat-close aria-label="Fechar conversa">
+      <button type="button" class="panel__close" data-chat-close aria-label={t('chat.close')}>
         <Icon name="close" size={18} />
       </button>
     </header>
@@ -51,10 +69,8 @@ const respostas = [
     <div class="panel__body" data-chat-log>
       <p class="stamp" data-chat-stamp aria-hidden="true"></p>
 
-      <p class="bubble bubble--them">Olá, como podemos ajudar? 👋</p>
-      <p class="bubble bubble--them bubble--soft">
-        Escreva a sua mensagem e continuamos no WhatsApp.
-      </p>
+      <p class="bubble bubble--them">{t('chat.greeting')}</p>
+      <p class="bubble bubble--them bubble--soft">{t('chat.handoff')}</p>
 
       <div class="quick" data-chat-quick>
         {
@@ -75,7 +91,7 @@ const respostas = [
     </div>
 
     <form class="panel__foot" data-chat-form novalidate>
-      <label class="sr-only" for="chat-msg">A sua mensagem</label>
+      <label class="sr-only" for="chat-msg">{t('chat.yourMessage')}</label>
       <input
         id="chat-msg"
         class="panel__input"
@@ -83,9 +99,9 @@ const respostas = [
         type="text"
         name="mensagem"
         autocomplete="off"
-        placeholder="Escreva a sua mensagem…"
+        placeholder={t('chat.placeholder')}
       />
-      <button type="submit" class="panel__send" data-chat-send aria-label="Enviar por WhatsApp">
+      <button type="submit" class="panel__send" data-chat-send aria-label={t('chat.send')}>
         <Icon name="send" size={20} />
       </button>
     </form>
@@ -96,11 +112,11 @@ const respostas = [
     class="fab"
     data-chat-launcher
     rel="noopener"
-    aria-label="Falar connosco por WhatsApp"
+    aria-label={t('chat.launcherAria')}
   >
     <span class="fab__icon fab__icon--chat"><Icon name="whatsapp" size={22} /></span>
     <span class="fab__icon fab__icon--fechar"><Icon name="close" size={22} /></span>
-    <span class="fab__label">Falar connosco</span>
+    <span class="fab__label">{t('chat.launcher')}</span>
   </a>
 </div>
 
@@ -458,6 +474,9 @@ const respostas = [
 
 <script>
   const raiz = document.querySelector<HTMLElement>('[data-chat-root]');
+
+  /* Textos traduzidos no servidor. O mesmo script serve as duas linguas. */
+  const T: Record<string, string> = JSON.parse(raiz?.dataset.i18n ?? '{}');
   const painel = document.querySelector<HTMLElement>('[data-chat-panel]');
   const botao = document.querySelector<HTMLAnchorElement>('[data-chat-launcher]');
   const fechar = document.querySelector<HTMLButtonElement>('[data-chat-close]');
@@ -507,7 +526,7 @@ const respostas = [
       raiz.removeAttribute('data-tucked');
       // Hora local de quem visita — por isso só se escreve no primeiro abrir.
       if (!carimbo.textContent) {
-        carimbo.textContent = new Date().toLocaleTimeString('pt-PT', {
+        carimbo.textContent = new Date().toLocaleTimeString(T.locale || 'pt-PT', {
           hour: '2-digit',
           minute: '2-digit',
         });
@@ -584,15 +603,15 @@ const respostas = [
         } catch {
           /* já navegou para outra origem: o browser trata do resto */
         }
-        aviso.textContent = 'A abrir o WhatsApp…';
+        aviso.textContent = T.opening;
       } else {
         // Bloqueado por quem trava janelas novas: fica o link para o toque seguinte.
         const ligacao = document.createElement('a');
         ligacao.href = destino;
         ligacao.target = '_blank';
         ligacao.rel = 'noopener';
-        ligacao.textContent = 'Abrir o WhatsApp';
-        aviso.append('Toque para continuar: ', ligacao);
+        ligacao.textContent = T.openWhatsapp;
+        aviso.append(T.tapToContinue, ligacao);
       }
       aviso.hidden = false;
 

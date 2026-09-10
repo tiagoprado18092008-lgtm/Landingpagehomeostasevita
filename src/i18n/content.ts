@@ -1,0 +1,210 @@
+/**
+ * Conteúdo de dados traduzido — tratamentos, áreas, princípios e FAQ.
+ *
+ * O português vem dos JSON em `src/content/` (continua a ser a fonte de
+ * verdade, editável pela clínica). O inglês vive aqui, indexado pela mesma
+ * ordem, porque só a parte textual muda: ícones, imagens e slugs são
+ * partilhados e não se traduzem.
+ *
+ * NOTA(cliente): tradução de trabalho, fiel ao português validado. Nenhuma
+ * frase acrescenta afirmação clínica que o original não faça — a mesma regra
+ * que rege o texto português aplica-se aqui.
+ */
+import type { Locale } from './index';
+
+import servicesPt from '../content/services.json';
+import benefitsPt from '../content/benefits.json';
+import concernsPt from '../content/concerns.json';
+import faqPt from '../content/faq.json';
+
+export interface Service {
+  icon: string;
+  name: string;
+  /**
+   * Nome português do tratamento, sempre. É daqui que sai a âncora do cartão
+   * (`#trat-acupuntura`), para que um link partilhado continue a apontar para
+   * o mesmo cartão seja qual for a língua da página.
+   */
+  anchor?: string;
+  description: string;
+  detail?: string;
+  photo: string;
+  image?: string;
+  alt?: string;
+}
+
+export interface Benefit {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+export interface Concern {
+  icon: string;
+  title: string;
+}
+
+export interface FaqItem {
+  q: string;
+  a: string[];
+}
+
+const servicesEn: Service[] = [
+  {
+    icon: 'needles',
+    name: 'Acupuncture',
+    anchor: 'Acupuntura',
+    description:
+      'The main technique of Traditional Chinese Medicine, applying needles at points chosen from an individual assessment.',
+    detail:
+      'The needles are very fine and the application is generally well tolerated. The points are not fixed: they change from session to session, according to the assessment and how things progress.',
+    photo: 'photo: acupuncture session',
+    image: 'acupuntura',
+    alt: 'Acupuncture needles being placed on the back of a person lying down.',
+  },
+  {
+    icon: 'ear',
+    name: 'Auriculotherapy',
+    anchor: 'Auriculoterapia',
+    description:
+      'Stimulation of points on the outer ear, integrated into the therapeutic strategy where appropriate to the situation.',
+    detail:
+      'It is applied to the outer ear, with small stimuli that may stay in place between sessions. It comes in as a complement to another technique, not on its own.',
+    photo: 'photo: auriculotherapy',
+    image: 'auriculoterapia',
+    alt: 'A stimulation point being placed on the outer ear of a patient.',
+  },
+  {
+    icon: 'cupping',
+    name: 'Cupping therapy',
+    anchor: 'Ventosaterapia',
+    description:
+      'Application of cups to the skin, used above all in situations of muscle tension.',
+    detail:
+      'The cups create a gentle suction over the area being worked on. Circular marks on the skin for a few days are common, and they fade on their own.',
+    photo: 'photo: cupping session',
+    image: 'ventosaterapia',
+    alt: 'Cups applied along the back of a person lying on a treatment table.',
+  },
+  {
+    icon: 'foot',
+    name: 'Reflexology',
+    anchor: 'Reflexologia',
+    description:
+      'Stimulation of reflex zones of the feet, as part of an integrated approach to the body.',
+    detail:
+      'It works through manual pressure on the feet, without needles — an option for those who prefer a less invasive approach. The zones come from the same assessment that guides the other techniques.',
+    photo: 'photo: reflexology session',
+    image: 'reflexologia',
+    alt: 'Hands pressing the sole of a foot during a reflexology session.',
+  },
+];
+
+const benefitsEn: Benefit[] = [
+  {
+    icon: 'person',
+    title: 'Individual assessment',
+    description:
+      'Every course of care begins with understanding the person, their symptoms and their individual characteristics.',
+  },
+  {
+    icon: 'yinyang',
+    title: 'A whole view of health',
+    description:
+      'The various symptoms and signs are analysed together, seeking to understand how they connect and to see the body as a whole.',
+  },
+  {
+    icon: 'needles',
+    title: 'Personalised intervention',
+    description:
+      'The therapeutic strategy is defined according to the assessment carried out and may bring together different techniques of Traditional Chinese Medicine.',
+  },
+  {
+    icon: 'hands',
+    title: 'Individual follow-up',
+    description:
+      'Progress is followed across the consultations, allowing the therapeutic strategy to be adapted whenever necessary.',
+  },
+  {
+    icon: 'leaf',
+    title: 'Prevention and balance',
+    description:
+      'Beyond working on the symptoms, value is placed on prevention and on adopting habits that support balance and wellbeing.',
+  },
+  {
+    icon: 'lotus',
+    title: 'A range of techniques',
+    description:
+      'Depending on each situation, different techniques may be used, such as acupuncture, auriculotherapy, cupping or reflexology.',
+  },
+];
+
+const concernsEn: Concern[] = [
+  { icon: 'joints', title: 'Pain and muscle tension' },
+  { icon: 'head', title: 'Migraines' },
+  { icon: 'stomach', title: 'Digestive and intestinal changes' },
+  { icon: 'lotus', title: 'Stress, anxiety and insomnia' },
+  { icon: 'energy', title: 'Allergies, rhinitis and sinusitis' },
+  { icon: 'yinyang', title: 'Lack of physical and emotional balance' },
+];
+
+const faqEn: FaqItem[] = [
+  {
+    q: 'What is Traditional Chinese Medicine?',
+    a: [
+      'Traditional Chinese Medicine (TCM) is a therapeutic approach to health based on age-old knowledge, which seeks to understand the person as a whole. Rather than analysing each symptom in isolation, it relates the different complaints and individual characteristics, considering that the same manifestation may be associated with different factors and imbalances.',
+      'Diagnosis in Traditional Chinese Medicine is carried out through an overall observation of the person and questions directed at symptoms, habits and individual characteristics. Observation of the tongue and assessment of the pulse are important elements of this evaluation.',
+      'Acupuncture is one of the main techniques used in Traditional Chinese Medicine, and may be complemented by other therapeutic strategies according to the needs of each person. Prevention and health promotion are also pillars of this medicine, valuing aspects such as diet, daily habits and lifestyle.',
+      'The aim is to provide a personalised intervention, oriented towards balance and the overall wellbeing of the body.',
+    ],
+  },
+  {
+    q: 'In what situations can Traditional Chinese Medicine be used?',
+    a: [
+      'Traditional Chinese Medicine can be used in addressing different health conditions, namely situations of pain, muscle tension, migraines, digestive and intestinal changes, stress, anxiety, insomnia, allergies, rhinitis and sinusitis, among others.',
+      'The intervention is always personalised, taking into account the symptoms presented, the individual characteristics and the needs of each person, and may serve as a complement to conventional health care where appropriate.',
+    ],
+  },
+  {
+    q: 'How does the consultation work?',
+    a: [
+      'The first consultation involves an in-depth, individual assessment, through gathering and analysing different parameters related to health, symptoms, habits and personal characteristics.',
+      'Follow-up consultations make it possible to track progress and adjust the intervention whenever necessary.',
+      'According to the symptoms, characteristics and needs of each person, different therapeutic techniques of Traditional Chinese Medicine and complementary areas may be used, namely acupuncture, auriculotherapy, cupping and reflexology.',
+    ],
+  },
+  {
+    q: 'Does acupuncture hurt?',
+    a: [
+      'Acupuncture needles are very fine and their application is generally well tolerated.',
+      'The sensation varies from person to person. For many people insertion is practically painless, with perhaps a slight prick or a momentary sensation of pressure, warmth or tingling.',
+      'During the session, the aim is to ensure the greatest possible comfort, adjusting the intervention to the sensitivity and individual characteristics of each person.',
+    ],
+  },
+  {
+    q: 'How many sessions are needed?',
+    a: [
+      'There is no single number of sessions that applies to everyone. The frequency and length of care depend on the situation presented, the therapeutic goals and the individual response to treatment.',
+      'Progress is followed across the consultations, allowing the therapeutic strategy to be adjusted whenever necessary.',
+    ],
+  },
+  {
+    q: 'How can I book a consultation?',
+    a: [
+      'Consultations take place by prior appointment.',
+      'To request an appointment or clarify any question before the first consultation, you can get in touch through the channels provided on this site.',
+    ],
+  },
+];
+
+export const getServices = (locale: Locale): Service[] =>
+  locale === 'en' ? servicesEn : (servicesPt as Service[]);
+
+export const getBenefits = (locale: Locale): Benefit[] =>
+  locale === 'en' ? benefitsEn : (benefitsPt as Benefit[]);
+
+export const getConcerns = (locale: Locale): Concern[] =>
+  locale === 'en' ? concernsEn : (concernsPt as Concern[]);
+
+export const getFaq = (locale: Locale): FaqItem[] =>
+  locale === 'en' ? faqEn : (faqPt as FaqItem[]);

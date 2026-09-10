@@ -1,0 +1,105 @@
+---
+import LegalLayout from '../../layouts/LegalLayout.astro';
+import { site } from '../../config/site';
+
+/**
+ * Versão inglesa da Política de Cookies.
+ *
+ * Tradução do documento português, que continua a ser a versão de referência:
+ * qualquer alteração feita lá tem de ser reflectida aqui. O conteúdo é
+ * traduzido à mão (e não pelo dicionário de interface) porque é um documento
+ * corrido, com tabela e notas próprias.
+ *
+ * TODO(cliente): a par do português, rever com apoio jurídico antes de
+ * publicar.
+ */
+---
+
+<LegalLayout
+  title="Cookie Policy — Homeostase Vita"
+  description="Which cookies this site uses, what they are for, and how you can change your choice at any time."
+  heading="Cookie Policy"
+  updated="September 2026"
+>
+  <h2>1. The essentials</h2>
+  <p>
+    This site does not set measurement cookies or load third-party content before you
+    allow it. Until you choose, and if you decline, the site works in full — we simply
+    do not collect usage statistics and the map is not loaded.
+  </p>
+
+  <h2>2. Which cookies exist</h2>
+  <table>
+    <thead>
+      <tr><th>Cookie</th><th>Source</th><th>Purpose</th><th>Duration</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>hv-consent</code></td>
+        <td>This site</td>
+        <td>
+          Stores your choice about cookies. It stays in your browser and is not sent
+          anywhere.
+        </td>
+        <td>Until you clear your browser data</td>
+      </tr>
+      <tr>
+        <td><code>_ga</code>, <code>_ga_*</code></td>
+        <td>Google Analytics 4</td>
+        <td>Aggregated usage statistics. Only after you accept.</td>
+        <td>Up to 2 years</td>
+      </tr>
+      <tr>
+        <td><code>_fbp</code></td>
+        <td>Meta Pixel</td>
+        <td>Measuring campaign results. Only after you accept.</td>
+        <td>Up to 3 months</td>
+      </tr>
+      <tr>
+        <td>Google Maps cookies</td>
+        <td>Google</td>
+        <td>
+          Showing the clinic map. Only loaded if you click "Load map" or accept cookies.
+        </td>
+        <td>Set by Google</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>3. Changing your mind</h2>
+  <p>
+    You can review your choice at any time under
+    <button type="button" class="link-gold" data-open-consent>Cookie settings</button>,
+    also available in the footer of every page. You can also delete cookies directly in
+    your browser settings.
+  </p>
+
+  <h2>4. Questions</h2>
+  <p>
+    For any question about cookies or privacy, write to
+    <a href={`mailto:${site.email}`}>{site.email}</a>. See also our
+    <a href="/en/privacy-policy">Privacy Policy</a>.
+  </p>
+</LegalLayout>
+
+<style is:global>
+  .prose code {
+    padding: 2px 6px;
+    border-radius: 4px;
+    background-color: var(--color-ivory);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.875em;
+  }
+
+  .prose button.link-gold {
+    padding: 0;
+    background: none;
+    border: 0;
+    color: var(--color-navy);
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: var(--color-teal);
+    text-underline-offset: 3px;
+  }
+</style>

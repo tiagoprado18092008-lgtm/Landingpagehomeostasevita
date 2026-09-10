@@ -1,6 +1,15 @@
 ---
 import '../styles/global.css';
 import { site } from '../config/site';
+import {
+  localeFromPath,
+  alternatePath,
+  htmlLang,
+  ogLocale,
+  LOCALES,
+  type Locale,
+} from '../i18n';
+import { useTranslations } from '../i18n/ui';
 import ConsentBanner from '../components/ConsentBanner.astro';
 import Grain from '../components/Grain.astro';
 
@@ -24,6 +33,17 @@ const {
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogUrl = new URL(ogImage, Astro.site).href;
 
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+
+/* Cada página declara o seu par na outra língua, mais o `x-default` que
+   aponta para o português — a versão de origem do site. */
+const alternates = LOCALES.map((l) => ({
+  hreflang: l === 'pt' ? 'pt-PT' : 'en',
+  href: new URL(alternatePath(Astro.url.pathname, l), Astro.site).href,
+}));
+const xDefault = new URL(alternatePath(Astro.url.pathname, 'pt'), Astro.site).href;
+
 const clinic = {
   '@context': 'https://schema.org',
   '@type': 'MedicalClinic',
@@ -46,25 +66,35 @@ const clinic = {
   },
   areaServed: { '@type': 'City', name: 'Maia' },
   medicalSpecialty: 'Alternative',
-  availableService: [
-    'Acupuntura',
-    'Auriculoterapia',
-    'Ventosaterapia',
-    'Acompanhamento alimentar',
-    'Reflexologia',
-  ].map((name) => ({ '@type': 'MedicalTherapy', name })),
+  availableService: (locale === 'en'
+    ? ['Acupuncture', 'Auriculotherapy', 'Cupping therapy', 'Dietary guidance', 'Reflexology']
+    : [
+        'Acupuntura',
+        'Auriculoterapia',
+        'Ventosaterapia',
+        'Acompanhamento alimentar',
+        'Reflexologia',
+      ]
+  ).map((name) => ({ '@type': 'MedicalTherapy', name })),
   sameAs: [site.social.instagram, site.social.facebook],
 };
 ---
 
 <!doctype html>
-<html lang="pt-PT" class="no-js">
+<html lang={htmlLang[locale]} class="no-js">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {
+      !noindex &&
+        alternates.map((alt) => (
+          <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+        ))
+    }
+    {!noindex && <link rel="alternate" hreflang="x-default" href={xDefault} />}
     {noindex && <meta name="robots" content="noindex, follow" />}
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -93,7 +123,7 @@ const clinic = {
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.name} />
-    <meta property="og:locale" content="pt_PT" />
+    <meta property="og:locale" content={ogLocale[locale]} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -140,7 +170,7 @@ const clinic = {
   </head>
 
   <body>
-    <a class="skip-link" href="#conteudo">Saltar para o conteúdo</a>
+    <a class="skip-link" href="#conteudo">{t('common.skipToContent')}</a>
     <Grain />
     <slot />
     <ConsentBanner />

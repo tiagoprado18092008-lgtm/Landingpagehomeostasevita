@@ -1,0 +1,123 @@
+---
+import { localeFromPath, alternatePath, htmlLang, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+
+/**
+ * Botão de troca de idioma.
+ *
+ * Um clique, um destino: mostra a língua para a qual se vai (PT → "English",
+ * EN → "Português"), que é o que a pessoa procura. Um par PT|EN com o estado
+ * activo obrigava a ler qual dos dois está ligado antes de clicar; isto não.
+ *
+ * É um link, não um botão de JavaScript: leva ao URL equivalente na outra
+ * língua, funciona sem JS, e o motor de busca segue-o. O `hreflang` diz-lhe
+ * qual é a língua de destino.
+ *
+ * `compacto` é a variante do header (só a sigla, para caber ao lado do CTA);
+ * o rodapé usa a forma por extenso.
+ */
+interface Props {
+  compacto?: boolean;
+  class?: string;
+}
+
+const { compacto = false, class: extraClass = '' } = Astro.props;
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const destino: Locale = locale === 'pt' ? 'en' : 'pt';
+const href = alternatePath(Astro.url.pathname, destino);
+const t = useTranslations(locale);
+
+/* O mesmo código de idioma que os `hreflang` do <head> declaram — se aqui
+   fosse só "pt", o link e o alternate deixavam de casar. */
+const codigo = htmlLang[destino];
+
+const sigla = destino.toUpperCase();
+---
+
+<a
+  class:list={['lang', compacto && 'lang--compacto', extraClass]}
+  href={href}
+  hreflang={codigo}
+  lang={codigo}
+  aria-label={t('lang.switchLabel')}
+  data-lang-switch
+>
+  <svg
+    class="lang__globo"
+    viewBox="0 0 24 24"
+    width="16"
+    height="16"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.6"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <circle cx="12" cy="12" r="9"></circle>
+    <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"></path>
+  </svg>
+  <span class="lang__texto">{compacto ? sigla : t('lang.switchTo')}</span>
+</a>
+
+<style>
+  .lang {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-s2);
+    min-height: 44px;
+    padding-inline: var(--spacing-s3);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--color-navy-ink);
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease),
+      background-color var(--dur) var(--ease);
+  }
+
+  .lang:hover {
+    color: var(--color-navy);
+    border-color: var(--color-teal);
+    background-color: color-mix(in srgb, var(--color-teal) 8%, transparent);
+  }
+
+  .lang__globo {
+    flex: none;
+    opacity: 0.75;
+  }
+
+  /* Variante do header: o quadrado da sigla, à medida do toggle do menu. */
+  .lang--compacto {
+    min-width: 48px;
+    height: 48px;
+    justify-content: center;
+    padding-inline: var(--spacing-s3);
+    text-transform: uppercase;
+  }
+
+  /* No rodapé o texto assenta sobre fundo escuro. */
+  :global(.rodape) .lang {
+    color: inherit;
+    border-color: color-mix(in srgb, currentColor 28%, transparent);
+  }
+
+  :global(.rodape) .lang:hover {
+    color: inherit;
+    border-color: currentColor;
+    background-color: color-mix(in srgb, currentColor 10%, transparent);
+  }
+
+  /* Em ecrã muito estreito o globo cede o lugar à sigla. */
+  @media (max-width: 400px) {
+    .lang--compacto .lang__globo {
+      display: none;
+    }
+  }
+</style>

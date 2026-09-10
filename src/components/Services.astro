@@ -1,7 +1,9 @@
 ---
 import { Image } from 'astro:assets';
-import services from '../content/services.json';
 import { slugify } from '../config/site';
+import { localeFromPath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+import { getServices, type Service } from '../i18n/content';
 import Placeholder from './Placeholder.astro';
 
 import acupuntura from '../assets/img/acupuntura.jpg';
@@ -20,28 +22,18 @@ import reflexologia from '../assets/img/reflexologia.jpg';
  * como uma tabela.
  */
 
-interface Tratamento {
-  icon: string;
-  name: string;
-  description: string;
-  /**
-   * Segundo parágrafo do cartão: o que é e como decorre.
-   *
-   * TODO(cliente): texto redigido aqui e por validar pela terapeuta. É
-   * deliberadamente descritivo — nenhuma frase diz que a técnica trata ou
-   * melhora seja o que for, porque isso é afirmação clínica e só pode sair
-   * de quem exerce.
-   */
-  detail?: string;
-  /** Legenda do slot, para quando ainda não há fotografia. */
-  photo: string;
-  /** Chave em `fotos`. Sem ela, o cartão fica com o slot. */
-  image?: string;
-  /** Texto alternativo da fotografia. Obrigatório quando há `image`. */
-  alt?: string;
-}
-
-const tratamentos = services as Tratamento[];
+/*
+ * O tipo e o texto dos tratamentos vivem em `src/i18n/content.ts`: o
+ * português continua a sair do JSON editável, o inglês da tradução ao lado.
+ *
+ * TODO(cliente): o segundo parágrafo de cada cartão (`detail`) foi redigido
+ * aqui e está por validar pela terapeuta, nas duas línguas. É deliberadamente
+ * descritivo — nenhuma frase diz que a técnica trata ou melhora seja o que
+ * for, porque isso é afirmação clínica e só pode sair de quem exerce.
+ */
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+const tratamentos: Service[] = getServices(locale);
 
 const fotos: Record<string, ImageMetadata> = {
   acupuntura,
@@ -58,20 +50,18 @@ const SIZES = '(min-width: 1000px) 25vw, (min-width: 640px) 50vw, 100vw';
   <div class="container tratamentos__container">
     <div class="tratamentos__head">
       <div>
-        <p class="eyebrow reveal">Tratamentos</p>
-        <h2 class="h2 reveal" id="servicos-titulo">Os nossos tratamentos</h2>
+        <p class="eyebrow reveal">{t('services.eyebrow')}</p>
+        <h2 class="h2 reveal" id="servicos-titulo">{t('services.title')}</h2>
       </div>
       <p class="tratamentos__intro reveal" style="--reveal-delay:80ms">
-        De acordo com os sintomas, as características e as necessidades de cada pessoa,
-        podem ser utilizadas diferentes técnicas da Medicina Tradicional Chinesa e áreas
-        complementares.
+        {t('services.intro')}
       </p>
     </div>
 
     <ul class="tratamentos__grid" data-stagger="90">
       {
         tratamentos.map((s, i) => (
-          <li class="trat reveal" id={`trat-${slugify(s.name)}`}>
+          <li class="trat reveal" id={`trat-${slugify(s.anchor ?? s.name)}`}>
             <span class="zoom-alvo trat__foto">
               {s.image && fotos[s.image] ? (
                 <Image
@@ -98,10 +88,8 @@ const SIZES = '(min-width: 1000px) 25vw, (min-width: 640px) 50vw, 100vw';
     </ul>
 
     <div class="tratamentos__cta reveal">
-      <p class="tratamentos__nota">
-        A escolha das técnicas resulta da avaliação individual feita em consulta.
-      </p>
-      <a href="#marcacao" class="btn btn-secondary">Marcar consulta</a>
+      <p class="tratamentos__nota">{t('services.note')}</p>
+      <a href="#marcacao" class="btn btn-secondary">{t('common.book')}</a>
     </div>
   </div>
 </section>

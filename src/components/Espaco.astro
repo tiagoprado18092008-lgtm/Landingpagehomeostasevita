@@ -5,6 +5,12 @@ import sala from '../assets/img/espaco-sala.png';
 import gabinete from '../assets/img/espaco-gabinete.jpeg';
 import hall from '../assets/img/espaco-hall.jpeg';
 import exterior from '../assets/img/espaco-exterior.png';
+import { localeFromPath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+
 
 /**
  * O espaço, antes do mapa. Quem nunca lá foi decide muito com os olhos: ver
@@ -25,42 +31,19 @@ import exterior from '../assets/img/espaco-exterior.png';
  * nas pequenas. Se chegarem originais maiores, os rácios podem abrir.
  */
 const fotos = [
-  {
-    src: sala,
-    variante: 'larga',
-    legenda: 'Sala comum, com acesso ao exterior',
-    alt: 'Sala ampla e luminosa, com janelas de chão ao tecto viradas para um relvado.',
-  },
-  {
-    src: gabinete,
-    variante: 'estreita',
-    legenda: 'Gabinete de consulta',
-    alt: 'Gabinete de consulta com sofá, poltrona, tapete e uma janela ampla com cortinados claros.',
-  },
-  {
-    src: hall,
-    variante: 'estreita',
-    legenda: 'Hall de entrada',
-    alt: 'Hall de entrada do edifício, com balcão de recepção, orquídeas e o letreiro do espaço.',
-  },
-  {
-    src: exterior,
-    variante: 'larga',
-    legenda: 'Relvado exterior do edifício',
-    alt: 'Exterior do edifício, com relvado e portas envidraçadas ao nível do jardim.',
-  },
+  { src: sala, variante: 'larga', legenda: t('space.cap1'), alt: t('space.alt1') },
+  { src: gabinete, variante: 'estreita', legenda: t('space.cap2'), alt: t('space.alt2') },
+  { src: hall, variante: 'estreita', legenda: t('space.cap3'), alt: t('space.alt3') },
+  { src: exterior, variante: 'larga', legenda: t('space.cap4'), alt: t('space.alt4') },
 ];
 ---
 
 <section class="section surface-azul espaco" id="espaco" aria-labelledby="espaco-titulo">
   <div class="container">
     <div class="section-head">
-      <p class="eyebrow reveal">O espaço</p>
-      <h2 class="h2 reveal" id="espaco-titulo">Onde vai ser recebido</h2>
-      <p class="lead reveal" style="--reveal-delay:80ms">
-        As consultas decorrem em gabinete próprio, dentro de um espaço partilhado na
-        Maia — amplo, luminoso e tranquilo, com hall de entrada e relvado exterior.
-      </p>
+      <p class="eyebrow reveal">{t('space.eyebrow')}</p>
+      <h2 class="h2 reveal" id="espaco-titulo">{t('space.title')}</h2>
+      <p class="lead reveal" style="--reveal-delay:80ms">{t('space.lead')}</p>
     </div>
 
     <div class="espaco__galeria" data-stagger="90">
@@ -84,10 +67,7 @@ const fotos = [
       }
     </div>
 
-    <p class="espaco__nota note reveal">
-      A sala comum e o hall de entrada são de uso partilhado com outros profissionais do
-      edifício. As consultas são sempre mediante marcação prévia.
-    </p>
+    <p class="espaco__nota note reveal">{t('space.note')}</p>
   </div>
 </section>
 

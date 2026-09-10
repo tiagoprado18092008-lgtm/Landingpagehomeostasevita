@@ -2,6 +2,11 @@
 import { site } from '../config/site';
 import Ambient from './Ambient.astro';
 import Icon from './Icon.astro';
+import { localeFromPath, localizePath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
 
 const configured = Boolean(site.form.endpoint) && !site.form.endpoint.includes('SEU_FORM_ID_AQUI');
 
@@ -19,7 +24,34 @@ if (!configured && import.meta.env.PROD) {
 
 /* Para onde o Formspree devolve quem submete sem JavaScript. Tem de ser
    absoluto — daí `Astro.site`. */
-const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
+const proximaPagina = new URL(localizePath('/pedido-recebido', locale), Astro.site).href;
+
+/* As mensagens que o script do formulário mostra ao vivo (validação, envio,
+   encaminhamento para WhatsApp) são renderizadas no servidor e entregues ao
+   cliente num só atributo. Assim o script não tem literais de língua nenhuma
+   e a versão inglesa não cai em português a meio de um erro. */
+const textos = {
+  submit: t('contact.submit'),
+  submitBusy: t('contact.submitBusy'),
+  errName: t('contact.errName'),
+  errReason: t('contact.errReason'),
+  errPhone: t('contact.errPhone'),
+  errEmail: t('contact.errEmail'),
+  errConsent: t('contact.errConsent'),
+  liveInvalid: t('contact.liveInvalid'),
+  liveSending: t('contact.liveSending'),
+  liveFailed: t('contact.liveFailed'),
+  liveFailedSaved: t('contact.liveFailedSaved'),
+  liveSuccess: t('contact.liveSuccess'),
+  subject: t('contact.subject'),
+  waIntro: t('contact.waIntro'),
+  waName: t('contact.waName'),
+  waPhone: t('contact.waPhone'),
+  waEmail: t('contact.waEmail'),
+  waReason: t('contact.waReason'),
+  consentYes: t('contact.consentYes'),
+  consentNo: t('contact.consentNo'),
+};
 ---
 
 <section class="section surface-ivory contact tem-ambiente" id="marcacao" aria-labelledby="marcacao-titulo">
@@ -27,31 +59,29 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
 
   <div class="container">
     <div class="contact__head">
-      <p class="eyebrow reveal">Marcação</p>
+      <p class="eyebrow reveal">{t('contact.eyebrow')}</p>
       <h2 class="h2 reveal" id="marcacao-titulo">
-        Marque a sua consulta<br />
-        <span class="accent-line">ou fale connosco.</span>
+        {t('contact.titleA')}<br />
+        <span class="accent-line">{t('contact.titleB')}</span>
       </h2>
     </div>
 
     <div class="contact__grid">
       <!-- ---------------------------------------------------- Formulário -->
       <div class="contact__form-wrap reveal reveal--left">
-        <p class="contact__form-intro">
-          As consultas são realizadas mediante marcação prévia. Deixe os seus dados e
-          entramos em contacto consigo para confirmar o horário.
-        </p>
+        <p class="contact__form-intro">{t('contact.formIntro')}</p>
 
         <form
           class="contact__form"
           data-form
           data-whatsapp={site.phone.whatsapp}
+          data-i18n={JSON.stringify(textos)}
           novalidate
           action={configured ? site.form.endpoint : undefined}
           method="post"
         >
           <div class="field">
-            <label for="nome">Nome<span aria-hidden="true">*</span></label>
+            <label for="nome">{t('contact.name')}<span aria-hidden="true">*</span></label>
             <input
               id="nome"
               name="nome"
@@ -65,21 +95,25 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
           </div>
 
           <div class="field">
-            <label for="motivo">Motivo do contacto<span aria-hidden="true">*</span></label>
+            <label for="motivo">
+              {t('contact.reason')}<span aria-hidden="true">*</span>
+            </label>
             <textarea
               id="motivo"
               name="motivo"
               rows="3"
               required
               minlength="4"
-              placeholder="Ex.: dores nas costas há alguns meses"
+              placeholder={t('contact.reasonPlaceholder')}
               aria-describedby="motivo-erro"></textarea>
             <p class="field__error" id="motivo-erro" data-error-for="motivo"></p>
           </div>
 
           <div class="field-row">
             <div class="field">
-              <label for="contacto">Contacto<span aria-hidden="true">*</span></label>
+              <label for="contacto">
+                {t('contact.phone')}<span aria-hidden="true">*</span>
+              </label>
               <input
                 id="contacto"
                 name="contacto"
@@ -94,7 +128,7 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
             </div>
 
             <div class="field">
-              <label for="email">Email<span aria-hidden="true">*</span></label>
+              <label for="email">{t('contact.email')}<span aria-hidden="true">*</span></label>
               <input
                 id="email"
                 name="email"
@@ -114,7 +148,7 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
             da verificação que já fazemos aqui em JavaScript.
           -->
           <div class="honeypot" aria-hidden="true">
-            <label for="_gotcha">Não preencher</label>
+            <label for="_gotcha">{t('contact.honeypot')}</label>
             <input id="_gotcha" name="_gotcha" type="text" tabindex="-1" autocomplete="off" />
           </div>
 
@@ -128,7 +162,7 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
                 <input
                   type="hidden"
                   name="_subject"
-                  value="Novo pedido de marcação — homeostasevita.pt"
+                  value={t('contact.subject')}
                 />
                 {/* Só serve o envio nativo, sem JavaScript: com JS o envio é
                     feito por fetch e esta redirecção nunca acontece. */}
@@ -142,9 +176,10 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
               <input id="consentimento" name="consentimento" type="checkbox" required
                 aria-describedby="consentimento-erro" />
               <span>
-                Autorizo o tratamento dos meus dados para efeitos de contacto e marcação,
-                nos termos da <a href="/politica-de-privacidade" class="link-gold">Política
-                de Privacidade</a>.<span aria-hidden="true">*</span>
+                {t('contact.consentA')}<a
+                  href={localizePath('/politica-de-privacidade', locale)}
+                  class="link-gold">{t('contact.consentLink')}</a
+                >{t('contact.consentB')}<span aria-hidden="true">*</span>
               </span>
             </label>
             <p class="field__error" id="consentimento-erro" data-error-for="consentimento"></p>
@@ -154,10 +189,7 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
             !configured && (
               <p class="contact__demo">
                 <Icon name="alert" size={18} class="contact__demo-icon" />
-                <span>
-                  O envio automático ainda não está ligado. Use o WhatsApp ou o
-                  telefone — respondemos da mesma forma.
-                </span>
+                <span>{t('contact.demoNotice')}</span>
               </p>
             )
           }
@@ -169,7 +201,7 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
                  pedido chega à mesma — antes, quem tivesse o JS desligado
                  ficava simplesmente sem forma de o enviar. */
               <button type="submit" class="btn btn-primary btn-full" data-submit>
-                <span data-submit-label>Enviar pedido</span>
+                <span data-submit-label>{t('contact.submit')}</span>
                 <span class="spinner" data-spinner aria-hidden="true"></span>
               </button>
             ) : (
@@ -178,7 +210,7 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
               <div class="contact__error-actions">
                 <a href={site.phone.whatsapp} class="btn btn-whatsapp" rel="noopener">
                   <Icon name="whatsapp" size={18} />
-                  Falar por WhatsApp
+                  {t('contact.whatsappTalk')}
                 </a>
                 <a href={`tel:${site.phone.tel}`} class="btn btn-secondary">
                   <Icon name="phone" size={18} />
@@ -188,20 +220,17 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
             )
           }
 
-          <p class="note contact__minimise" data-js-only>
-            Só pedimos o necessário para o contactarmos. Os dados não são usados para
-            mais nada nem partilhados com terceiros.
-          </p>
+          <p class="note contact__minimise" data-js-only>{t('contact.minimise')}</p>
         </form>
 
         <!-- Sucesso: substitui o formulário -->
         <div class="contact__result" data-success hidden role="status">
           <span class="medallion" aria-hidden="true"><Icon name="check" /></span>
-          <h3 class="h3">Recebemos o seu pedido.</h3>
-          <p>Entramos em contacto consigo em breve para confirmar o horário.</p>
+          <h3 class="h3">{t('contact.successTitle')}</h3>
+          <p>{t('contact.successText')}</p>
           <a href={site.phone.whatsapp} class="btn btn-whatsapp" rel="noopener">
             <Icon name="whatsapp" size={18} />
-            Falar já por WhatsApp
+            {t('contact.successWhatsapp')}
           </a>
         </div>
 
@@ -212,15 +241,12 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
         <div class="contact__error" data-error-panel hidden role="alert">
           <p class="contact__error-title">
             <Icon name="alert" size={18} class="contact__demo-icon" />
-            Não foi possível enviar o pedido.
+            {t('contact.errorTitle')}
           </p>
-          <p class="note">
-            Os seus dados não se perderam — continuam no formulário. Tente de novo ou
-            envie-nos o pedido por WhatsApp, já preenchido.
-          </p>
+          <p class="note">{t('contact.errorText')}</p>
           <div class="contact__error-actions">
             <button type="button" class="btn btn-primary" data-retry>
-              Tentar novamente
+              {t('contact.retry')}
             </button>
             <a
               href={site.phone.whatsapp}
@@ -229,7 +255,7 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
               data-whatsapp-fallback
             >
               <Icon name="whatsapp" size={18} />
-              Enviar por WhatsApp
+              {t('contact.sendWhatsapp')}
             </a>
             <a href={`tel:${site.phone.tel}`} class="btn btn-secondary">
               <Icon name="phone" size={18} />
@@ -242,7 +268,7 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
       </div>
 
       <!-- ------------------------------------------- Painel de contactos -->
-      <aside class="contact__aside reveal reveal--right" style="--reveal-delay:120ms" aria-label="Contactos e localização">
+      <aside class="contact__aside reveal reveal--right" style="--reveal-delay:120ms" aria-label={t('contact.asideAria')}>
         <!-- O painel do flyer: círculos dourados sólidos, telefone em destaque -->
         <div class="painel">
           <a class="painel__linha painel__linha--destaque" href={`tel:${site.phone.tel}`}>
@@ -254,7 +280,7 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
             <span class="painel__disco"><Icon name="whatsapp" size={20} /></span>
             <span class="painel__texto">
               <span class="painel__rotulo">WhatsApp</span>
-              <span class="painel__valor">Enviar mensagem</span>
+              <span class="painel__valor">{t('contact.whatsappSend')}</span>
             </span>
           </a>
 
@@ -269,7 +295,7 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
           <div class="painel__linha">
             <span class="painel__disco"><Icon name="pin" size={20} /></span>
             <span class="painel__texto">
-              <span class="painel__rotulo">Morada</span>
+              <span class="painel__rotulo">{t('local.address')}</span>
               <span class="painel__valor">
                 {site.address.street}<br />
                 {site.address.postalCode}&nbsp;{site.address.locality}
@@ -280,8 +306,8 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
           <div class="painel__linha">
             <span class="painel__disco"><Icon name="clock" size={20} /></span>
             <span class="painel__texto">
-              <span class="painel__rotulo">Consultas</span>
-              <span class="painel__valor">Mediante marcação prévia</span>
+              <span class="painel__rotulo">{t('local.consultations')}</span>
+              <span class="painel__valor">{t('local.byAppointment')}</span>
             </span>
           </div>
         </div>
@@ -661,29 +687,33 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
     const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
     const label = form.querySelector<HTMLElement>('[data-submit-label]')!;
 
+    /* Textos traduzidos, vindos do servidor. O script não guarda nenhuma
+       frase: a página inglesa e a portuguesa correm este mesmo código. */
+    const T: Record<string, string> = JSON.parse(form.dataset.i18n ?? '{}');
+
     type Rule = { test: (v: string, el: HTMLInputElement) => boolean; message: string };
 
     const rules: Record<string, Rule> = {
       nome: {
         test: (v) => v.trim().length >= 2,
-        message: 'Indique o seu nome.',
+        message: T.errName,
       },
       motivo: {
         test: (v) => v.trim().length >= 4,
-        message: 'Diga-nos em poucas palavras o motivo do contacto.',
+        message: T.errReason,
       },
       contacto: {
         // Aceita 9 dígitos nacionais, com ou sem indicativo e espaços.
         test: (v) => /^(\+?351)?[\s.-]?9\d{2}[\s.-]?\d{3}[\s.-]?\d{3}$/.test(v.trim()),
-        message: 'Indique um número de telemóvel português válido.',
+        message: T.errPhone,
       },
       email: {
         test: (v) => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v.trim()),
-        message: 'Indique um email válido para lhe podermos responder.',
+        message: T.errEmail,
       },
       consentimento: {
         test: (_v, el) => el.checked,
-        message: 'Precisamos da sua autorização para o contactarmos.',
+        message: T.errConsent,
       },
     };
 
@@ -720,7 +750,7 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
     const setBusy = (busy: boolean) => {
       submit.setAttribute('aria-busy', String(busy));
       submit.disabled = busy;
-      label.textContent = busy ? 'A enviar…' : 'Enviar pedido';
+      label.textContent = busy ? T.submitBusy : T.submit;
       form
         .querySelectorAll<HTMLInputElement>('input, textarea')
         .forEach((el) => (el.disabled = busy));
@@ -798,11 +828,16 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
       if (!zap) return;
       const d = lerCampos();
       const texto =
-        `Olá, gostaria de marcar uma consulta.\n\n` +
-        `Nome: ${d.nome}\n` +
-        `Telemóvel: ${d.contacto}\n` +
-        `Email: ${d.email}\n` +
-        `Motivo: ${d.motivo}`;
+        `${T.waIntro}
+
+` +
+        `${T.waName}: ${d.nome}
+` +
+        `${T.waPhone}: ${d.contacto}
+` +
+        `${T.waEmail}: ${d.email}
+` +
+        `${T.waReason}: ${d.motivo}`;
       zap.href = `${whatsappBase}?text=${encodeURIComponent(texto)}`;
     };
 
@@ -816,7 +851,7 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
       if (results.includes(false)) {
         const firstBad = names[results.indexOf(false)];
         const el = form.elements.namedItem(firstBad) as HTMLInputElement;
-        live.textContent = 'O formulário tem campos por corrigir.';
+        live.textContent = T.liveInvalid;
         el.focus();
         return;
       }
@@ -830,7 +865,7 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
       }
 
       setBusy(true);
-      live.textContent = 'A enviar o pedido.';
+      live.textContent = T.liveSending;
 
       const endpoint = form.getAttribute('action');
 
@@ -843,7 +878,7 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
         setBusy(false);
         prepararWhatsapp();
         errorPanel.hidden = false;
-        live.textContent = 'Não foi possível enviar o pedido.';
+        live.textContent = T.liveFailed;
         errorPanel.scrollIntoView({ block: 'center', behavior: 'smooth' });
         return;
       }
@@ -851,14 +886,14 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
       try {
         // Formspree aceita JSON com Content-Type + Accept application/json.
         const payload: Record<string, string> = {
-          _subject: 'Novo pedido de marcação — homeostasevita.pt',
+          _subject: T.subject,
         };
         for (const name of ['nome', 'motivo', 'contacto', 'email', '_gotcha']) {
           const el = form.elements.namedItem(name) as HTMLInputElement | null;
           if (el) payload[name] = el.value;
         }
         const consentEl = form.elements.namedItem('consentimento') as HTMLInputElement | null;
-        payload.consentimento = consentEl?.checked ? 'sim' : 'não';
+        payload.consentimento = consentEl?.checked ? T.consentYes : T.consentNo;
 
         // Uma ligação móvel que fica pendurada é indistinguível de sucesso.
         // Ao fim de 15s desiste e mostra as alternativas.
@@ -878,7 +913,7 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
         limparRascunho();
         form.hidden = true;
         successPanel.hidden = false;
-        live.textContent = 'Pedido recebido. Entramos em contacto em breve.';
+        live.textContent = T.liveSuccess;
         successPanel.scrollIntoView({ block: 'center', behavior: 'smooth' });
       } catch {
         setBusy(false);
@@ -886,8 +921,7 @@ const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
         guardarRascunho();
         prepararWhatsapp();
         errorPanel.hidden = false;
-        live.textContent =
-          'Não foi possível enviar o pedido. Os seus dados foram guardados.';
+        live.textContent = T.liveFailedSaved;
         errorPanel.scrollIntoView({ block: 'center', behavior: 'smooth' });
       }
     });

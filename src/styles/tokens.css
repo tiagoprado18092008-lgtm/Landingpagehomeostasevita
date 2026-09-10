@@ -71,10 +71,12 @@
 
   /* ---- Tracking: em corpos grandes o sans precisa de fechar ---------- */
   /* A serifa tem contraste próprio e não precisa de fechar como o sans:
-     um tracking agressivo colava-lhe as hastes. */
-  --tracking-display: -0.014em;
-  --tracking-h2: -0.012em;
-  --tracking-h3: -0.008em;
+     um tracking agressivo colava-lhe as hastes. A Medium (500) tem ainda
+     mais mancha que a Light, por isso abre-se mais um pouco — o negativo
+     servia para compensar a leveza que já não existe. */
+  --tracking-display: -0.008em;
+  --tracking-h2: -0.006em;
+  --tracking-h3: -0.004em;
   --tracking-sans: -0.024em;
   --tracking-caps: 0.18em;
 

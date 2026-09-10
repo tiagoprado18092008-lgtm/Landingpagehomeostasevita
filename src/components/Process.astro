@@ -1,5 +1,11 @@
 ---
 import Icon from './Icon.astro';
+import { localeFromPath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+
 
 /**
  * Como funciona a consulta — desenhada como um meridiano.
@@ -19,42 +25,19 @@ import Icon from './Icon.astro';
  * prefers-reduced-motion fica cheio e quieto.
  */
 const passos = [
-  {
-    icon: 'person',
-    titulo: 'Avaliação aprofundada',
-    texto:
-      'A primeira consulta começa pela recolha e análise de diferentes parâmetros relacionados com a saúde, sintomas, hábitos e características pessoais.',
-  },
-  {
-    icon: 'yinyang',
-    titulo: 'Observação global',
-    texto:
-      'A observação da língua e a avaliação do pulso são elementos importantes desta avaliação, a par das questões dirigidas a cada situação.',
-  },
-  {
-    icon: 'needles',
-    titulo: 'Estratégia terapêutica',
-    texto:
-      'Da avaliação resulta uma estratégia adequada à situação, que pode integrar acupuntura, auriculoterapia, ventosaterapia ou reflexologia.',
-  },
-  {
-    icon: 'hands',
-    titulo: 'Consultas de seguimento',
-    texto:
-      'Permitem acompanhar a evolução e ajustar a intervenção sempre que necessário, ao longo do acompanhamento.',
-  },
+  { icon: 'person', titulo: t('process.step1Title'), texto: t('process.step1Text') },
+  { icon: 'yinyang', titulo: t('process.step2Title'), texto: t('process.step2Text') },
+  { icon: 'needles', titulo: t('process.step3Title'), texto: t('process.step3Text') },
+  { icon: 'hands', titulo: t('process.step4Title'), texto: t('process.step4Text') },
 ];
 ---
 
 <section class="section surface-azul percurso" id="percurso" aria-labelledby="percurso-titulo">
   <div class="container">
     <div class="section-head">
-      <p class="eyebrow reveal">Como funciona a consulta</p>
-      <h2 class="h2 reveal" id="percurso-titulo">Do primeiro contacto ao acompanhamento</h2>
-      <p class="lead reveal">
-        Uma avaliação individualizada precede sempre qualquer intervenção. Este é o
-        percurso de quem chega pela primeira vez.
-      </p>
+      <p class="eyebrow reveal">{t('process.eyebrow')}</p>
+      <h2 class="h2 reveal" id="percurso-titulo">{t('process.title')}</h2>
+      <p class="lead reveal">{t('process.lead')}</p>
     </div>
 
     <div class="canal">
@@ -83,8 +66,8 @@ const passos = [
     <p class="marcacao-nota reveal">
       <Icon name="check" size={18} class="marcacao-nota__icone" />
       <span>
-        <strong>Marcação prévia</strong>
-        As consultas são realizadas mediante marcação
+        <strong>{t('process.bookingStrong')}</strong>
+        {t('process.bookingText')}
       </span>
     </p>
   </div>

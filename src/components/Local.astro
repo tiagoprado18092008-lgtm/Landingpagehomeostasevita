@@ -2,6 +2,12 @@
 import { site } from '../config/site';
 import Icon from './Icon.astro';
 import MapCard from './MapCard.astro';
+import { localeFromPath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+
 
 /**
  * Onde é e como se chega lá. Era uma linha perdida no rodapé; passa a
@@ -10,15 +16,15 @@ import MapCard from './MapCard.astro';
 const detalhes = [
   {
     icon: 'pin',
-    label: 'Morada',
+    label: t('local.address'),
     valor: `${site.address.street}, ${site.address.postalCode} ${site.address.locality}`,
   },
   /* Sem horário afixado — o que a pessoa precisa de saber aqui é que não
      se aparece sem avisar. */
   {
     icon: 'clock',
-    label: 'Consultas',
-    valor: 'Mediante marcação prévia',
+    label: t('local.consultations'),
+    valor: t('local.byAppointment'),
   },
 ];
 ---
@@ -26,12 +32,9 @@ const detalhes = [
 <section class="section surface-azul local" id="local" aria-labelledby="local-titulo">
   <div class="container local__inner">
     <div class="local__texto">
-      <p class="eyebrow reveal">Onde estamos</p>
-      <h2 class="h2 reveal" id="local-titulo">Como chegar até nós</h2>
-      <p class="lead reveal" style="--reveal-delay:80ms">
-        A Homeostase Vita funciona na Rua Engenheiro Frederico Ulrich, na Maia — no
-        espaço que se vê acima.
-      </p>
+      <p class="eyebrow reveal">{t('local.eyebrow')}</p>
+      <h2 class="h2 reveal" id="local-titulo">{t('local.title')}</h2>
+      <p class="lead reveal" style="--reveal-delay:80ms">{t('local.lead')}</p>
 
       <ul class="local__detalhes reveal" style="--reveal-delay:140ms">
         {

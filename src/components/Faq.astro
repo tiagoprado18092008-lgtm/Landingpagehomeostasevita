@@ -1,5 +1,11 @@
 ---
-import faq from '../content/faq.json';
+import { localeFromPath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+import { getFaq } from '../i18n/content';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+const faq = getFaq(locale);
 
 /**
  * Acordeão nativo (details/summary): funciona sem JS e já traz a semântica
@@ -27,8 +33,8 @@ const faqSchema = {
 <section class="section faq" id="faq" aria-labelledby="faq-titulo">
   <div class="container-narrow">
     <div class="section-head">
-      <p class="eyebrow reveal">Perguntas frequentes</p>
-      <h2 class="h2 reveal" id="faq-titulo">Antes da primeira consulta</h2>
+      <p class="eyebrow reveal">{t('faq.eyebrow')}</p>
+      <h2 class="h2 reveal" id="faq-titulo">{t('faq.title')}</h2>
     </div>
 
     <div class="faq__lista">

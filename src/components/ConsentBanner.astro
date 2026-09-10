@@ -6,21 +6,27 @@
  * Google ficam bloqueados até "Aceitar". A escolha fica guardada e pode ser
  * revista pelo link no rodapé.
  */
+import { localeFromPath, localizePath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
 ---
 
 <div class="consent-banner" data-consent hidden role="dialog" aria-labelledby="consent-titulo" aria-describedby="consent-texto">
   <div class="consent-banner__inner">
     <div>
-      <h2 class="consent-banner__title" id="consent-titulo">Cookies e privacidade</h2>
+      <h2 class="consent-banner__title" id="consent-titulo">{t('consent.title')}</h2>
       <p class="consent-banner__text" id="consent-texto">
-        Usamos cookies de medição e o mapa do Google apenas se autorizar. Sem a sua
-        autorização, o site funciona na mesma — só não recolhemos estatísticas.{' '}
-        <a href="/politica-de-cookies" class="link-gold">Política de Cookies</a>
+        {t('consent.text')}{' '}
+        <a href={localizePath('/politica-de-cookies', locale)} class="link-gold">
+          {t('consent.policy')}
+        </a>
       </p>
     </div>
     <div class="consent-banner__actions">
-      <button type="button" class="btn btn-secondary" data-consent-reject>Recusar</button>
-      <button type="button" class="btn btn-primary" data-consent-accept>Aceitar</button>
+      <button type="button" class="btn btn-secondary" data-consent-reject>{t('consent.reject')}</button>
+      <button type="button" class="btn btn-primary" data-consent-accept>{t('consent.accept')}</button>
     </div>
   </div>
 </div>

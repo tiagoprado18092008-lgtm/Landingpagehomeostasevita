@@ -1,0 +1,114 @@
+---
+import LegalLayout from '../../layouts/LegalLayout.astro';
+import { site } from '../../config/site';
+
+/**
+ * Versão inglesa da Política de Privacidade.
+ *
+ * Tradução do documento português, que continua a ser a versão de referência
+ * — é a que vale perante a CNPD, e qualquer alteração feita lá tem de ser
+ * reflectida aqui. As referências ao RGPD mantêm a numeração dos artigos.
+ *
+ * TODO(cliente): a par do português, rever com apoio jurídico antes de
+ * publicar e preencher os campos marcados como pendentes.
+ */
+---
+
+<LegalLayout
+  title="Privacy Policy — Homeostase Vita"
+  description="How Homeostase Vita processes the personal data collected through this site, under the GDPR."
+  heading="Privacy Policy"
+  updated="September 2026"
+>
+  <h2>1. Who processes your data</h2>
+  <p>
+    The controller of the personal data collected on this site is
+    <strong>{site.legalName}</strong>, with its address at {site.address.street},
+    {site.address.postalCode}&nbsp;{site.address.locality}, Portugal.
+  </p>
+  <p>
+    For any question about this policy or about your data, contact us by email at
+    <a href={`mailto:${site.email}`}>{site.email}</a> or by telephone on
+    {site.phone.display}.
+  </p>
+  <p>Tax number (NIF): 218520115</p>
+
+  <h2>2. What data we collect</h2>
+  <p>We collect only what is necessary in order to contact you:</p>
+  <table>
+    <thead>
+      <tr><th>Data</th><th>Where</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Name, phone, email and reason for contact</td>
+        <td>Booking form</td>
+        <td>Responding to the request and scheduling the consultation</td>
+      </tr>
+      <tr>
+        <td>Aggregated browsing data</td>
+        <td>Measurement cookies</td>
+        <td>Understanding how the site is used — only with your permission</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    The "reason for contact" field is free text. We ask that you do not include detailed
+    clinical information there — that conversation belongs in the consultation, not in a
+    form.
+  </p>
+
+  <h2>3. On what legal basis</h2>
+  <ul>
+    <li>
+      <strong>Consent</strong> (Article 6(1)(a) GDPR) — for the booking form and for
+      measurement cookies. You may withdraw it at any time, without affecting the
+      lawfulness of processing carried out beforehand.
+    </li>
+    <li>
+      <strong>Pre-contractual steps</strong> (Article 6(1)(b)) — where the contact is
+      intended to book a consultation.
+    </li>
+  </ul>
+
+  <h2>4. For how long</h2>
+  <p>
+    Contact requests that do not result in a consultation are deleted after 12 months.
+    If you become our patient, the data is then retained under the legal obligations
+    applicable to clinical records.
+  </p>
+
+  <h2>5. Who has access</h2>
+  <p>
+    The data is accessed only by those at Homeostase Vita who need it in order to
+    respond to your request. We use technical service providers — site hosting and the
+    form delivery service — who process the data on our behalf and are bound by
+    confidentiality.
+  </p>
+  <p>We do not sell or pass on your data to third parties for commercial purposes.</p>
+
+  <h2>6. Your rights</h2>
+  <p>
+    You may ask us at any time for access to, rectification, erasure, restriction or
+    portability of your data, as well as object to the processing. Simply write to
+    <a href={`mailto:${site.email}`}>{site.email}</a>.
+  </p>
+  <p>
+    If you consider that your data is not being processed correctly, you may lodge a
+    complaint with the Portuguese Data Protection Authority (CNPD) —
+    <a href="https://www.cnpd.pt" rel="noopener">www.cnpd.pt</a>.
+  </p>
+
+  <h2>7. Security</h2>
+  <p>
+    The site is served over an encrypted connection (HTTPS) and the form data is
+    transmitted by POST, never in the page address. The typefaces are hosted on this
+    domain, so reading the site does not generate requests to third-party servers.
+  </p>
+
+  <h2>8. Changes</h2>
+  <p>
+    This policy may be updated. The date of the last revision is shown at the top of the
+    page.
+  </p>
+</LegalLayout>

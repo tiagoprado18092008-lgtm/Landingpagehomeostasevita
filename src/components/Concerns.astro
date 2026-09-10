@@ -1,7 +1,13 @@
 ---
-import concerns from '../content/concerns.json';
 import Icon from './Icon.astro';
 import Ambient from './Ambient.astro';
+import { localeFromPath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+import { getConcerns } from '../i18n/content';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+const concerns = getConcerns(locale);
 
 /**
  * As seis áreas como lista de verificação: um visto dourado, um filete a
@@ -18,14 +24,11 @@ import Ambient from './Ambient.astro';
 
   <div class="container areas__inner">
     <div class="areas__aside">
-      <p class="eyebrow reveal">Áreas de procura</p>
-      <h2 class="h2 reveal" id="areas-titulo">Em que situações pode ser utilizada</h2>
-      <p class="lead reveal" style="--reveal-delay:80ms">
-        A Medicina Tradicional Chinesa pode ser utilizada na abordagem de diferentes
-        condições de saúde, entre outras:
-      </p>
+      <p class="eyebrow reveal">{t('areas.eyebrow')}</p>
+      <h2 class="h2 reveal" id="areas-titulo">{t('areas.title')}</h2>
+      <p class="lead reveal" style="--reveal-delay:80ms">{t('areas.lead')}</p>
       <a href="#marcacao" class="areas__link reveal">
-        Marcar uma avaliação
+        {t('areas.link')}
         <Icon name="arrow" size={15} />
       </a>
     </div>
@@ -41,12 +44,7 @@ import Ambient from './Ambient.astro';
           ))
         }
       </ul>
-      <p class="note areas__notice reveal">
-        A intervenção é sempre personalizada, tendo em consideração os sintomas
-        apresentados, as características individuais e as necessidades de cada pessoa,
-        podendo constituir um complemento aos cuidados de saúde convencionais quando
-        adequado.
-      </p>
+      <p class="note areas__notice reveal">{t('areas.notice')}</p>
     </div>
   </div>
 </section>

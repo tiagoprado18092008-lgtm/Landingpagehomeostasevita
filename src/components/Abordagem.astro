@@ -1,9 +1,18 @@
 ---
 import { Image } from 'astro:assets';
 import avaliacao from '../assets/img/avaliacao.jpg';
+import { localeFromPath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+
 
 /**
  * Como se trata, em prosa — o bloco que fecha a lista de tratamentos.
+ *
+ * Sem eyebrow e com o título a abrir em grande: o bloco passa a ler-se como a
+ * apresentação do método da casa, não como mais uma secção rotulada.
  *
  * Substituiu os seis cartões de princípios: diziam a mesma coisa que a
  * Filosofia diz mais abaixo, seis vezes e em caixas iguais. Aqui a mesma
@@ -29,31 +38,18 @@ import avaliacao from '../assets/img/avaliacao.jpg';
 
   <div class="container abordagem__inner">
     <div class="abordagem__texto">
-      <p class="eyebrow reveal">Como tratamos</p>
+      <h2 class="h2 reveal" id="abordagem-titulo">{t('approach.title')}</h2>
 
-      <h2 class="h2 reveal" id="abordagem-titulo" style="--reveal-delay:40ms">
-        O tratamento começa<br />na avaliação
-      </h2>
+      <p class="abordagem__p reveal" style="--reveal-delay:100ms">{t('approach.p1')}</p>
 
-      <p class="abordagem__p reveal" style="--reveal-delay:100ms">
-        Nenhuma destas técnicas se escolhe pelo sintoma. A consulta abre com uma
-        avaliação individual — o que sente e há quanto tempo, o sono, a digestão, os
-        hábitos, o que já experimentou — e é essa leitura de conjunto que define a
-        estratégia terapêutica e as técnicas de cada sessão.
-      </p>
-
-      <p class="abordagem__p reveal" style="--reveal-delay:160ms">
-        O acompanhamento não termina aí: a evolução é revista de consulta em consulta e
-        a estratégia ajustada sempre que for preciso. Além do alívio dos sintomas,
-        trabalha-se a prevenção e os hábitos que sustentam o equilíbrio.
-      </p>
+      <p class="abordagem__p reveal" style="--reveal-delay:160ms">{t('approach.p2')}</p>
     </div>
 
     <figure class="abordagem__arte reveal reveal--scale" style="--reveal-delay:120ms">
       <Image
         class="arte__foto"
         src={avaliacao}
-        alt="Terapeuta a avaliar o pulso no punho de uma paciente, apoiado numa almofada."
+        alt={t('approach.imgAlt')}
         widths={[440, 700, 1100]}
         sizes="(min-width: 900px) 46vw, 92vw"
         quality={82}
@@ -100,14 +96,11 @@ import avaliacao from '../assets/img/avaliacao.jpg';
     align-items: center;
   }
 
-  .abordagem__texto .eyebrow {
-    margin-bottom: var(--spacing-s3);
-  }
-
-  /* A quebra é explícita no markup; o `text-wrap: balance` global, com uma
-     largura máxima curta, partia isto em três linhas desiguais. */
+  /* Título a abrir o bloco, sem rótulo por cima: ganha um ponto de escala
+     para sustentar sozinho o topo da coluna. */
   .abordagem__texto .h2 {
-    text-wrap: normal;
+    max-width: 14ch;
+    font-size: clamp(2rem, 4.4vw, 3.25rem);
   }
 
   /* Sobre a faixa fria o texto corrido fica a navy-ink, não a cinzento: é

@@ -1,16 +1,26 @@
 ---
 import { site } from '../config/site';
-import servicos from '../content/services.json';
 import Ambient from './Ambient.astro';
 import Icon from './Icon.astro';
+import { localeFromPath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+import { getServices } from '../i18n/content';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
 
 /**
  * Sem fotografia — as únicas fotografias da página são as dos tratamentos.
  * A credibilidade vem da cédula, da biografia e das técnicas praticadas.
  */
-const { firstName, lastName, bio } = site.practitioner;
+const { firstName, lastName } = site.practitioner;
 
-const tecnicas = servicos.map((s) => s.name);
+/* A biografia vem do dicionário, para existir nas duas línguas. O `site.ts`
+   mantém o original português como fonte de verdade da clínica; quando lá
+   estiver a `null` (por confirmar), o bloco pendente continua a aparecer. */
+const bio = site.practitioner.bio ? t('practitioner.bio') : null;
+
+const tecnicas = getServices(locale).map((s) => s.name);
 ---
 
 <section class="section surface-cloud terapeuta tem-ambiente" id="terapeuta" aria-labelledby="terapeuta-titulo">
@@ -18,8 +28,8 @@ const tecnicas = servicos.map((s) => s.name);
 
   <div class="container">
     <div class="section-head">
-      <p class="eyebrow reveal">Quem cuida de si</p>
-      <h2 class="h2 reveal" id="terapeuta-titulo">A pessoa por trás de cada consulta</h2>
+      <p class="eyebrow reveal">{t('practitioner.eyebrow')}</p>
+      <h2 class="h2 reveal" id="terapeuta-titulo">{t('practitioner.title')}</h2>
     </div>
 
     <div class="terapeuta__cartao reveal reveal--scale">
@@ -29,10 +39,10 @@ const tecnicas = servicos.map((s) => s.name);
           {firstName}{' '}
           {lastName ?? <span class="pendente">⟨apelido⟩</span>}
         </p>
-        <p class="terapeuta__papel">Terapeuta de Medicina Tradicional Chinesa</p>
+        <p class="terapeuta__papel">{t('practitioner.role')}</p>
         <p class="terapeuta__cedula">
           <Icon name="check" size={15} />
-          Cédula ACSS n.º {site.credentials.acss}
+          {t('practitioner.licence')} {site.credentials.acss}
         </p>
       </div>
 
@@ -44,7 +54,7 @@ const tecnicas = servicos.map((s) => s.name);
             <div class="terapeuta__pendente">
               <p class="terapeuta__pendente-titulo">
                 <Icon name="alert" size={17} class="terapeuta__alerta" />
-                Biografia por confirmar
+                {t('practitioner.bioPending')}
               </p>
               <p class="note">
                 ⟨TODO: 2 a 4 frases sobre a formação e a abordagem da Teresa, a validar
@@ -56,13 +66,13 @@ const tecnicas = servicos.map((s) => s.name);
         }
 
         <div class="terapeuta__tecnicas">
-          <p class="terapeuta__tecnicas-titulo">Técnicas praticadas</p>
+          <p class="terapeuta__tecnicas-titulo">{t('practitioner.techniques')}</p>
           <ul>
             {tecnicas.map((t) => <li>{t}</li>)}
           </ul>
         </div>
 
-        <a href="#marcacao" class="btn btn-primary terapeuta__cta">Marcar consulta</a>
+        <a href="#marcacao" class="btn btn-primary terapeuta__cta">{t('common.book')}</a>
       </div>
     </div>
   </div>

@@ -1,32 +1,38 @@
 ---
 import { Image } from 'astro:assets';
-import { site, slugify } from '../config/site';
-import tratamentos from '../content/services.json';
-import Emblem from './Emblem.astro';
+import { site } from '../config/site';
 import Icon from './Icon.astro';
 import alphascale from '../assets/brand/alphascale.png';
+import livroReclamacoes from '../assets/brand/livro-reclamacoes.jpg';
+import LangSwitch from './LangSwitch.astro';
+import { localeFromPath, localizePath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
 
 /**
- * O chão da página. Quatro faixas de peso decrescente — identidade e acção,
- * os detalhes, a identificação legal, o plinto — sobre uma só laje de navy,
- * encostada a direito ao bege da secção anterior e apertada o suficiente
- * para caber num ecrã de uma vez.
+ * O chão da página, no registo da referência que a cliente escolheu: o nome
+ * da clínica em serifa grande a abrir, uma etiqueta "CONTACTO" por baixo, e
+ * só depois — muito mais abaixo na hierarquia — colunas de texto miúdo com
+ * os dados, os links legais e as licenças.
  *
- * A coluna "Navegar" é desenhada como um meridiano: um filete com um ponto
- * em cada secção. As secções da página são um percurso ordenado, e pontos
- * sobre um canal é o vocabulário da casa. Os tratamentos, que não são um
- * percurso, levam o ícone da técnica em vez do ponto.
+ * Toda a informação vive numa só laje de navy. Nada de caixas, nada de
+ * cartões: a hierarquia faz-se pelo tamanho do tipo e pelo espaço em volta,
+ * que é o que dá ao rodapé o ar sereno da referência.
  */
 const year = new Date().getFullYear();
 
-const percurso = [
-  { href: '#servicos', label: 'Tratamentos' },
-  { href: '#sobre', label: 'Filosofia' },
-  { href: '#areas', label: 'Áreas de procura' },
-  { href: '#percurso', label: 'Primeira consulta' },
-  { href: '#terapeuta', label: 'Terapeuta' },
-  { href: '#local', label: 'Onde estamos' },
-  { href: '#faq', label: 'Perguntas' },
+/** Portal do Estado. O selo é obrigatório e tem de abrir para aqui. */
+const LIVRO_RECLAMACOES = 'https://www.livroreclamacoes.pt/inicio';
+
+const links = [
+  { href: '#marcacao', label: t('footer.linkContact') },
+  {
+    href: localizePath('/politica-de-privacidade', locale),
+    label: t('footer.linkPrivacy'),
+  },
+  { href: localizePath('/politica-de-cookies', locale), label: t('footer.linkCookies') },
 ];
 
 const redes = [
@@ -39,127 +45,110 @@ const redes = [
   <div class="footer__laje">
     <span class="footer__brilho" aria-hidden="true"></span>
 
-    <!-- Faixa 1 — quem somos, e o que fazer a seguir -------------------- -->
-    <div class="container footer__topo">
-      <div class="footer__marca">
-        <a href="#topo" class="footer__logo" aria-label={`${site.name} — voltar ao topo`}>
-          <Emblem size={52} />
-          <span class="footer__wordmark">
-            <span class="wordmark footer__name">Homeostase Vita</span>
-            <span class="footer__sub">Medicina Tradicional Chinesa</span>
-          </span>
+    <div class="container footer__inner">
+      <!-- O nome, em serifa, a abrir ------------------------------------ -->
+      <h2 class="footer__nome">
+        <a href="#topo" aria-label={`${site.name} — ${t('footer.backToTop')}`}>
+          {t('footer.name')}
         </a>
-        <p class="footer__resumo">
-          Clínica de Medicina Tradicional Chinesa na Maia. Acupuntura e terapias
-          integrativas, com avaliação individual e acompanhamento personalizado.
-        </p>
+      </h2>
+
+      <p class="footer__eyebrow">{t('footer.contact')}</p>
+
+      <!-- As colunas de detalhe ----------------------------------------- -->
+      <div class="footer__grelha">
+        <div class="footer__dados">
+          <p>
+            <strong>{t('footer.address')}</strong>
+            {site.address.street}, {site.address.postalCode}&nbsp;{site.address.locality},
+            {' '}{t('footer.country')}
+          </p>
+          <p>
+            <strong>{t('footer.phone')}</strong>
+            <a href={`tel:${site.phone.tel}`}>{site.phone.display}</a>
+          </p>
+          <p>
+            <strong>{t('footer.email')}</strong>
+            <a href={`mailto:${site.email}`}>{site.email}</a>
+          </p>
+          <p>
+            <strong>{t('footer.bookings')}</strong><br />
+            {t('footer.bookingsValue')}
+          </p>
+        </div>
+
+        <nav class="footer__links" aria-label={t('footer.legalNav')}>
+          <ul>
+            {
+              links.map((l) => (
+                <li>
+                  <a href={l.href}>{l.label}</a>
+                </li>
+              ))
+            }
+            <li>
+              <button type="button" class="footer__consent-btn" data-open-consent>
+                {t('footer.cookieSettings')}
+              </button>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="footer__licencas">
+          <p class="footer__licencas-titulo">{t('footer.licences')}</p>
+          <p>{t('footer.licenceAcss')} {site.credentials.acss}</p>
+          <p class="footer__aviso">{t('common.complementaryNotice')}</p>
+        </div>
+
+        <div class="footer__canto">
+          <ul class="footer__redes" aria-label={t('footer.social')}>
+            {
+              redes.map((r) => (
+                <li>
+                  <a
+                    href={r.href}
+                    class="footer__rede"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${r.label} ${t('footer.socialOf')}`}
+                  >
+                    <Icon name={r.icon} size={19} />
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+
+          <a
+            href={LIVRO_RECLAMACOES}
+            class="footer__livro"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={t('footer.complaints')}
+          >
+            <Image
+              src={livroReclamacoes}
+              alt={t('footer.complaintsAlt')}
+              width={120}
+              loading="lazy"
+              class="footer__livro-img"
+            />
+          </a>
+        </div>
       </div>
 
-      <div class="footer__accao">
-        <a href={`tel:${site.phone.tel}`} class="footer__tel">{site.phone.display}</a>
-        <a href={`mailto:${site.email}`} class="footer__email">{site.email}</a>
-
-        <a href="#marcacao" class="btn btn-primary footer__btn">Marcar consulta</a>
-
-        <ul class="footer__redes" aria-label="Redes sociais">
-          {
-            redes.map((r) => (
-              <li>
-                <a
-                  href={r.href}
-                  class="footer__rede"
-                  rel="noopener"
-                  aria-label={`${r.label} da Homeostase Vita`}
-                >
-                  <Icon name={r.icon} size={17} />
-                  <span>{r.label}</span>
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-    </div>
-
-    <!-- Faixa 2 — os detalhes ------------------------------------------- -->
-    <div class="container footer__colunas">
-      <nav class="footer__col" aria-label="Secções da página">
-        <h2 class="footer__titulo">Navegar</h2>
-        <ul class="footer__meridiano">
-          {
-            percurso.map((s) => (
-              <li>
-                <a href={s.href}>
-                  <span class="footer__ponto" aria-hidden="true" />
-                  {s.label}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
-
-      <nav class="footer__col" aria-label="Tratamentos">
-        <h2 class="footer__titulo">Técnicas</h2>
-        <ul class="footer__tecnicas">
-          {
-            tratamentos.map((t) => (
-              <li>
-                <a href={`#trat-${slugify(t.name)}`}>
-                  <Icon name={t.icon} size={17} class="footer__tec-icone" />
-                  {t.name}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
-
-      <div class="footer__col">
-        <h2 class="footer__titulo">Onde estamos</h2>
-        <address class="footer__morada">
-          {site.address.street}<br />
-          {site.address.postalCode}&nbsp;{site.address.locality}
-        </address>
-        <a href="#mapa" class="footer__mapa">
-          <Icon name="pin" size={16} />
-          Ver no mapa
-        </a>
-      </div>
-    </div>
-
-    <!-- Faixa 3 — identificação obrigatória (RJPPS) ---------------------- -->
-    <div class="container footer__legal">
-      <p class="footer__cedula">
-        <Icon name="check" size={16} class="footer__cedula-icone" />
-        Cédula Profissional ACSS n.º {site.credentials.acss}
-      </p>
-      <p class="footer__aviso">
-        A Medicina Tradicional Chinesa é uma abordagem complementar de bem-estar e não
-        dispensa a avaliação e o acompanhamento médico.
-      </p>
-    </div>
-
-    <!-- Faixa 4 — o plinto ---------------------------------------------- -->
-    <div class="footer__base">
-      <div class="container footer__base-inner">
-        <ul class="footer__links">
-          <li><a href="/politica-de-privacidade">Política de Privacidade</a></li>
-          <li><a href="/politica-de-cookies">Política de Cookies</a></li>
-          <li>
-            <button type="button" class="footer__consent-btn" data-open-consent>
-              Definições de cookies
-            </button>
-          </li>
-        </ul>
+      <!-- O plinto ------------------------------------------------------ -->
+      <div class="footer__base">
+        <p class="footer__copy">© {year} {site.legalName}</p>
+        <LangSwitch class="footer__lang" />
         <p class="footer__copy">
-          © {year} {site.legalName} · Desenvolvido por{' '}
+          <span>{t('footer.builtBy')}</span>
           <a
             href="https://www.alphascaleai.com/"
             class="footer__by"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="AlphaScale AI — abre o site em nova janela"
+            aria-label={t('footer.builtByAria')}
           >
             <Image
               src={alphascale}
@@ -177,17 +166,13 @@ const redes = [
 </footer>
 
 <style>
-  /* A laje encosta a direito ao bege da secção anterior. Tinha cantos
-     arredondados no topo, e o entalhe deixava ver uma faixa de bege por cima
-     do navy — espaço que não dizia nada e empurrava o rodapé todo para baixo.
-     Sem raio, o navy começa na primeira linha e o rodapé cabe de uma vez. */
   .footer {
     background-color: var(--color-navy-deep);
   }
 
   .footer__laje {
     --footer-hairline: color-mix(in srgb, var(--color-ivory) 14%, transparent);
-    --footer-muted: color-mix(in srgb, var(--color-ivory) 70%, transparent);
+    --footer-muted: color-mix(in srgb, var(--color-ivory) 72%, transparent);
     position: relative;
     isolation: isolate;
     overflow: hidden;
@@ -195,8 +180,6 @@ const redes = [
     color: var(--color-ivory);
   }
 
-  /* Um só halo, como nas secções claras — dá profundidade ao navy sem lhe
-     pôr nada em cima. */
   .footer__brilho {
     position: absolute;
     z-index: -1;
@@ -212,123 +195,193 @@ const redes = [
     pointer-events: none;
   }
 
-  /* ----------------------------------------------------- Faixa 1: topo - */
-  /* As quatro faixas andam apertadas de propósito: o rodapé tem de caber num
-     ecrã de uma vez, senão a assinatura e os contactos ficam por baixo da
-     dobra e ninguém lá chega. */
-  .footer__topo {
-    display: grid;
-    gap: clamp(1.75rem, 3.5vw, 2.75rem);
-    padding-top: clamp(2rem, 3.5vw, 3rem);
-    padding-bottom: clamp(1.5rem, 3vw, 2.25rem);
+  .footer__inner {
+    padding-top: clamp(2.25rem, 4vw, 3.5rem);
   }
 
-  .footer__logo {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-s4);
-    text-decoration: none;
-  }
-
-  .footer__wordmark {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  .footer__name {
-    font-size: 1.25rem;
-    letter-spacing: 0.16em;
+  /* ------------------------------------------------------ O nome ------ */
+  /* A peça grande da referência. Serifa, peso normal, quebra livre — o nome
+     ocupa duas linhas em ecrãs largos e é isso que lhe dá a presença. */
+  .footer__nome {
+    max-width: 18ch;
+    margin: 0;
+    font-family: var(--font-wordmark);
+    font-size: clamp(2.25rem, 6vw, 4.25rem);
+    font-weight: 400;
+    line-height: 1.06;
+    letter-spacing: -0.005em;
     color: var(--color-ivory);
   }
 
-  .footer__sub {
-    font-size: 0.625rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+  .footer__nome a {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .footer__nome a:hover,
+  .footer__nome a:focus-visible {
     color: var(--color-teal-soft);
   }
 
-  .footer__resumo {
-    margin-top: var(--spacing-s4);
-    max-width: 42ch;
-    font-size: 0.9375rem;
-    line-height: 1.75;
+  /* A etiqueta, também em serifa e em maiúsculas largas: é o eco pequeno do
+     nome, não um título de coluna. */
+  .footer__eyebrow {
+    margin-top: clamp(1rem, 2vw, 1.5rem);
+    font-family: var(--font-wordmark);
+    font-size: clamp(1.125rem, 2vw, 1.5rem);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ivory);
+  }
+
+  /* ---------------------------------------------------- As colunas ---- */
+  /* O vão grande entre a etiqueta e a grelha é deliberado: é o que separa o
+     registo de marca do registo de informação. */
+  .footer__grelha {
+    display: grid;
+    gap: clamp(1.75rem, 3vw, 2.5rem);
+    margin-top: clamp(1.75rem, 3.5vw, 2.75rem);
+    font-size: 0.875rem;
+    line-height: 1.6;
     color: var(--footer-muted);
   }
 
-  .footer__accao {
+  .footer__dados p {
+    margin: 0 0 var(--spacing-s4);
+  }
+
+  .footer__dados p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* As etiquetas em bold e claro; o valor em tom apagado. Assim lê-se a
+     coluna toda de relance sem precisar de títulos por cima. */
+  .footer__dados strong {
+    font-weight: 700;
+    color: var(--color-ivory);
+  }
+
+  .footer__dados a {
+    color: var(--footer-muted);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-teal-soft) 55%, transparent);
+    text-underline-offset: 3px;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .footer__dados a:hover,
+  .footer__dados a:focus-visible {
+    color: var(--color-ivory);
+    text-decoration-color: var(--color-teal-soft);
+  }
+
+  .footer__links ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.75rem, 1.6vw, 1.25rem);
+    align-items: flex-start;
+  }
+
+  .footer__links a,
+  .footer__consent-btn {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-ivory);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-teal-soft) 60%, transparent);
+    text-underline-offset: 4px;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .footer__links a:hover,
+  .footer__links a:focus-visible,
+  .footer__consent-btn:hover,
+  .footer__consent-btn:focus-visible {
+    color: var(--color-teal-soft);
+    text-decoration-color: var(--color-teal-soft);
+  }
+
+  .footer__consent-btn {
+    padding: 0;
+    background: none;
+    border: 0;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  /* O selo oficial não se recolore — é uma marca do Estado. Fica sobre uma
+     placa clara para não flutuar sozinho no navy, e acende ao passar. */
+  .footer__canto {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--spacing-s2);
+    gap: var(--spacing-s4);
   }
 
-  /* O número é a coisa maior do rodapé: numa clínica pequena a chamada é o
-     que se quer que aconteça. Fica como tipo, não como botão. */
-  .footer__tel {
-    font-size: clamp(1.75rem, 2.6vw, 2.25rem);
-    font-weight: 500;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    color: var(--color-ivory);
-    text-decoration: none;
-    text-underline-offset: 8px;
-    text-decoration-thickness: 1px;
-  }
-
-  .footer__tel:hover,
-  .footer__tel:focus-visible {
-    text-decoration: underline;
-    text-decoration-color: var(--color-teal-soft);
-  }
-
-  .footer__email {
-    font-size: 0.9375rem;
-    color: var(--footer-muted);
-    text-decoration: none;
-    text-underline-offset: 4px;
-  }
-
-  .footer__email:hover,
-  .footer__email:focus-visible {
-    color: var(--color-ivory);
-    text-decoration: underline;
-    text-decoration-color: var(--color-teal-soft);
-  }
-
-  .footer__btn {
-    margin-top: var(--spacing-s3);
-  }
-
-  /* Sobre navy-deep o btn-primary desapareceria: inverte para claro. */
-  .footer__accao .btn-primary {
+  .footer__livro {
+    display: inline-block;
+    padding: 5px;
+    border-radius: 6px;
     background-color: var(--color-ivory);
-    color: var(--color-navy-deep);
-  }
-  .footer__accao .btn-primary:hover {
-    background-color: #fff;
+    line-height: 0;
+    transition:
+      transform var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease);
   }
 
+  .footer__livro-img {
+    display: block;
+    width: clamp(104px, 10vw, 124px);
+    height: auto;
+  }
+
+  .footer__livro:hover,
+  .footer__livro:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--color-teal-soft) 32%, transparent);
+  }
+
+  .footer__licencas p {
+    margin: 0 0 var(--spacing-s2);
+  }
+
+  .footer__licencas-titulo {
+    font-weight: 700;
+    color: var(--color-ivory);
+  }
+
+  .footer__aviso {
+    margin-top: var(--spacing-s4);
+    max-width: 46ch;
+    font-size: 0.8125rem;
+    font-style: italic;
+    color: color-mix(in srgb, var(--color-ivory) 58%, transparent);
+  }
+
+  /* Os ícones sozinhos, em quadrado de contorno fino, como na referência. */
   .footer__redes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
-    flex-wrap: wrap;
     gap: var(--spacing-s3);
-    margin-top: var(--spacing-s2);
+    align-items: flex-start;
   }
 
   .footer__rede {
     display: inline-flex;
     align-items: center;
-    gap: var(--spacing-s2);
-    padding: 9px var(--spacing-s4);
+    justify-content: center;
+    width: 42px;
+    height: 42px;
     border: 1px solid color-mix(in srgb, var(--color-teal-soft) 45%, transparent);
-    border-radius: var(--radius-pill);
-    font-size: 0.8125rem;
-    font-weight: 500;
+    border-radius: 8px;
     color: var(--color-ivory);
-    text-decoration: none;
     transition:
       background-color var(--dur) var(--ease),
       border-color var(--dur) var(--ease),
@@ -342,273 +395,44 @@ const redes = [
     color: var(--color-navy-deep);
   }
 
-  /* ------------------------------------------------- Faixa 2: colunas - */
-  .footer__colunas {
-    display: grid;
-    gap: clamp(1.5rem, 3vw, 2.25rem);
-    padding-block: clamp(1.5rem, 3vw, 2rem);
-    border-top: 1px solid var(--footer-hairline);
-  }
-
-  /* Sem maiúsculas espaçadas: o eyebrow da marca já trabalha em todas as
-     secções acima, e três seguidos aqui em baixo tornavam o rodapé genérico. */
-  .footer__titulo {
-    font-family: var(--font-sans);
-    font-size: 0.875rem;
-    font-weight: 600;
-    letter-spacing: 0;
-    color: var(--color-teal-soft);
-    margin-bottom: var(--spacing-s4);
-  }
-
-  .footer__meridiano,
-  .footer__tecnicas,
-  .footer__redes,
-  .footer__links {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .footer__col a {
-    color: var(--color-ivory);
-    text-decoration: none;
-  }
-
-  /* O meridiano: filete a correr do primeiro ao último ponto. */
-  .footer__meridiano {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-s2);
-  }
-
-  .footer__meridiano::before {
-    content: '';
-    position: absolute;
-    left: 3.5px;
-    top: 0.7rem;
-    bottom: 0.7rem;
-    width: 1px;
-    background: linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--color-teal-soft) 22%, transparent),
-      color-mix(in srgb, var(--color-teal-soft) 68%, transparent) 18%,
-      color-mix(in srgb, var(--color-teal-soft) 68%, transparent) 82%,
-      color-mix(in srgb, var(--color-teal-soft) 22%, transparent)
-    );
-  }
-
-  .footer__meridiano a {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-s4);
-    font-size: 0.9375rem;
-    line-height: 1.5;
-    color: var(--footer-muted);
-    transition: color var(--dur) var(--ease);
-  }
-
-  .footer__ponto {
-    flex: none;
-    width: 8px;
-    height: 8px;
-    border: 1px solid color-mix(in srgb, var(--color-teal-soft) 70%, transparent);
-    border-radius: 50%;
-    background-color: var(--color-navy-deep);
-    transition:
-      background-color var(--dur) var(--ease),
-      border-color var(--dur) var(--ease),
-      box-shadow var(--dur) var(--ease);
-  }
-
-  .footer__meridiano a:hover,
-  .footer__meridiano a:focus-visible {
-    color: var(--color-ivory);
-  }
-
-  .footer__meridiano a:hover .footer__ponto,
-  .footer__meridiano a:focus-visible .footer__ponto {
-    background-color: var(--color-teal-soft);
-    border-color: var(--color-teal-soft);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-teal-soft) 20%, transparent);
-  }
-
-  /* Os tratamentos não são um percurso: levam o ícone da técnica. */
-  .footer__tecnicas {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-s2);
-  }
-
-  .footer__tecnicas a {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-s3);
-    font-size: 0.9375rem;
-    line-height: 1.5;
-    color: var(--footer-muted);
-    transition: color var(--dur) var(--ease);
-  }
-
-  .footer__tec-icone {
-    flex: none;
-    color: color-mix(in srgb, var(--color-teal-soft) 80%, transparent);
-    transition: color var(--dur) var(--ease);
-  }
-
-  .footer__tecnicas a:hover,
-  .footer__tecnicas a:focus-visible {
-    color: var(--color-ivory);
-  }
-  .footer__tecnicas a:hover .footer__tec-icone,
-  .footer__tecnicas a:focus-visible .footer__tec-icone {
-    color: var(--color-teal-soft);
-  }
-
-  .footer__morada {
-    font-style: normal;
-    font-size: 0.9375rem;
-    line-height: 1.7;
-    color: var(--footer-muted);
-  }
-
-  .footer__mapa {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-s2);
-    margin-top: var(--spacing-s3);
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--color-teal-soft);
-    text-underline-offset: 5px;
-  }
-
-  .footer__col .footer__mapa {
-    color: var(--color-teal-soft);
-  }
-
-  .footer__mapa:hover,
-  .footer__mapa:focus-visible {
-    text-decoration: underline;
-  }
-
-  /* --------------------------------------------------- Faixa 3: legal - */
-  .footer__legal {
-    display: grid;
-    gap: var(--spacing-s2) clamp(2rem, 4vw, 3rem);
-    padding-block: clamp(1rem, 2vw, 1.25rem);
-    border-top: 1px solid var(--footer-hairline);
-  }
-
-  .footer__cedula {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-s2);
-    font-size: 0.8125rem;
-    font-weight: 500;
-    white-space: nowrap;
-    color: var(--color-ivory);
-  }
-
-  .footer__cedula-icone {
-    flex: none;
-    color: var(--color-green);
-  }
-
-  .footer__aviso {
-    max-width: 68ch;
-    font-size: 0.75rem;
-    line-height: 1.65;
-    color: var(--footer-muted);
-  }
-
-  /* -------------------------------------------------- Faixa 4: plinto - */
-  /* O plinto era uma faixa de navy mais escuro. Passa ao mesmo navy do resto
-     — o rodapé lê-se como uma superfície só — e separa-se pelo mesmo filete
-     que já divide as outras faixas, em vez de por uma mudança de cor. */
-  .footer__base-inner {
+  /* ------------------------------------------------------ O plinto ---- */
+  .footer__base {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: var(--spacing-s3) var(--spacing-s5);
-    padding-top: var(--spacing-s4);
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    padding-top: clamp(1rem, 2vw, 1.375rem);
     border-top: 1px solid var(--footer-hairline);
-    /* O botão do WhatsApp é fixo ao canto inferior direito. Com a página no
-       fim assentava em cima desta linha: a assinatura ficava tapada e o hover
-       nem chegava a disparar, porque o clique batia no botão. O plinto passa
-       a reservar-lhe a altura (52px) mais o afastamento que ele próprio usa,
-       e acaba sempre acima dele. Manter em sincronia com o `.chat` do
-       ChatWidget, que é quem define esse afastamento. */
-    padding-bottom: max(clamp(3rem, 4vw, 3.75rem), calc(clamp(16px, 3vw, 28px) + 68px));
+    /* O botão do WhatsApp é fixo ao canto inferior direito: o plinto reserva
+       a altura dele (52px) mais o afastamento que ele usa, e acaba sempre
+       acima. Manter em sincronia com o `.chat` do ChatWidget. */
+    padding-bottom: max(clamp(1.5rem, 2.5vw, 2rem), calc(clamp(16px, 3vw, 28px) + 60px));
   }
 
-  .footer__links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-s2) var(--spacing-s5);
-  }
-
-  .footer__links a,
-  .footer__consent-btn {
-    font-size: 0.75rem;
-    color: var(--footer-muted);
-    text-decoration: none;
-  }
-
-  /* A linha da assinatura é a única coisa que sobra no fim da página: sobe de
-     corpo e vai toda no mesmo tom — o ano, o nome da clínica e quem fez o
-     site lêem-se como uma frase só, não como um crédito escondido a cinzento
-     com uma palavra acesa lá dentro. */
   .footer__copy {
-    /* Em fluxo de texto, o emblema (inline-flex, 28px) inchava a caixa de
-       linha para o dobro e o plinto crescia com ela. Em flex a linha mede o
-       mais alto dos dois e nada mais. */
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 0 6px;
+    margin: 0;
     min-width: 0;
-    /* 14px: o suficiente para a linha crescer sobre os 12px dos links legais
-       ao lado, sem passar a largura que sobra no plinto — a 15px partia em
-       duas linhas e o rodapé voltava a ganhar altura. */
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     line-height: 1.5;
-    color: var(--color-ivory);
-    text-decoration: none;
-  }
-
-  .footer__links a:hover,
-  .footer__consent-btn:hover {
-    color: var(--color-ivory);
-  }
-
-  .footer__consent-btn {
-    padding: 0;
-    background: none;
-    border: 0;
-    font-family: inherit;
-    cursor: pointer;
-    text-decoration: underline;
-    text-decoration-color: var(--color-teal-soft);
-    text-underline-offset: 3px;
+    color: var(--footer-muted);
   }
 
   .footer__copy a {
     color: var(--color-ivory);
     text-decoration: none;
   }
-  .footer__copy a:hover {
-    text-decoration: underline;
-  }
 
   /* A assinatura de quem fez o site. O emblema da AlphaScale entra em repouso
      sem halo nenhum — é um crédito, não uma segunda marca — e só ao passar o
-     cursor acende no ciano da casa e cresce um pouco. Os dois drop-shadow
-     existem já no estado parado (a raio zero e transparentes) porque um
-     filtro só interpola entre listas com o mesmo número de funções: sem isso
-     o brilho aparecia de golpe em vez de subir. */
+     cursor acende no ciano da casa. Os dois drop-shadow existem já no estado
+     parado (a raio zero e transparentes) porque um filtro só interpola entre
+     listas com o mesmo número de funções. */
   .footer__by {
     --as-ciano: 41 194 242;
     display: inline-flex;
@@ -633,8 +457,8 @@ const redes = [
     transition: color var(--dur) var(--ease);
   }
 
-  .footer__copy .footer__by:hover,
-  .footer__copy .footer__by:focus-visible {
+  .footer__by:hover,
+  .footer__by:focus-visible {
     text-decoration: none;
   }
 
@@ -653,47 +477,38 @@ const redes = [
 
   @media (prefers-reduced-motion: reduce) {
     .footer__by:hover .footer__by-logo,
-    .footer__by:focus-visible .footer__by-logo {
+    .footer__by:focus-visible .footer__by-logo,
+    .footer__livro:hover,
+    .footer__livro:focus-visible {
       transform: none;
     }
   }
 
-  /* ------------------------------------------------------ Adaptação --- */
+  /* ---------------------------------------------------- Adaptação ----- */
   @media (min-width: 640px) {
-    .footer__colunas {
+    .footer__grelha {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
-  @media (min-width: 900px) {
-    .footer__topo {
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: start;
+  /* Quatro colunas: dados largos, links, licenças, e as redes encostadas à
+     direita — a mesma repartição da referência. */
+  @media (min-width: 1000px) {
+    .footer__grelha {
+      /* As três colunas de texto encostam-se à esquerda com um vão curto
+         entre si; o resto do vão vai todo para o canto, onde ficam as redes
+         e o selo. */
+      grid-template-columns: minmax(0, 22rem) minmax(0, 15rem) minmax(0, 18rem) 1fr;
+      column-gap: clamp(2rem, 3vw, 3rem);
     }
 
-    .footer__accao {
+    .footer__canto {
       align-items: flex-end;
       text-align: right;
     }
 
-    .footer__colunas {
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr);
-    }
-
-    .footer__legal {
-      grid-template-columns: auto minmax(0, 1fr);
-      align-items: center;
-    }
-
-    /* Os links legais à esquerda, a assinatura encostada à direita, ambos na
-       mesma linha. A base zero é o que os mantém lá: com base automática a
-       frase inteira contava como largura mínima ao decidir a quebra, não
-       cabia ao lado dos links e o plinto abria para duas linhas. Abaixo deste
-       ponto não se aplica — aí as duas coisas empilham-se de propósito. */
-    .footer__copy {
-      flex: 1 1 0;
+    .footer__redes {
       justify-content: flex-end;
-      text-align: right;
     }
   }
 </style>

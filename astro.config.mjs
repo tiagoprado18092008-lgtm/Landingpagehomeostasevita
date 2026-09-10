@@ -12,10 +12,18 @@ export default defineConfig({
   trailingSlash: 'ignore',
   integrations: [
     sitemap({
-      i18n: undefined,
-      // A confirmação de pedido é o fim de um percurso, não conteúdo:
-      // fica fora do sitemap, a par do `noindex` que a própria página leva.
-      filter: (page) => !page.includes('/pedido-recebido'),
+      // O site existe em duas línguas: `/` em português (o idioma de origem)
+      // e `/en/` em inglês. O sitemap declara os pares, e cada página leva
+      // ainda os `hreflang` no <head>.
+      i18n: {
+        defaultLocale: 'pt',
+        locales: { pt: 'pt-PT', en: 'en' },
+      },
+      // A confirmação de pedido é o fim de um percurso, não conteúdo: fica
+      // fora do sitemap nas duas línguas, a par do `noindex` que as próprias
+      // páginas levam.
+      filter: (page) =>
+        !page.includes('/pedido-recebido') && !page.includes('/request-received'),
     }),
   ],
   vite: { plugins: [tailwindcss()] },

@@ -1,6 +1,12 @@
 ---
 import Ambient from './Ambient.astro';
 import Icon from './Icon.astro';
+import { localeFromPath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+
 
 /**
  * A acupuntura é o tratamento mais procurado e o termo que mais se pesquisa
@@ -10,11 +16,7 @@ import Icon from './Icon.astro';
  * A pergunta do medo das agulhas vive aqui, em destaque, porque é a objeção
  * que mais trava uma primeira marcação.
  */
-const pontos = [
-  'Agulhas muito finas, geralmente bem toleradas',
-  'Pontos escolhidos a partir da avaliação individual',
-  'Intervenção ajustada à sensibilidade de cada pessoa',
-];
+const pontos = [t('acup.point1'), t('acup.point2'), t('acup.point3')];
 ---
 
 <section class="section surface-navy acup tem-ambiente" aria-labelledby="acup-titulo">
@@ -22,16 +24,14 @@ const pontos = [
 
   <div class="container acup__inner">
     <div class="acup__texto">
-      <p class="eyebrow reveal">Em destaque</p>
+      <p class="eyebrow reveal">{t('acup.eyebrow')}</p>
       <h2 class="h2 reveal" id="acup-titulo">
-        Acupuntura, uma das<br />
-        <span class="accent-line">principais técnicas</span>
+        {t('acup.titleA')}<br />
+        <span class="accent-line">{t('acup.titleB')}</span>
       </h2>
 
       <p class="acup__lead reveal" style="--reveal-delay:80ms">
-        A acupuntura é uma das principais técnicas utilizadas na Medicina Tradicional
-        Chinesa, podendo ser <strong>complementada por outras estratégias terapêuticas</strong>
-        de acordo com as necessidades de cada pessoa.
+        {t('acup.leadA')}<strong>{t('acup.leadStrong')}</strong>{t('acup.leadB')}
       </p>
 
       <ul class="acup__pontos reveal" style="--reveal-delay:140ms">
@@ -45,27 +45,16 @@ const pontos = [
         }
       </ul>
 
-      <a href="#marcacao" class="btn btn-primary acup__cta reveal">Marcar consulta</a>
+      <a href="#marcacao" class="btn btn-primary acup__cta reveal">{t('common.book')}</a>
     </div>
 
     <!-- A objeção que mais trava uma primeira marcação, respondida à vista -->
     <aside class="acup__duvida reveal reveal--scale" style="--reveal-delay:120ms">
-      <p class="acup__duvida-eyebrow">A pergunta mais frequente</p>
-      <p class="acup__duvida-q">A acupuntura dói?</p>
-      <p class="acup__duvida-a">
-        As agulhas de acupuntura são muito finas e, geralmente, a sua aplicação é bem
-        tolerada. A sensação varia de pessoa para pessoa: para muitas, a inserção é
-        praticamente indolor, podendo sentir-se uma ligeira picada ou uma sensação
-        momentânea de pressão, calor ou formigueiro.
-      </p>
-      <p class="acup__duvida-a">
-        Durante a sessão, procura-se garantir o maior conforto possível, ajustando a
-        intervenção à sensibilidade e às características individuais de cada pessoa.
-      </p>
-      <p class="acup__duvida-nota">
-        A Medicina Tradicional Chinesa é uma abordagem complementar de bem-estar e não
-        dispensa a avaliação e o acompanhamento médico.
-      </p>
+      <p class="acup__duvida-eyebrow">{t('acup.faqEyebrow')}</p>
+      <p class="acup__duvida-q">{t('acup.faqQ')}</p>
+      <p class="acup__duvida-a">{t('acup.faqA1')}</p>
+      <p class="acup__duvida-a">{t('acup.faqA2')}</p>
+      <p class="acup__duvida-nota">{t('common.complementaryNotice')}</p>
     </aside>
   </div>
 </section>

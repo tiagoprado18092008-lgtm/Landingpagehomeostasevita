@@ -1,0 +1,57 @@
+---
+/**
+ * Versão inglesa da página inicial.
+ *
+ * O conteúdo não é duplicado: monta os mesmos componentes da versão
+ * portuguesa, que descobrem a língua pelo caminho do pedido (`/en/…`) e se
+ * traduzem sozinhos. Uma secção nova na página portuguesa só precisa da
+ * mesma linha aqui.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Hero from '../../components/Hero.astro';
+import Credentials from '../../components/Credentials.astro';
+import Abordagem from '../../components/Abordagem.astro';
+import Sobre from '../../components/Sobre.astro';
+import Concerns from '../../components/Concerns.astro';
+import Services from '../../components/Services.astro';
+import Acupuntura from '../../components/Acupuntura.astro';
+import Process from '../../components/Process.astro';
+import Practitioner from '../../components/Practitioner.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Faq from '../../components/Faq.astro';
+import Espaco from '../../components/Espaco.astro';
+import Local from '../../components/Local.astro';
+import Contact from '../../components/Contact.astro';
+import Footer from '../../components/Footer.astro';
+import ChatWidget from '../../components/ChatWidget.astro';
+import { localeFromPath, type Locale } from '../../i18n';
+import { useTranslations } from '../../i18n/ui';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+---
+
+<BaseLayout title={t('meta.homeTitle')} description={t('meta.homeDescription')} schema>
+  <Header />
+
+  <main id="conteudo">
+    <Hero />
+    <Credentials />
+    <Services />
+    <Abordagem />
+    <Sobre />
+    <Concerns />
+    <Acupuntura />
+    <Process />
+    <Practitioner />
+    <Faq />
+    <CtaBand />
+    <Espaco />
+    <Local />
+    <Contact />
+  </main>
+
+  <Footer />
+  <ChatWidget />
+</BaseLayout>

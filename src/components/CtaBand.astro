@@ -3,6 +3,12 @@ import { Image } from 'astro:assets';
 import { site } from '../config/site';
 import Icon from './Icon.astro';
 import azulejo from '../assets/img/azulejo.png';
+import { localeFromPath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+
 
 /**
  * Faixa de chamada a meio da página. Quem já leu até aqui não devia ter de
@@ -21,7 +27,7 @@ import azulejo from '../assets/img/azulejo.png';
  */
 ---
 
-<section class="faixa" aria-label="Marcar consulta">
+<section class="faixa" aria-label={t('cta.aria')}>
   <Image
     class="faixa__img"
     src={azulejo}
@@ -35,16 +41,12 @@ import azulejo from '../assets/img/azulejo.png';
   />
 
   <div class="container faixa__inner">
-    <p class="faixa__eyebrow reveal">Dê o primeiro passo</p>
-    <p class="faixa__titulo reveal" style="--reveal-delay:40ms">
-      A sua consulta começa com uma conversa.
-    </p>
-    <p class="faixa__sub reveal" style="--reveal-delay:100ms">
-      Sem compromisso: pode ligar só para esclarecer dúvidas antes de decidir.
-    </p>
+    <p class="faixa__eyebrow reveal">{t('cta.eyebrow')}</p>
+    <p class="faixa__titulo reveal" style="--reveal-delay:40ms">{t('cta.title')}</p>
+    <p class="faixa__sub reveal" style="--reveal-delay:100ms">{t('cta.sub')}</p>
 
     <div class="faixa__accoes reveal" style="--reveal-delay:160ms">
-      <a href="#marcacao" class="btn btn-primary faixa__btn">Marcar consulta</a>
+      <a href="#marcacao" class="btn btn-primary faixa__btn">{t('common.book')}</a>
       <a href={site.phone.whatsapp} class="btn btn-whatsapp faixa__btn" rel="noopener">
         <Icon name="whatsapp" size={18} />
         WhatsApp

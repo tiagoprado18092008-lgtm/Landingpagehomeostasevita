@@ -1,6 +1,12 @@
 ---
 import Ambient from './Ambient.astro';
 import LotusRule from './LotusRule.astro';
+import { localeFromPath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+
 
 /**
  * O bloco de filosofia: uma frase curta a dourado de um lado, o enunciado
@@ -16,28 +22,17 @@ import LotusRule from './LotusRule.astro';
 
   <div class="container sobre__inner">
     <div class="sobre__aside">
-      <p class="eyebrow reveal">A nossa filosofia</p>
-      <p class="sobre__frase reveal" id="sobre-titulo">
-        Uma abordagem centrada na pessoa.
-      </p>
+      <p class="eyebrow reveal">{t('about.eyebrow')}</p>
+      <p class="sobre__frase reveal" id="sobre-titulo">{t('about.phrase')}</p>
       <LotusRule class="sobre__rule reveal" align="start" />
     </div>
 
     <div class="sobre__body reveal reveal--right" style="--reveal-delay:100ms">
       <p class="sobre__statement">
-        Cada pessoa é avaliada de forma individualizada. Os sintomas não são analisados
-        isoladamente, mas relacionados com outros sinais, hábitos e características
-        pessoais, permitindo construir uma <strong>visão global do estado de saúde</strong>.
+        {t('about.p1a')}<strong>{t('about.p1strong')}</strong>{t('about.p1b')}
       </p>
-      <p>
-        A partir desta avaliação, é definida uma estratégia terapêutica adaptada às
-        necessidades de cada pessoa, recorrendo às técnicas mais adequadas a cada situação.
-      </p>
-      <p>
-        O acompanhamento é realizado num ambiente tranquilo e profissional, onde o tempo
-        dedicado à avaliação e a atenção às particularidades de cada caso clínico assumem
-        um papel central.
-      </p>
+      <p>{t('about.p2')}</p>
+      <p>{t('about.p3')}</p>
     </div>
   </div>
 </section>
