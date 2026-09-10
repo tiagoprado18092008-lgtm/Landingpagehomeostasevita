@@ -259,7 +259,7 @@ const pt = {
   'footer.complaints': 'Livro de Reclamações electrónico — abre em nova janela',
   'footer.complaintsAlt': 'Livro de Reclamações',
   'footer.builtBy': 'Desenvolvido por',
-  'footer.builtByAria': 'AlphaScale AI — abre o site em nova janela',
+  'footer.builtByAria': 'AlphaScale — abre o site em nova janela',
   'footer.country': 'Portugal',
 
   // --- Consentimento ---
@@ -565,7 +565,7 @@ const en: Record<UiKey, string> = {
   'footer.complaints': 'Electronic complaints book — opens in a new window',
   'footer.complaintsAlt': 'Complaints book',
   'footer.builtBy': 'Built by',
-  'footer.builtByAria': 'AlphaScale AI — opens the site in a new window',
+  'footer.builtByAria': 'AlphaScale — opens the site in a new window',
   'footer.country': 'Portugal',
 
   // --- Consentimento ---

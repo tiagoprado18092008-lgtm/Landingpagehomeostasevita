@@ -3,7 +3,7 @@ import { Image } from 'astro:assets';
 
 import sala from '../assets/img/espaco-sala.png';
 import gabinete from '../assets/img/espaco-gabinete.jpeg';
-import hall from '../assets/img/espaco-hall.jpeg';
+import hall from '../assets/img/espaco-hall.png';
 import exterior from '../assets/img/espaco-exterior.png';
 import { localeFromPath, type Locale } from '../i18n';
 import { useTranslations } from '../i18n/ui';
@@ -25,10 +25,11 @@ const t = useTranslations(locale);
  * Confirmar com a Teresa antes de publicar — sobretudo se a sala comum e a
  * hall de entrada são mesmo de uso partilhado e se o relvado é acessível.
  *
- * As fotografias são pequenas (a maior tem 629px de largura). O mosaico está
- * dimensionado para elas: nenhum lado renderizado passa muito da largura do
- * ficheiro, e por isso os cortes são largos — 21/9 nas grandes, quase quadrado
- * nas pequenas. Se chegarem originais maiores, os rácios podem abrir.
+ * A sala, o exterior e a hall já vêm de originais grandes (~1500px de largura
+ * nas horizontais, 1100x1430 na hall), por isso os cortes largos que existiam
+ * para disfarçar ficheiros pequenos deixaram de ser precisos. O gabinete é a
+ * excepção: continua a ser uma fotografia de telemóvel, vertical, e é por isso
+ * que fica numa peça estreita onde o rácio lhe assenta.
  */
 const fotos = [
   { src: sala, variante: 'larga', legenda: t('space.cap1'), alt: t('space.alt1') },
