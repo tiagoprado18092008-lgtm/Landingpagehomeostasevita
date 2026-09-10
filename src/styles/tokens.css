@@ -23,6 +23,15 @@
   --color-ivory: #faf7ee;
   --color-beige: #fcfaf3;
   --color-mist: #cdd8e8;
+  /* Profundidade acrescentada no redesign editorial: um quase-preto quente
+     para os momentos premium (não o navy, que é cor de marca e já carrega
+     autoridade), e duas lavagens quentes para as secções de transição.
+     Continuam a ser a mesma claridade do bege — muda a temperatura, não o
+     valor — para não trair a regra de "um só bege" acima. */
+  --color-ink: #14110d;
+  --color-ink-soft: #221d17;
+  --color-sand: #f6f1e4;
+  --color-clay: color-mix(in srgb, #b08968 7%, var(--color-paper));
   --color-paper: #fcfaf3;
   --color-muted: #5a6b82;
   --color-danger: #b5432f;
@@ -36,12 +45,17 @@
   --color-azul-lavado: color-mix(in srgb, var(--color-teal) 9%, var(--color-paper));
 
   /* ---- Tipografia ----------------------------------------------------
-     DM Sans faz todo o trabalho — títulos e corpo. A serifa fica reservada
-     ao wordmark, que é a marca desenhada e não texto de interface. */
+     Redesign editorial: a serifa passa a desenhar os títulos. Já estava
+     carregada e pré-carregada por causa do hero, por isso não custa um byte
+     a mais — só deixou de estar travada no wordmark. DM Sans fica com o
+     corpo, a navegação e os microtextos, onde a sua clareza rende mais. */
   --font-sans: 'DM Sans Variable', 'DM Sans', -apple-system, BlinkMacSystemFont,
     'Segoe UI', Roboto, sans-serif;
-  --font-wordmark: 'Cormorant Garamond Variable', 'Cormorant Garamond', Georgia,
+  --font-serif: 'Cormorant Garamond Variable', 'Cormorant Garamond', Georgia,
     'Times New Roman', serif;
+  /* Mantido como alias: o wordmark é a marca desenhada e pode um dia querer
+     uma face própria sem arrastar consigo todos os títulos. */
+  --font-wordmark: var(--font-serif);
   --font-cjk: 'Noto Serif SC', 'Songti SC', 'Source Han Serif SC', SimSun,
     'Cormorant Garamond Variable', serif;
 
@@ -50,15 +64,18 @@
   --text-small: 0.875rem;
   --text-body: clamp(1rem, 0.3vw + 0.95rem, 1.0625rem);
   --text-lead: clamp(1.0625rem, 1vw + 0.8rem, 1.25rem);
-  --text-h3: clamp(1.1875rem, 1.4vw, 1.5rem);
-  --text-h2: clamp(1.875rem, 3.2vw, 3rem);
-  --text-h1: clamp(2.5rem, 4.8vw + 0.5rem, 4.25rem);
-  --text-display: clamp(3rem, 6vw, 4.75rem);
+  --text-h3: clamp(1.25rem, 1.4vw, 1.5rem);
+  --text-h2: clamp(2.25rem, 4vw, 3.5rem);
+  --text-h1: clamp(2.75rem, 5.4vw + 0.5rem, 5rem);
+  --text-display: clamp(3.25rem, 6.6vw, 5.5rem);
 
   /* ---- Tracking: em corpos grandes o sans precisa de fechar ---------- */
-  --tracking-display: -0.032em;
-  --tracking-h2: -0.028em;
-  --tracking-h3: -0.02em;
+  /* A serifa tem contraste próprio e não precisa de fechar como o sans:
+     um tracking agressivo colava-lhe as hastes. */
+  --tracking-display: -0.014em;
+  --tracking-h2: -0.012em;
+  --tracking-h3: -0.008em;
+  --tracking-sans: -0.024em;
   --tracking-caps: 0.18em;
 
   /* ---- Espaco (base 4px) -------------------------------------------- */
@@ -107,7 +124,11 @@
   --content: 1120px;
   --measure: 62ch;
   --gutter: clamp(1.25rem, 5vw, 4rem);
-  --section-y: clamp(4rem, 7vw, 7.5rem);
+  /* Três alturas em vez de uma: é o que deixa as secções terem pesos
+     diferentes em vez de desfilarem todas com a mesma respiração. */
+  --section-y: clamp(5rem, 8.5vw, 9rem);
+  --section-y-lg: clamp(7rem, 12vw, 13rem);
+  --section-y-sm: clamp(3rem, 5vw, 5rem);
   --header-h: 80px;
 
   /* ---- Motion -------------------------------------------------------- */

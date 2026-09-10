@@ -9,20 +9,26 @@ const nav = [
   { id: 'sobre', label: 'Filosofia' },
   { id: 'percurso', label: '1.ª consulta' },
   { id: 'terapeuta', label: 'Terapeuta' },
+];
+
+/** O painel em ecrã pequeno tem espaço de sobra: leva a lista completa. */
+const navPainel = [
+  ...nav,
+  { id: 'espaco', label: 'O espaço' },
   { id: 'faq', label: 'Perguntas' },
 ];
 ---
 
-<header class="site-header">
+<header class="site-header" data-header>
   <div class="site-header__inner">
-    <a href="#topo" class="brand" aria-label={`${site.name} — início`}>
+    <a href="#topo" class="brand" aria-label={`${site.name} — ${t('common.homeAria')}`}>
       <Emblem size={52} loading="eager" class="brand__mark" />
       <span class="brand__type">
         <span class="brand__name wordmark">Homeostase Vita</span>
       </span>
     </a>
 
-    <nav class="nav" aria-label="Navegação principal">
+    <nav class="nav" aria-label={t('nav.main')}>
       <ul class="nav__list">
         {
           nav.map((item) => (
@@ -37,17 +43,20 @@ const nav = [
     </nav>
 
     <div class="header-actions">
-      <a href="#marcacao" class="btn btn-primary header-cta">Marcar consulta</a>
+      <LangSwitch compacto />
+      <a href="#marcacao" class="btn btn-primary header-cta">{t('common.book')}</a>
       <button
         type="button"
         class="menu-toggle"
         data-menu-toggle
         aria-expanded="false"
         aria-controls="menu-mobile"
+        data-label-open={t('nav.openMenu')}
+        data-label-close={t('nav.closeMenu')}
       >
         <Icon name="menu" class="menu-toggle__open" />
         <Icon name="close" class="menu-toggle__close" />
-        <span class="sr-only">Abrir menu</span>
+        <span class="sr-only">{t('nav.openMenu')}</span>
       </button>
     </div>
   </div>
@@ -55,11 +64,11 @@ const nav = [
 
 <!-- Menu mobile em ecrã inteiro -->
 <div class="menu-panel" id="menu-mobile" data-menu-panel hidden>
-  <nav aria-label="Navegação em ecrã pequeno">
+  <nav aria-label={t('nav.small')}>
     <ul class="menu-panel__list">
       {
-        nav.map((item) => (
-          <li>
+        navPainel.map((item, i) => (
+          <li style={`--i:${i}`}>
             <a href={`#${item.id}`} class="menu-panel__link" data-menu-close>
               {item.label}
             </a>
@@ -69,16 +78,18 @@ const nav = [
     </ul>
   </nav>
   <div class="menu-panel__actions">
-    <a href="#marcacao" class="btn btn-primary btn-full" data-menu-close>Marcar consulta</a>
+    <a href="#marcacao" class="btn btn-primary btn-full" data-menu-close>{t('common.book')}</a>
     <a href={`tel:${site.phone.tel}`} class="btn btn-secondary btn-full">
       <Icon name="phone" size={18} />
-      Ligar {site.phone.display}
+      {t('common.call')} {site.phone.display}
     </a>
     <a href={site.phone.whatsapp} class="btn btn-whatsapp btn-full" rel="noopener">
       <Icon name="whatsapp" size={18} />
       WhatsApp
     </a>
   </div>
+  <LangSwitch class="menu-panel__lang" />
+
   <p class="menu-panel__meta note">
     {site.address.street}<br />
     {site.address.postalCode}&nbsp;{site.address.locality}
@@ -86,16 +97,57 @@ const nav = [
 </div>
 
 <style>
-  /* Sticky, não fixed: o header fica em fluxo e acompanha o cimo da página
-     sem tapar conteúdo nem exigir compensação de altura no main. */
-  /* Sombra permanente: separa sempre o header do conteudo, mesmo no topo
-     da pagina — nao depende de scroll para o corte ficar visivel. */
+  /* Fixed, não sticky: o header tem de poder assentar POR CIMA da
+     fotografia do hero sem lhe roubar altura. O hero compensa-o sozinho
+     com padding-top; as restantes páginas já usavam --header-h.
+
+     No topo é transparente e a marca lê-se em claro sobre a fotografia —
+     é isso que faz o header pertencer à composição em vez de ser uma barra
+     pousada em cima dela. Passado o primeiro ecrã ganha fundo, filete e
+     letra escura. Quem entra a meio (âncora, recarregar) vê-o já sólido: o
+     script decide no arranque, não só ao scroll. */
   .site-header {
-    position: sticky;
+    position: fixed;
+    inset-inline: 0;
     top: 0;
     z-index: 90;
-    background-color: var(--color-beige);
-    box-shadow: var(--shadow-2);
+    background-color: transparent;
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color var(--dur-slow) var(--ease),
+      border-color var(--dur-slow) var(--ease),
+      backdrop-filter var(--dur-slow) var(--ease);
+  }
+
+  .site-header[data-solido='true'] {
+    background-color: color-mix(in srgb, var(--color-beige) 88%, transparent);
+    backdrop-filter: blur(14px) saturate(1.4);
+    border-bottom-color: var(--hairline-cool);
+  }
+
+  /* Sobre a fotografia, tudo o que é texto passa a claro. */
+  .site-header:not([data-solido='true']) .brand__name,
+  .site-header:not([data-solido='true']) .nav__link {
+    color: var(--color-ivory);
+    text-shadow: 0 1px 20px rgba(3, 18, 42, 0.5);
+  }
+
+  .site-header:not([data-solido='true']) .menu-toggle {
+    color: var(--color-ivory);
+    border-color: color-mix(in srgb, var(--color-ivory) 42%, transparent);
+  }
+
+  .site-header:not([data-solido='true']) .header-cta {
+    background-color: color-mix(in srgb, var(--color-ivory) 14%, transparent);
+    color: var(--color-ivory);
+    border-color: color-mix(in srgb, var(--color-ivory) 46%, transparent);
+    backdrop-filter: blur(3px);
+    box-shadow: none;
+  }
+  .site-header:not([data-solido='true']) .header-cta:hover {
+    background-color: var(--color-ivory);
+    color: var(--color-navy-deep);
+    border-color: var(--color-ivory);
   }
 
   /* Ao contrário do resto da página, o header não usa a .container (max-width
@@ -160,41 +212,54 @@ const nav = [
   .nav__list {
     display: flex;
     align-items: center;
-    gap: clamp(var(--spacing-s4), 2vw, var(--spacing-s6));
+    gap: clamp(var(--spacing-s6), 3.2vw, var(--spacing-s8));
     list-style: none;
     margin: 0;
     padding: 0;
   }
 
+  /* Discreta de propósito: pequena, espaçada, em maiúsculas curtas. A
+     navegação indica, não anuncia — não compete com o título do hero. */
   .nav__link {
     position: relative;
     display: block;
     white-space: nowrap;
     padding: var(--spacing-s2) 0;
-    font-size: 1.0625rem;
+    font-size: 0.8125rem;
     font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     color: var(--color-navy-ink);
     text-decoration: none;
     transition: color var(--dur) var(--ease);
   }
 
+  /* O filete abre do centro para fora — mais contido do que varrer da
+     esquerda, e não sugere uma direcção de leitura que não existe. */
   .nav__link::after {
     content: '';
     position: absolute;
     left: 0;
+    right: 0;
     bottom: 0;
-    height: 1.5px;
-    width: 0;
-    background: var(--color-teal);
-    transition: width var(--dur) var(--ease);
+    height: 1px;
+    background: currentColor;
+    scale: 0 1;
+    transition: scale var(--dur) var(--ease);
   }
 
-  .nav__link:hover {
-    color: var(--color-navy);
+  .nav__link:hover,
+  .nav__link:focus-visible {
+    color: var(--color-teal-deep);
+  }
+  .site-header:not([data-solido='true']) .nav__link:hover,
+  .site-header:not([data-solido='true']) .nav__link:focus-visible {
+    color: #fff;
   }
   .nav__link:hover::after,
+  .nav__link:focus-visible::after,
   .nav__link[aria-current='true']::after {
-    width: 100%;
+    scale: 1 1;
   }
 
   /* --- Ações --- */
@@ -207,12 +272,12 @@ const nav = [
 
   .header-cta {
     display: none;
-    min-height: 52px;
-    font-size: 0.875rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
+    min-height: 46px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding-inline: var(--spacing-s6);
+    padding-inline: var(--spacing-s5);
   }
 
   .menu-toggle {
@@ -286,6 +351,7 @@ const nav = [
     padding: calc(var(--header-h) + var(--spacing-s5)) var(--gutter) var(--spacing-s8);
     background-color: var(--color-paper);
     overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .menu-panel[hidden] {
@@ -300,16 +366,51 @@ const nav = [
     flex-direction: column;
   }
 
+  /* Em ecrã inteiro os itens têm espaço para serem títulos, não linhas de
+     menu: serifa grande, filete fino, e uma cascata de entrada. */
   .menu-panel__link {
     display: block;
-    padding: var(--spacing-s4) 0;
+    padding: clamp(var(--spacing-s4), 2.4vh, var(--spacing-s5)) 0;
     border-bottom: 1px solid var(--hairline-cool);
-    font-family: var(--font-sans);
-    font-size: 1.5rem;
-    font-weight: 500;
-    letter-spacing: var(--tracking-h3);
+    font-family: var(--font-serif);
+    font-size: clamp(1.75rem, 7vw, 2.5rem);
+    font-weight: 300;
+    letter-spacing: var(--tracking-h2);
     color: var(--color-navy);
     text-decoration: none;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .menu-panel__link:hover,
+  .menu-panel__link:focus-visible {
+    color: var(--color-teal-deep);
+  }
+
+  .menu-panel:not([hidden]) .menu-panel__list li {
+    animation: menu-entrar 500ms var(--ease) both;
+    animation-delay: calc(var(--i, 0) * 45ms + 60ms);
+  }
+
+  .menu-panel:not([hidden]) .menu-panel__actions {
+    animation: menu-entrar 500ms var(--ease) 300ms both;
+  }
+
+  @keyframes menu-entrar {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu-panel:not([hidden]) .menu-panel__list li,
+    .menu-panel:not([hidden]) .menu-panel__actions {
+      animation: none;
+    }
   }
 
   .menu-panel__actions {
@@ -318,12 +419,60 @@ const nav = [
     gap: var(--spacing-s3);
   }
 
+  /* O selector de idioma fica acima da morada, no fim do painel. */
+  .menu-panel__lang {
+    align-self: start;
+  }
+
   .menu-panel__meta {
     margin-top: auto;
   }
 </style>
 
 <script>
+  // Header sólido: a partir do momento em que o hero deixa de estar debaixo
+  // dele. Um sentinela invisível no topo evita ouvir o evento de scroll.
+  const header = document.querySelector<HTMLElement>('[data-header]');
+
+  // Duas razões independentes para o header estar sólido: já passámos o
+  // hero, ou o painel de menu está aberto por cima de um fundo claro.
+  // Guardadas em separado para que fechar o menu no topo da página devolva
+  // o header ao modo transparente em vez de o deixar preso em sólido.
+  let passouHero = false;
+  let menuAberto = false;
+
+  const aplicarHeader = () => {
+    header?.setAttribute('data-solido', String(passouHero || menuAberto));
+  };
+
+  /** Chamado pelo menu para forçar o fundo enquanto o painel está aberto. */
+  const marcarMenu = (aberto: boolean) => {
+    menuAberto = aberto;
+    aplicarHeader();
+  };
+
+  if (header) {
+    const sentinela = document.createElement('div');
+    sentinela.setAttribute('aria-hidden', 'true');
+    sentinela.style.cssText =
+      'position:absolute;top:0;left:0;width:1px;height:70svh;pointer-events:none;';
+    document.body.prepend(sentinela);
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(
+        ([e]) => {
+          passouHero = !e.isIntersecting;
+          aplicarHeader();
+        },
+        { threshold: 0 },
+      ).observe(sentinela);
+    } else {
+      passouHero = true;
+    }
+
+    aplicarHeader();
+  }
+
   const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
   const panel = document.querySelector<HTMLElement>('[data-menu-panel]');
 
@@ -331,9 +480,14 @@ const nav = [
   if (toggle && panel) {
     const setOpen = (open: boolean) => {
       toggle.setAttribute('aria-expanded', String(open));
+      // O painel é claro: com ele aberto o header não pode estar em modo
+      // "sobre a fotografia", ou a marca ficaria branca sobre bege.
+      marcarMenu(open);
       panel.hidden = !open;
       document.body.style.overflow = open ? 'hidden' : '';
-      toggle.querySelector('.sr-only')!.textContent = open ? 'Fechar menu' : 'Abrir menu';
+      // Os rótulos vêm do HTML (traduzidos no servidor), não de literais aqui.
+      const rotulo = open ? toggle.dataset.labelClose : toggle.dataset.labelOpen;
+      if (rotulo) toggle.querySelector('.sr-only')!.textContent = rotulo;
     };
 
     toggle.addEventListener('click', () => {
