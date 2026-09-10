@@ -29,14 +29,15 @@ const alta = await getImage({
 });
 
 /**
- * Hero fotográfico de ecrã inteiro, por baixo do header bege.
+ * Hero fotográfico de ecrã inteiro, com o header transparente por cima.
  *
  * A fotografia é o assunto: agulhas finas nas costas, em foco raso. O véu
  * é navy da marca (não preto neutro) — a pele fica quente no centro e a
  * imagem arrefece nas bordas, ligando-se à paleta do resto da página.
  *
- * O bloco de texto assenta acima do centro, para que as mãos e as agulhas
- * fiquem a respirar por baixo em vez de servirem de fundo ao parágrafo.
+ * A composição é assimétrica: o texto ocupa a coluna esquerda e assenta no
+ * terço inferior, deixando a direita e o alto da fotografia livres. O véu
+ * acompanha-o em diagonal, em vez de escurecer a imagem toda.
  *
  * A cédula profissional não vem aqui: vive na faixa `Credentials`, logo
  * a seguir, e repeti-la seria ruído.
@@ -70,22 +71,32 @@ const alta = await getImage({
   </div>
 
   <div class="hero__conteudo">
-    <h1 class="hero__titulo">
-      <Fragment set:html={t('hero.titleA').replace(/ /, '&nbsp;')} /><br
-        class="hero__quebra"
-      />{t('hero.titleB')}
-    </h1>
+    <div class="hero__texto">
+      <p class="hero__kicker">
+        <span class="hero__filete" aria-hidden="true"></span>
+        {t('hero.kicker')} · {site.city}
+      </p>
 
-    <p class="hero__sub">{t('hero.sub')}</p>
+      <h1 class="hero__titulo">
+        {t('hero.title')}<br />
+        <em>{t('hero.titleEm')}</em> {t('hero.titleEnd')}
+      </h1>
 
-    <div class="hero__acoes">
-      <a href="#marcacao" class="btn hero__btn">{t('common.book')}</a>
-      <a href={`tel:${site.phone.tel}`} class="btn hero__tel">
-        <Icon name="phone" size={17} />
-        {site.phone.display}
-      </a>
+      <p class="hero__sub">{t('hero.sub')}</p>
+
+      <div class="hero__acoes">
+        <a href="#marcacao" class="btn hero__btn">{t('common.book')}</a>
+        <a href={`tel:${site.phone.tel}`} class="btn hero__tel">
+          <Icon name="phone" size={17} />
+          {site.phone.display}
+        </a>
+      </div>
     </div>
   </div>
+
+  <a class="hero__descer" href="#servicos" aria-label={t('hero.scroll')}>
+    <span class="hero__descer-linha" aria-hidden="true"></span>
+  </a>
 </section>
 
 <style>
@@ -96,13 +107,18 @@ const alta = await getImage({
      880px evita o hero interminável num monitor 4K ao alto; o piso de 520px
      salva o telemóvel deitado.
      -------------------------------------------------------------------- */
+  /* O header é `fixed` e já não ocupa espaço no fluxo: o hero enche o ecrã
+     todo e reserva a altura dele no próprio padding-top. Cinematográfico de
+     propósito — 100svh, sem tecto: a fotografia é o assunto, e cortá-la a
+     880px tirava-lhe a escala. */
   .hero {
     position: relative;
     isolation: isolate;
     display: grid;
-    align-content: center;
-    min-height: max(520px, min(calc(100svh - var(--header-h)), 880px));
-    padding-block: clamp(3.5rem, 9vh, 6.5rem) clamp(4rem, 11vh, 8rem);
+    align-content: end;
+    min-height: max(560px, 100svh);
+    padding-block: calc(var(--header-h) + clamp(2rem, 6vh, 4rem))
+      clamp(4.5rem, 12vh, 8.5rem);
     /* Média da fotografia, escurecida: se a imagem tardar, não há flash. */
     background-color: #2e2019;
     overflow: hidden;
@@ -135,58 +151,100 @@ const alta = await getImage({
      1. leito — escurece só a mancha onde o texto assenta;
      2. bordas — encosta ao header em cima e entrega à faixa branca em baixo;
      3. vinheta — fecha os cantos e tira o brilho da pele desfocada. */
+  /* O véu deixou de ser um leito central que escurecia a imagem toda. Como
+     o texto vive agora no canto inferior esquerdo, a sombra vai buscá-lo
+     ali: pesa à esquerda e em baixo, e larga a fotografia à direita, que
+     fica visível de verdade em vez de ficar debaixo de cinzento. */
   .hero__veu {
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(
-        84% 70% at 50% 44%,
-        rgba(3, 18, 42, 0.68) 0%,
-        rgba(3, 18, 42, 0.52) 58%,
-        rgba(3, 18, 42, 0) 100%
+      linear-gradient(
+        100deg,
+        rgba(3, 18, 42, 0.78) 0%,
+        rgba(3, 18, 42, 0.56) 32%,
+        rgba(3, 18, 42, 0.16) 62%,
+        rgba(3, 18, 42, 0.06) 100%
       ),
       linear-gradient(
         180deg,
-        rgba(3, 18, 42, 0.6) 0%,
-        rgba(3, 18, 42, 0.14) 30%,
-        rgba(3, 18, 42, 0.16) 58%,
-        rgba(3, 18, 42, 0.72) 100%
-      ),
-      radial-gradient(
-        128% 104% at 50% 42%,
-        rgba(3, 18, 42, 0) 32%,
-        rgba(3, 18, 42, 0.56) 100%
+        rgba(3, 18, 42, 0.44) 0%,
+        rgba(3, 18, 42, 0) 26%,
+        rgba(3, 18, 42, 0) 52%,
+        rgba(3, 18, 42, 0.6) 100%
       );
   }
 
   /* --- Conteúdo -------------------------------------------------------- */
+  /* Grelha assimétrica: o texto ocupa a coluna da esquerda e a direita fica
+     deliberadamente vazia, para a fotografia respirar. Não é espaço
+     desperdiçado — é o que separa uma composição de um texto centrado. */
   .hero__conteudo {
     position: relative;
     z-index: 1;
+    display: grid;
     width: 100%;
-    max-width: 1280px;
+    max-width: var(--container);
     margin-inline: auto;
     padding-inline: var(--gutter);
-    text-align: center;
     color: var(--color-ivory);
+  }
+
+  @media (min-width: 900px) {
+    .hero__conteudo {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    }
+  }
+
+  .hero__texto {
+    max-width: 46rem;
+  }
+
+  /* Assinatura: um filete curto antes da linha de contexto. */
+  .hero__kicker {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s3);
+    margin: 0 0 clamp(1.25rem, 2.4vw, 1.75rem);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-ivory) 88%, transparent);
+  }
+
+  .hero__filete {
+    width: clamp(28px, 5vw, 56px);
+    height: 1px;
+    flex: none;
+    background: var(--color-teal-soft);
   }
 
   /* A ousadia gasta-se toda aqui: a serifa da marca em tamanho de cartaz,
      leve, com a entrelinha fechada para as duas linhas formarem bloco. */
+  /* A ousadia gasta-se toda aqui. O itálico na segunda linha é o único
+     ornamento — dá inflexão sem acrescentar peça. */
   .hero__titulo {
     font-family: var(--font-serif);
     font-weight: 500;
-    font-size: clamp(2.125rem, 6.2vw, 5.5rem);
+    font-size: clamp(2.75rem, 7.4vw, 6.5rem);
     line-height: 0.98;
-    letter-spacing: -0.012em;
+    letter-spacing: -0.008em;
     text-wrap: balance;
     color: var(--color-ivory);
-    text-shadow: 0 2px 44px rgba(3, 18, 42, 0.55);
+    text-shadow: 0 2px 44px rgba(3, 18, 42, 0.45);
+  }
+
+  .hero__titulo em {
+    font-style: italic;
+    font-weight: 500;
+    color: color-mix(in srgb, var(--color-teal-soft) 62%, var(--color-ivory));
   }
 
   .hero__sub {
-    max-width: 52ch;
-    margin: clamp(1.25rem, 2.4vw, 2rem) auto 0;
+    max-width: 42ch;
+    margin: clamp(1.5rem, 2.8vw, 2.25rem) 0 0;
     font-size: clamp(1.0625rem, 0.5vw + 0.95rem, 1.1875rem);
     line-height: 1.6;
     color: color-mix(in srgb, var(--color-ivory) 93%, transparent);
@@ -197,9 +255,51 @@ const alta = await getImage({
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
     gap: var(--spacing-s3);
-    margin-top: clamp(1.75rem, 3vw, 2.75rem);
+    margin-top: clamp(2rem, 3.4vw, 3rem);
+  }
+
+  /* --- Convite a descer: uma linha fina que pulsa devagar. --- */
+  .hero__descer {
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    bottom: clamp(1.25rem, 3vh, 2rem);
+    translate: -50% 0;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+  }
+
+  .hero__descer-linha {
+    width: 1px;
+    height: 34px;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      color-mix(in srgb, var(--color-ivory) 78%, transparent)
+    );
+    transform-origin: top;
+    animation: hv-descer 2600ms var(--ease) infinite;
+  }
+
+  @keyframes hv-descer {
+    0%,
+    100% {
+      scale: 1 0.4;
+      opacity: 0.35;
+    }
+    50% {
+      scale: 1 1;
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 899px) {
+    .hero__descer {
+      display: none;
+    }
   }
 
   .hero__btn {
@@ -236,17 +336,20 @@ const alta = await getImage({
   /* --- O momento único de movimento -------------------------------------
      A fotografia assenta devagar enquanto as três peças de texto sobem em
      cascata. Uma vez, na carga da página, e mais nada. */
-  .hero__conteudo > * {
+  .hero__texto > * {
     animation: hv-subir 900ms var(--ease) both;
   }
-  .hero__titulo {
+  .hero__kicker {
     animation-delay: 120ms;
   }
+  .hero__titulo {
+    animation-delay: 220ms;
+  }
   .hero__sub {
-    animation-delay: 300ms;
+    animation-delay: 400ms;
   }
   .hero__acoes {
-    animation-delay: 440ms;
+    animation-delay: 540ms;
   }
 
   @keyframes hv-assentar {
@@ -278,12 +381,8 @@ const alta = await getImage({
      maré que sobe. */
   @media (max-width: 767px), (max-aspect-ratio: 4 / 5) {
     .hero {
-      align-content: end;
-      padding-block: clamp(2rem, 8vh, 3.5rem) clamp(2.5rem, 7vh, 4rem);
-    }
-
-    .hero__quebra {
-      display: none;
+      padding-block: calc(var(--header-h) + clamp(1.5rem, 5vh, 3rem))
+        clamp(3rem, 8vh, 4.5rem);
     }
 
     .hero__img {
@@ -319,7 +418,8 @@ const alta = await getImage({
 
   @media (prefers-reduced-motion: reduce) {
     .hero__img,
-    .hero__conteudo > * {
+    .hero__texto > *,
+    .hero__descer-linha {
       animation: none;
     }
   }

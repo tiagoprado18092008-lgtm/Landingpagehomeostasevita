@@ -40,10 +40,19 @@ const pt = {
   'nav.closeMenu': 'Fechar menu',
 
   // --- Hero ---
+  /* O enunciado do hero deixou de repetir o nome da clínica — esse vive no
+     header, no emblema e na linha de contexto por cima do título. Aqui
+     diz-se o que a pessoa vem procurar. `titleEm` sai em itálico.
+     titleA/titleB ficam: continuam a servir o <title> da página. */
+  'hero.kicker': 'Medicina Tradicional Chinesa',
+  'hero.title': 'Equilíbrio que',
+  'hero.titleEm': 'se constrói',
+  'hero.titleEnd': 'consigo',
+  'hero.scroll': 'Ver os tratamentos',
   'hero.titleA': 'Homeostase Vita — Clínica',
   'hero.titleB': ' de Medicina Tradicional Chinesa',
   'hero.sub':
-    'Uma clínica integrativa na Maia, com acompanhamento individual para a saúde física e emocional, dores persistentes e equilíbrio duradouro.',
+    'Clínica integrativa na Maia. Avaliação individual e acompanhamento continuado para dores persistentes, saúde emocional e um equilíbrio que dura.',
   'hero.imgAlt':
     'Agulhas de acupuntura a serem colocadas nas costas de uma pessoa, durante uma sessão.',
 
@@ -337,10 +346,15 @@ const en: Record<UiKey, string> = {
   'nav.closeMenu': 'Close menu',
 
   // --- Hero ---
+  'hero.kicker': 'Traditional Chinese Medicine',
+  'hero.title': 'Balance,',
+  'hero.titleEm': 'built with',
+  'hero.titleEnd': 'you',
+  'hero.scroll': 'See the treatments',
   'hero.titleA': 'Homeostase Vita — Traditional',
   'hero.titleB': ' Chinese Medicine clinic',
   'hero.sub':
-    'An integrative clinic in Maia, offering individual care for physical and emotional health, persistent pain and lasting balance.',
+    'An integrative clinic in Maia. Individual assessment and continued care for persistent pain, emotional health and balance that lasts.',
   'hero.imgAlt':
     'Acupuncture needles being placed on a person’s back during a session.',
 
