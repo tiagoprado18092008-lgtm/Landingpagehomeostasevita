@@ -1,0 +1,228 @@
+---
+import { site } from '../config/site';
+import servicos from '../content/services.json';
+import Ambient from './Ambient.astro';
+import Icon from './Icon.astro';
+
+/**
+ * Sem fotografia — as únicas fotografias da página são as dos tratamentos.
+ * A credibilidade vem da cédula, da biografia e das técnicas praticadas.
+ */
+const { firstName, lastName, bio } = site.practitioner;
+
+const tecnicas = servicos.map((s) => s.name);
+---
+
+<section class="section surface-cloud terapeuta tem-ambiente" id="terapeuta" aria-labelledby="terapeuta-titulo">
+  <Ambient variant="canto" opacity={0.55} />
+
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow reveal">Quem cuida de si</p>
+      <h2 class="h2 reveal" id="terapeuta-titulo">A pessoa por trás de cada consulta</h2>
+    </div>
+
+    <div class="terapeuta__cartao reveal reveal--scale">
+      <div class="terapeuta__id">
+        <span class="terapeuta__inicial" aria-hidden="true">{firstName.charAt(0)}</span>
+        <p class="terapeuta__nome">
+          {firstName}{' '}
+          {lastName ?? <span class="pendente">⟨apelido⟩</span>}
+        </p>
+        <p class="terapeuta__papel">Terapeuta de Medicina Tradicional Chinesa</p>
+        <p class="terapeuta__cedula">
+          <Icon name="check" size={15} />
+          Cédula ACSS n.º {site.credentials.acss}
+        </p>
+      </div>
+
+      <div class="terapeuta__corpo">
+        {
+          bio ? (
+            <p class="terapeuta__bio">{bio}</p>
+          ) : (
+            <div class="terapeuta__pendente">
+              <p class="terapeuta__pendente-titulo">
+                <Icon name="alert" size={17} class="terapeuta__alerta" />
+                Biografia por confirmar
+              </p>
+              <p class="note">
+                ⟨TODO: 2 a 4 frases sobre a formação e a abordagem da Teresa, a validar
+                pela clínica antes de publicar. Não deve incluir anos de experiência nem
+                formações que não estejam confirmadas.⟩
+              </p>
+            </div>
+          )
+        }
+
+        <div class="terapeuta__tecnicas">
+          <p class="terapeuta__tecnicas-titulo">Técnicas praticadas</p>
+          <ul>
+            {tecnicas.map((t) => <li>{t}</li>)}
+          </ul>
+        </div>
+
+        <a href="#marcacao" class="btn btn-primary terapeuta__cta">Marcar consulta</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Esta secção troca o dourado do eyebrow pelo verde do emblema. */
+  .section-head .eyebrow {
+    color: var(--color-green-deep);
+  }
+
+  .terapeuta__cartao {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 3rem);
+    padding: clamp(1.75rem, 3.5vw, 3rem);
+    border-radius: var(--radius-xl);
+    background-color: #fff;
+  }
+
+  /* --- Identificação --- */
+  .terapeuta__id {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s2);
+  }
+
+  /* A inicial faz o papel do retrato, sem fingir que há uma fotografia. */
+  .terapeuta__inicial {
+    display: grid;
+    place-items: center;
+    width: 84px;
+    height: 84px;
+    margin-bottom: var(--spacing-s3);
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 32% 28%,
+      var(--color-navy) 0%,
+      var(--color-navy-deep) 100%
+    );
+    color: var(--color-ivory);
+    font-size: 2rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    box-shadow: 0 0 0 1px rgba(16, 88, 120, 0.28);
+  }
+
+  .terapeuta__nome {
+    font-size: clamp(1.5rem, 2.2vw, 1.875rem);
+    font-weight: 500;
+    letter-spacing: var(--tracking-h2);
+    color: var(--color-navy);
+  }
+
+  .pendente {
+    font-style: italic;
+    font-weight: 400;
+    font-size: 0.7em;
+    color: var(--color-teal-deep);
+  }
+
+  .terapeuta__papel {
+    font-size: 0.9375rem;
+    color: var(--color-muted);
+  }
+
+  .terapeuta__cedula {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-s2);
+    align-self: flex-start;
+    margin-top: var(--spacing-s3);
+    padding: 6px var(--spacing-s4);
+    border-radius: var(--radius-pill);
+    background-color: var(--color-ivory);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-navy);
+  }
+
+  .terapeuta__cedula :global(svg) {
+    flex: none;
+    color: var(--color-teal-deep);
+  }
+
+  /* --- Corpo --- */
+  .terapeuta__corpo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s5);
+  }
+
+  .terapeuta__bio {
+    font-size: var(--text-lead);
+    line-height: 1.65;
+    color: var(--color-muted);
+  }
+
+  .terapeuta__pendente {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s2);
+    padding: var(--spacing-s5);
+    border: 1px dashed var(--hairline);
+    border-radius: var(--radius-md);
+    background-color: var(--color-ivory);
+  }
+
+  .terapeuta__pendente-titulo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s2);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--color-teal-deep);
+  }
+
+  .terapeuta__pendente-titulo :global(.terapeuta__alerta) {
+    flex: none;
+  }
+
+  .terapeuta__tecnicas {
+    padding-top: var(--spacing-s5);
+    border-top: 1px solid var(--hairline-cool);
+  }
+
+  .terapeuta__tecnicas-titulo {
+    margin-bottom: var(--spacing-s3);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .terapeuta__tecnicas ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-s2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .terapeuta__tecnicas li {
+    padding: 6px var(--spacing-s4);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-pill);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-navy);
+  }
+
+  .terapeuta__cta {
+    align-self: flex-start;
+  }
+
+  @media (min-width: 860px) {
+    .terapeuta__cartao {
+      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+      align-items: start;
+    }
+  }
+</style>

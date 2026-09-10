@@ -1,0 +1,322 @@
+---
+import { getImage } from 'astro:assets';
+import { site } from '../config/site';
+import Icon from './Icon.astro';
+import fotoLarga from '../assets/img/hero-acupuntura.jpg';
+import fotoAlta from '../assets/img/hero-acupuntura-vertical.jpg';
+
+/* Arte dirigida: o mesmo momento, dois enquadramentos.
+   Em ecra largo a fotografia horizontal; no telemovel um recorte vertical
+   feito de proposito, porque a horizontal cortada a 390px so mostrava
+   desfoque e deixava de se perceber que aquilo e acupuntura. */
+const larga = await getImage({
+  src: fotoLarga,
+  widths: [1080, 1440, 1920, 2600],
+  format: 'webp',
+  quality: 78,
+});
+const alta = await getImage({
+  src: fotoAlta,
+  widths: [480, 720, 900, 1200, 1500, 1800],
+  format: 'webp',
+  quality: 78,
+});
+
+/**
+ * Hero fotográfico de ecrã inteiro, por baixo do header bege.
+ *
+ * A fotografia é o assunto: agulhas finas nas costas, em foco raso. O véu
+ * é navy da marca (não preto neutro) — a pele fica quente no centro e a
+ * imagem arrefece nas bordas, ligando-se à paleta do resto da página.
+ *
+ * O bloco de texto assenta acima do centro, para que as mãos e as agulhas
+ * fiquem a respirar por baixo em vez de servirem de fundo ao parágrafo.
+ *
+ * A cédula profissional não vem aqui: vive na faixa `Credentials`, logo
+ * a seguir, e repeti-la seria ruído.
+ */
+---
+
+<section class="hero" id="topo">
+  <div class="hero__foto">
+    <picture>
+      <source
+        media="(min-width: 768px) and (min-aspect-ratio: 4 / 5)"
+        srcset={larga.srcSet.attribute}
+        sizes="100vw"
+        width={larga.attributes.width}
+        height={larga.attributes.height}
+      />
+      <img
+        class="hero__img"
+        src={alta.src}
+        srcset={alta.srcSet.attribute}
+        sizes="100vw"
+        width="1800"
+        height="2903"
+        alt="Agulhas de acupuntura a serem colocadas nas costas de uma pessoa, durante uma sessão."
+        loading="eager"
+        fetchpriority="high"
+        decoding="sync"
+      />
+    </picture>
+    <div class="hero__veu" aria-hidden="true"></div>
+  </div>
+
+  <div class="hero__conteudo">
+    <h1 class="hero__titulo">
+      Homeostase&nbsp;Vita — Clínica<br class="hero__quebra" /> de Medicina
+      Tradicional Chinesa
+    </h1>
+
+    <p class="hero__sub">
+      Uma clínica integrativa na Maia, com acompanhamento individual para a
+      saúde física e emocional, dores persistentes e equilíbrio duradouro.
+    </p>
+
+    <div class="hero__acoes">
+      <a href="#marcacao" class="btn hero__btn">Marcar consulta</a>
+      <a href={`tel:${site.phone.tel}`} class="btn hero__tel">
+        <Icon name="phone" size={17} />
+        {site.phone.display}
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* -----------------------------------------------------------------------
+     Caixa
+     O header é sticky e está em fluxo, por isso o hero começa mesmo por
+     baixo dele: basta descontar a sua altura para encher o ecrã. O tecto de
+     880px evita o hero interminável num monitor 4K ao alto; o piso de 520px
+     salva o telemóvel deitado.
+     -------------------------------------------------------------------- */
+  .hero {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    align-content: center;
+    min-height: max(520px, min(calc(100svh - var(--header-h)), 880px));
+    padding-block: clamp(3.5rem, 9vh, 6.5rem) clamp(4rem, 11vh, 8rem);
+    /* Média da fotografia, escurecida: se a imagem tardar, não há flash. */
+    background-color: #2e2019;
+    overflow: hidden;
+  }
+
+  /* --- Fotografia ------------------------------------------------------ */
+  .hero__foto {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  .hero__foto picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* O enquadramento sobe: as mãos e as agulhas caem no terço inferior,
+       por baixo do texto, em vez de ficarem tapadas por ele. */
+    object-position: 50% 42%;
+    animation: hv-assentar 2600ms var(--ease) both;
+  }
+
+  /* Três camadas, cada uma com um trabalho:
+     1. leito — escurece só a mancha onde o texto assenta;
+     2. bordas — encosta ao header em cima e entrega à faixa branca em baixo;
+     3. vinheta — fecha os cantos e tira o brilho da pele desfocada. */
+  .hero__veu {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(
+        84% 70% at 50% 44%,
+        rgba(3, 18, 42, 0.68) 0%,
+        rgba(3, 18, 42, 0.52) 58%,
+        rgba(3, 18, 42, 0) 100%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(3, 18, 42, 0.6) 0%,
+        rgba(3, 18, 42, 0.14) 30%,
+        rgba(3, 18, 42, 0.16) 58%,
+        rgba(3, 18, 42, 0.72) 100%
+      ),
+      radial-gradient(
+        128% 104% at 50% 42%,
+        rgba(3, 18, 42, 0) 32%,
+        rgba(3, 18, 42, 0.56) 100%
+      );
+  }
+
+  /* --- Conteúdo -------------------------------------------------------- */
+  .hero__conteudo {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    text-align: center;
+    color: var(--color-ivory);
+  }
+
+  /* A ousadia gasta-se toda aqui: a serifa da marca em tamanho de cartaz,
+     leve, com a entrelinha fechada para as duas linhas formarem bloco. */
+  .hero__titulo {
+    font-family: var(--font-wordmark);
+    font-weight: 300;
+    font-size: clamp(2.125rem, 6.2vw, 5.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+    color: var(--color-ivory);
+    text-shadow: 0 2px 44px rgba(3, 18, 42, 0.55);
+  }
+
+  .hero__sub {
+    max-width: 52ch;
+    margin: clamp(1.25rem, 2.4vw, 2rem) auto 0;
+    font-size: clamp(1.0625rem, 0.5vw + 0.95rem, 1.1875rem);
+    line-height: 1.6;
+    color: color-mix(in srgb, var(--color-ivory) 93%, transparent);
+    text-shadow: 0 1px 24px rgba(3, 18, 42, 0.6);
+  }
+
+  .hero__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-s3);
+    margin-top: clamp(1.75rem, 3vw, 2.75rem);
+  }
+
+  .hero__btn {
+    padding-inline: clamp(var(--spacing-s7), 5vw, 3.5rem);
+    background-color: var(--color-ivory);
+    color: var(--color-navy-deep);
+    box-shadow: 0 18px 44px -20px rgba(3, 18, 42, 0.85);
+  }
+  .hero__btn:hover {
+    background-color: #fff;
+    --btn-y: -2px;
+  }
+  .hero__btn:active {
+    --btn-y: 0px;
+  }
+
+  .hero__tel {
+    border-color: color-mix(in srgb, var(--color-ivory) 45%, transparent);
+    color: var(--color-ivory);
+    font-weight: 500;
+    backdrop-filter: blur(2px);
+  }
+  .hero__tel:hover {
+    border-color: var(--color-ivory);
+    background-color: color-mix(in srgb, var(--color-ivory) 12%, transparent);
+    --btn-y: -2px;
+  }
+
+  .hero :global(:focus-visible) {
+    outline-color: var(--color-ivory);
+    outline-offset: 3px;
+  }
+
+  /* --- O momento único de movimento -------------------------------------
+     A fotografia assenta devagar enquanto as três peças de texto sobem em
+     cascata. Uma vez, na carga da página, e mais nada. */
+  .hero__conteudo > * {
+    animation: hv-subir 900ms var(--ease) both;
+  }
+  .hero__titulo {
+    animation-delay: 120ms;
+  }
+  .hero__sub {
+    animation-delay: 300ms;
+  }
+  .hero__acoes {
+    animation-delay: 440ms;
+  }
+
+  @keyframes hv-assentar {
+    from {
+      transform: scale(1.07);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes hv-subir {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* --- Ecrãs estreitos --------------------------------------------------
+     A quebra forçada só serve o título de duas linhas largas; abaixo de
+     768px o texto reparte-se sozinho, com equilíbrio. */
+  /* No telemóvel a leitura inverte-se: a fotografia ocupa a metade de cima,
+     onde as agulhas se veem inteiras, e o texto assenta em baixo, sobre a
+     zona escura. O véu deixa de ser um leito central e passa a ser uma
+     maré que sobe. */
+  @media (max-width: 767px), (max-aspect-ratio: 4 / 5) {
+    .hero {
+      align-content: end;
+      padding-block: clamp(2rem, 8vh, 3.5rem) clamp(2.5rem, 7vh, 4rem);
+    }
+
+    .hero__quebra {
+      display: none;
+    }
+
+    .hero__img {
+      object-position: 50% 16%;
+    }
+
+    .hero__veu {
+      background: linear-gradient(
+        180deg,
+        rgba(3, 18, 42, 0.44) 0%,
+        rgba(3, 18, 42, 0.12) 20%,
+        rgba(3, 18, 42, 0.5) 40%,
+        rgba(3, 18, 42, 0.74) 56%,
+        rgba(3, 18, 42, 0.88) 76%,
+        rgba(3, 18, 42, 0.92) 100%
+      );
+    }
+
+    .hero__sub {
+      max-width: 38ch;
+    }
+
+  }
+
+  /* Só onde os dois botões deixam de caber lado a lado é que o principal
+     ocupa a linha toda — num tablet ao alto uma pílula de 750px seria
+     estranha. */
+  @media (max-width: 520px) {
+    .hero__acoes .hero__btn {
+      flex: 1 1 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__img,
+    .hero__conteudo > * {
+      animation: none;
+    }
+  }
+</style>

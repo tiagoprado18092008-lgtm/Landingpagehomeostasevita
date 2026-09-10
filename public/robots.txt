@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# TODO(deploy): confirmar que o domínio abaixo é o final.
+Sitemap: https://homeostasevita.pt/sitemap-index.xml

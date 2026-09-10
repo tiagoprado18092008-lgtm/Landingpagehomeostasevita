@@ -1,0 +1,616 @@
+---
+import { site } from '../config/site';
+import Icon from './Icon.astro';
+import Emblem from './Emblem.astro';
+
+/**
+ * Contacto a um toque, em todas as resoluções.
+ *
+ * O botão do canto abre um painel de conversa que recolhe a pergunta e a
+ * entrega ao WhatsApp já escrita. Não há respostas automáticas nem modelo de
+ * linguagem do lado de cá: o assistente cumprimenta, recebe a mensagem e passa
+ * a conversa para onde ela é de facto respondida — por isso o painel diz isso
+ * à pessoa antes de ela escrever.
+ *
+ * Sem JS o botão continua a ser o link directo de sempre para o WhatsApp.
+ */
+
+/** Aberturas mais pedidas. O rótulo é curto; o texto é o que segue na mensagem. */
+const respostas = [
+  { label: 'Marcar consulta', texto: 'Olá! Gostaria de marcar uma consulta.' },
+  {
+    label: 'Como é a primeira consulta?',
+    texto: 'Olá! Queria saber como funciona a primeira consulta.',
+  },
+  { label: 'Onde ficam?', texto: 'Olá! Podem indicar-me a morada da clínica?' },
+];
+---
+
+<div class="chat" data-chat-root data-wa={site.phone.whatsapp}>
+  <section
+    id="chat-panel"
+    class="panel"
+    data-chat-panel
+    hidden
+    role="dialog"
+    aria-label={`Conversa com a ${site.name}`}
+  >
+    <header class="panel__top">
+      <span class="panel__avatar">
+        <Emblem size={30} />
+      </span>
+      <span class="panel__id">
+        <strong class="panel__name">Assistente {site.name}</strong>
+        <span class="panel__status">Online</span>
+      </span>
+      <button type="button" class="panel__close" data-chat-close aria-label="Fechar conversa">
+        <Icon name="close" size={18} />
+      </button>
+    </header>
+
+    <div class="panel__body" data-chat-log>
+      <p class="stamp" data-chat-stamp aria-hidden="true"></p>
+
+      <p class="bubble bubble--them">Olá, como podemos ajudar? 👋</p>
+      <p class="bubble bubble--them bubble--soft">
+        Escreva a sua mensagem e continuamos no WhatsApp.
+      </p>
+
+      <div class="quick" data-chat-quick>
+        {
+          respostas.map((r) => (
+            <button type="button" class="quick__btn" data-texto={r.texto}>
+              {r.label}
+            </button>
+          ))
+        }
+      </div>
+
+      <p class="hint" data-chat-hint role="status" hidden></p>
+
+      {/* O CSS de um componente Astro só alcança elementos que passaram pelo
+          compilador. As bolhas de quem escreve nascem em JS: clonam-se daqui
+          para herdarem o atributo de scope. */}
+      <template data-chat-modelo><p class="bubble bubble--me"></p></template>
+    </div>
+
+    <form class="panel__foot" data-chat-form novalidate>
+      <label class="sr-only" for="chat-msg">A sua mensagem</label>
+      <input
+        id="chat-msg"
+        class="panel__input"
+        data-chat-input
+        type="text"
+        name="mensagem"
+        autocomplete="off"
+        placeholder="Escreva a sua mensagem…"
+      />
+      <button type="submit" class="panel__send" data-chat-send aria-label="Enviar por WhatsApp">
+        <Icon name="send" size={20} />
+      </button>
+    </form>
+  </section>
+
+  <a
+    href={site.phone.whatsapp}
+    class="fab"
+    data-chat-launcher
+    rel="noopener"
+    aria-label="Falar connosco por WhatsApp"
+  >
+    <span class="fab__icon fab__icon--chat"><Icon name="whatsapp" size={22} /></span>
+    <span class="fab__icon fab__icon--fechar"><Icon name="close" size={22} /></span>
+    <span class="fab__label">Falar connosco</span>
+  </a>
+</div>
+
+<style>
+  .chat {
+    position: fixed;
+    right: clamp(16px, 3vw, 28px);
+    bottom: clamp(16px, 3vw, 28px);
+    z-index: 70;
+    transition:
+      translate var(--dur) var(--ease),
+      opacity var(--dur) var(--ease);
+  }
+
+  /* Recolhido: sai do caminho do botão de envio do formulário, sem
+     desaparecer do fluxo de foco. */
+  .chat[data-tucked] {
+    translate: 0 140%;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* ---- Botão do canto -------------------------------------------------- */
+
+  .fab {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-s2);
+    min-height: 52px;
+    padding: 0 var(--spacing-s5);
+    border-radius: var(--radius-pill);
+    background-color: #128c7e;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    box-shadow: var(--shadow-3);
+    transition:
+      background-color var(--dur) var(--ease),
+      translate var(--dur) var(--ease);
+  }
+
+  .fab:hover {
+    background-color: #0e7367;
+    translate: 0 -2px;
+  }
+
+  .fab__icon {
+    display: inline-flex;
+  }
+
+  .fab__icon--fechar {
+    display: none;
+  }
+
+  /* Aberto: o botão fecha-se numa pastilha redonda com o X. */
+  .fab[aria-expanded='true'] {
+    width: 52px;
+    padding: 0;
+    justify-content: center;
+    background-color: var(--color-navy);
+  }
+
+  .fab[aria-expanded='true']:hover {
+    background-color: var(--color-navy-deep);
+  }
+
+  .fab[aria-expanded='true'] .fab__icon--chat,
+  .fab[aria-expanded='true'] .fab__label {
+    display: none;
+  }
+
+  .fab[aria-expanded='true'] .fab__icon--fechar {
+    display: inline-flex;
+  }
+
+  /* ---- Painel ---------------------------------------------------------- */
+
+  .panel {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + var(--spacing-s3));
+    display: flex;
+    flex-direction: column;
+    width: min(360px, calc(100vw - 2 * clamp(16px, 3vw, 28px)));
+    max-height: min(540px, calc(100dvh - 9rem));
+    overflow: hidden;
+    border: 1px solid var(--hairline-cool);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-paper);
+    box-shadow: var(--shadow-3);
+    transform-origin: 100% 100%;
+    opacity: 0;
+    scale: 0.96;
+    translate: 0 8px;
+    transition:
+      opacity var(--dur) var(--ease),
+      scale var(--dur) var(--ease),
+      translate var(--dur) var(--ease);
+  }
+
+  .panel[data-open] {
+    opacity: 1;
+    scale: 1;
+    translate: 0;
+  }
+
+  .panel__top {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s3);
+    padding: var(--spacing-s4);
+    background-color: var(--color-navy);
+    color: #fff;
+  }
+
+  .panel__avatar {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-paper);
+  }
+
+  .panel__id {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .panel__name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .panel__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .panel__status::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--color-green);
+  }
+
+  .panel__close {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.75);
+    cursor: pointer;
+    transition:
+      background-color var(--dur-fast) var(--ease),
+      color var(--dur-fast) var(--ease);
+  }
+
+  .panel__close:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+
+  .panel__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-s2);
+    padding: var(--spacing-s5) var(--spacing-s4);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background-color: var(--color-cloud);
+  }
+
+  .stamp {
+    align-self: center;
+    margin-bottom: var(--spacing-s2);
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    background-color: rgba(255, 255, 255, 0.7);
+    color: var(--color-muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+  }
+
+  .bubble {
+    max-width: 88%;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    box-shadow: var(--shadow-1);
+    overflow-wrap: anywhere;
+  }
+
+  .bubble--them {
+    align-self: flex-start;
+    border-bottom-left-radius: 8px;
+    background-color: #fff;
+    color: var(--text);
+  }
+
+  /* Segunda linha do cumprimento: diz para onde vai a mensagem, sem competir
+     com o Olá em peso visual. */
+  .bubble--soft {
+    color: var(--color-muted);
+    font-size: 0.875rem;
+  }
+
+  .bubble--me {
+    align-self: flex-end;
+    border-bottom-right-radius: 8px;
+    background-color: var(--color-navy);
+    color: #fff;
+  }
+
+  .quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-s2);
+    margin-top: var(--spacing-s2);
+  }
+
+  .quick__btn {
+    padding: 7px 14px;
+    border: 1px solid var(--hairline-cool);
+    border-radius: var(--radius-pill);
+    background-color: transparent;
+    color: var(--color-navy);
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1.3;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background-color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease);
+  }
+
+  .quick__btn:hover {
+    background-color: #fff;
+    border-color: var(--accent);
+  }
+
+  .hint {
+    align-self: center;
+    margin-top: var(--spacing-s2);
+    color: var(--color-muted);
+    font-size: 0.8125rem;
+    text-align: center;
+  }
+
+  .hint :global(a) {
+    color: var(--color-teal-deep);
+  }
+
+  .panel__foot {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s2);
+    padding: var(--spacing-s3);
+    border-top: 1px solid var(--hairline-cool);
+    background-color: var(--color-paper);
+  }
+
+  .panel__input {
+    flex: 1;
+    min-width: 0;
+    height: 44px;
+    padding: 0 var(--spacing-s4);
+    border: 1px solid var(--hairline-cool);
+    border-radius: var(--radius-pill);
+    background-color: #fff;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.9375rem;
+  }
+
+  .panel__input::placeholder {
+    color: var(--color-muted);
+  }
+
+  .panel__input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .panel__send {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background-color: #128c7e;
+    color: #fff;
+    cursor: pointer;
+    transition:
+      background-color var(--dur-fast) var(--ease),
+      opacity var(--dur-fast) var(--ease);
+  }
+
+  .panel__send:hover:not(:disabled) {
+    background-color: #0e7367;
+  }
+
+  .panel__send:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 520px) {
+    .fab {
+      width: 52px;
+      padding: 0;
+      justify-content: center;
+    }
+
+    .fab__label {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chat,
+    .panel,
+    .fab {
+      transition-duration: 1ms;
+    }
+
+    .panel {
+      scale: 1;
+      translate: 0;
+    }
+  }
+</style>
+
+<script>
+  const raiz = document.querySelector<HTMLElement>('[data-chat-root]');
+  const painel = document.querySelector<HTMLElement>('[data-chat-panel]');
+  const botao = document.querySelector<HTMLAnchorElement>('[data-chat-launcher]');
+  const fechar = document.querySelector<HTMLButtonElement>('[data-chat-close]');
+  const formulario = document.querySelector<HTMLFormElement>('[data-chat-form]');
+  const campo = document.querySelector<HTMLInputElement>('[data-chat-input]');
+  const enviar = document.querySelector<HTMLButtonElement>('[data-chat-send]');
+  const registo = document.querySelector<HTMLElement>('[data-chat-log]');
+  const carimbo = document.querySelector<HTMLElement>('[data-chat-stamp]');
+  const atalhos = document.querySelector<HTMLElement>('[data-chat-quick]');
+  const aviso = document.querySelector<HTMLElement>('[data-chat-hint]');
+  const modelo = document.querySelector<HTMLTemplateElement>('[data-chat-modelo]');
+
+  if (
+    raiz &&
+    painel &&
+    botao &&
+    fechar &&
+    formulario &&
+    campo &&
+    enviar &&
+    registo &&
+    carimbo &&
+    aviso &&
+    modelo
+  ) {
+    const numero = raiz.dataset.wa ?? '';
+    let aberto = false;
+    let temporizador = 0;
+
+    const sincronizar = () => {
+      enviar.disabled = campo.value.trim() === '';
+    };
+
+    // Só agora o botão passa a ser um comutador: sem JS ficou o link directo.
+    botao.setAttribute('aria-expanded', 'false');
+    botao.setAttribute('aria-controls', 'chat-panel');
+
+    const abrir = () => {
+      aberto = true;
+      window.clearTimeout(temporizador);
+      painel.hidden = false;
+      // A transição só pega depois de o elemento sair de display:none.
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => painel.setAttribute('data-open', '')),
+      );
+      botao.setAttribute('aria-expanded', 'true');
+      raiz.removeAttribute('data-tucked');
+      // Hora local de quem visita — por isso só se escreve no primeiro abrir.
+      if (!carimbo.textContent) {
+        carimbo.textContent = new Date().toLocaleTimeString('pt-PT', {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+      }
+      campo.focus({ preventScroll: true });
+    };
+
+    const encerrar = (devolverFoco = true) => {
+      aberto = false;
+      painel.removeAttribute('data-open');
+      botao.setAttribute('aria-expanded', 'false');
+      if (devolverFoco) botao.focus({ preventScroll: true });
+      // Esconder depois da transição, para não cortar o desaparecimento.
+      temporizador = window.setTimeout(() => {
+        if (!aberto) painel.hidden = true;
+      }, 320);
+    };
+
+    botao.addEventListener('click', (evento) => {
+      evento.preventDefault();
+      if (aberto) encerrar();
+      else abrir();
+    });
+
+    fechar.addEventListener('click', () => encerrar());
+
+    document.addEventListener('keydown', (evento) => {
+      if (evento.key === 'Escape' && aberto) encerrar();
+    });
+
+    // Clicar fora fecha, mas sem roubar o foco de onde a pessoa clicou.
+    document.addEventListener('pointerdown', (evento) => {
+      if (aberto && !raiz.contains(evento.target as Node)) encerrar(false);
+    });
+
+    // Os atalhos preenchem o campo em vez de enviarem: quase toda a gente quer
+    // acrescentar o caso próprio à pergunta feita.
+    atalhos?.querySelectorAll<HTMLButtonElement>('[data-texto]').forEach((atalho) => {
+      atalho.addEventListener('click', () => {
+        campo.value = atalho.dataset.texto ?? '';
+        sincronizar();
+        campo.focus();
+        campo.setSelectionRange(campo.value.length, campo.value.length);
+      });
+    });
+
+    campo.addEventListener('input', sincronizar);
+    sincronizar();
+
+    formulario.addEventListener('submit', (evento) => {
+      evento.preventDefault();
+      const texto = campo.value.trim();
+      if (!texto) return;
+
+      const bolha = modelo.content.firstElementChild!.cloneNode(true) as HTMLElement;
+      bolha.textContent = texto;
+      registo.insertBefore(bolha, aviso);
+
+      // Os atalhos já cumpriram o papel de abertura.
+      if (atalhos) atalhos.hidden = true;
+
+      campo.value = '';
+      sincronizar();
+
+      const destino = `${numero}?text=${encodeURIComponent(texto)}`;
+      // Sem a opção 'noopener': com ela o retorno é sempre null e deixava de se
+      // distinguir uma janela travada de uma aberta. Corta-se o opener à mão.
+      const janela = window.open(destino, '_blank');
+
+      aviso.textContent = '';
+      if (janela) {
+        try {
+          janela.opener = null;
+        } catch {
+          /* já navegou para outra origem: o browser trata do resto */
+        }
+        aviso.textContent = 'A abrir o WhatsApp…';
+      } else {
+        // Bloqueado por quem trava janelas novas: fica o link para o toque seguinte.
+        const ligacao = document.createElement('a');
+        ligacao.href = destino;
+        ligacao.target = '_blank';
+        ligacao.rel = 'noopener';
+        ligacao.textContent = 'Abrir o WhatsApp';
+        aviso.append('Toque para continuar: ', ligacao);
+      }
+      aviso.hidden = false;
+
+      registo.scrollTop = registo.scrollHeight;
+    });
+
+    // Em ecrã pequeno o botão sai do caminho enquanto o formulário de marcação
+    // está em uso — mas só se a conversa estiver fechada.
+    const marcacao = document.querySelector<HTMLFormElement>('[data-form]');
+    if (marcacao && window.matchMedia('(max-width: 960px)').matches) {
+      marcacao.addEventListener('focusin', () => {
+        if (!aberto) raiz.setAttribute('data-tucked', '');
+      });
+      marcacao.addEventListener('focusout', (evento) => {
+        if (!marcacao.contains(evento.relatedTarget as Node)) {
+          raiz.removeAttribute('data-tucked');
+        }
+      });
+    }
+  }
+</script>

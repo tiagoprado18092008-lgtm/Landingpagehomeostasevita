@@ -1,0 +1,177 @@
+---
+import { Image } from 'astro:assets';
+
+import sala from '../assets/img/espaco-sala.png';
+import gabinete from '../assets/img/espaco-gabinete.png';
+import espera from '../assets/img/espaco-espera.png';
+import exterior from '../assets/img/espaco-exterior.png';
+
+/**
+ * O espaço, antes do mapa. Quem nunca lá foi decide muito com os olhos: ver
+ * a sala, o gabinete e a luz tira mais dúvidas do que qualquer parágrafo.
+ *
+ * O enquadramento é honesto de propósito. A clínica não é dona do edifício —
+ * aluga um gabinete num espaço partilhado — por isso as legendas dizem o que
+ * é de uso comum e o que é o gabinete de consulta, e a nota final não deixa
+ * ninguém com a ideia de que o piso todo é da Homeostase Vita.
+ *
+ * TODO(cliente): a descrição do espaço foi escrita a partir das fotografias.
+ * Confirmar com a Teresa antes de publicar — sobretudo se a sala comum e a
+ * sala de espera são mesmo de uso partilhado e se o relvado é acessível.
+ *
+ * As fotografias são pequenas (a maior tem 629px de largura). O mosaico está
+ * dimensionado para elas: nenhum lado renderizado passa muito da largura do
+ * ficheiro, e por isso os cortes são largos — 21/9 nas grandes, quase quadrado
+ * nas pequenas. Se chegarem originais maiores, os rácios podem abrir.
+ */
+const fotos = [
+  {
+    src: sala,
+    variante: 'larga',
+    legenda: 'Sala comum, com acesso ao exterior',
+    alt: 'Sala ampla e luminosa, com janelas de chão ao tecto viradas para um relvado.',
+  },
+  {
+    src: gabinete,
+    variante: 'estreita',
+    legenda: 'Gabinete de consulta',
+    alt: 'Gabinete com marquesa, candeeiro de mesa e uma planta junto à janela.',
+  },
+  {
+    src: espera,
+    variante: 'estreita',
+    legenda: 'Sala de espera',
+    alt: 'Sala de espera com cadeiras de madeira e tecido claro em torno de uma mesa de apoio.',
+  },
+  {
+    src: exterior,
+    variante: 'larga',
+    legenda: 'Relvado exterior do edifício',
+    alt: 'Exterior do edifício, com relvado e portas envidraçadas ao nível do jardim.',
+  },
+];
+---
+
+<section class="section surface-azul espaco" id="espaco" aria-labelledby="espaco-titulo">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow reveal">O espaço</p>
+      <h2 class="h2 reveal" id="espaco-titulo">Onde vai ser recebido</h2>
+      <p class="lead reveal" style="--reveal-delay:80ms">
+        As consultas decorrem em gabinete próprio, dentro de um espaço partilhado na
+        Maia — amplo, luminoso e tranquilo, com sala de espera e relvado exterior.
+      </p>
+    </div>
+
+    <div class="espaco__galeria" data-stagger="90">
+      {
+        fotos.map((f) => (
+          <figure class={`espaco__peca espaco__peca--${f.variante} reveal reveal--scale`}>
+            <span class="zoom-alvo espaco__moldura">
+              <Image
+                class="espaco__img"
+                src={f.src}
+                alt={f.alt}
+                format="webp"
+                quality={82}
+                loading="lazy"
+                decoding="async"
+              />
+            </span>
+            <figcaption class="espaco__legenda">{f.legenda}</figcaption>
+          </figure>
+        ))
+      }
+    </div>
+
+    <p class="espaco__nota note reveal">
+      A sala comum e a sala de espera são de uso partilhado com outros profissionais do
+      edifício. As consultas são sempre mediante marcação prévia.
+    </p>
+  </div>
+</section>
+
+<style>
+  /* A faixa de marcação acima já desvanece para o azul lavado e o Local
+     continua-o: esta secção entra no meio sem costura nenhuma, mantendo o
+     azul chapado de ponta a ponta. */
+  .espaco .section-head {
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .espaco__galeria {
+    display: grid;
+    gap: clamp(0.75rem, 1.6vw, 1.25rem);
+    max-width: 64rem;
+    margin-inline: auto;
+  }
+
+  .espaco__peca {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s3);
+    margin: 0;
+    min-width: 0;
+  }
+
+  .espaco__moldura {
+    display: block;
+    border-radius: var(--radius-lg);
+    background-color: var(--color-ivory);
+    box-shadow: var(--shadow-2);
+    /* Telemóvel e tablet: um só corte para as quatro, que em coluna
+       estreita a diferença de rácios lia-se como desalinho. */
+    aspect-ratio: 4 / 3;
+  }
+
+  .espaco :global(.espaco__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .espaco__legenda {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--color-muted);
+    padding-inline: var(--spacing-s2);
+  }
+
+  .espaco__nota {
+    max-width: 52ch;
+    margin: clamp(1.75rem, 3vw, 2.5rem) auto 0;
+    text-align: center;
+  }
+
+  @media (min-width: 640px) {
+    .espaco__galeria {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* Mosaico em xadrez: larga + estreita, depois estreita + larga. Os dois
+     rácios estão escolhidos para dar a mesma altura nesta grelha de seis
+     colunas — daí o 21/9 contra o 8/7, que à vista parecem arbitrários. */
+  @media (min-width: 900px) {
+    .espaco__galeria {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .espaco__peca--larga {
+      grid-column: span 4;
+    }
+
+    .espaco__peca--estreita {
+      grid-column: span 2;
+    }
+
+    .espaco__peca--larga .espaco__moldura {
+      aspect-ratio: 21 / 9;
+    }
+
+    .espaco__peca--estreita .espaco__moldura {
+      aspect-ratio: 8 / 7;
+    }
+  }
+</style>

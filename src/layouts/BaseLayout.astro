@@ -1,0 +1,186 @@
+---
+import '../styles/global.css';
+import { site } from '../config/site';
+import ConsentBanner from '../components/ConsentBanner.astro';
+import Grain from '../components/Grain.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Página secundária (legais) não leva JSON-LD da clínica. */
+  schema?: boolean;
+  ogImage?: string;
+  /** Fora dos motores de busca e do sitemap — páginas de fim de percurso. */
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  schema = false,
+  ogImage = '/og-image.png',
+  noindex = false,
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogUrl = new URL(ogImage, Astro.site).href;
+
+const clinic = {
+  '@context': 'https://schema.org',
+  '@type': 'MedicalClinic',
+  name: site.legalName,
+  url: Astro.site?.href,
+  telephone: site.phone.tel,
+  email: site.email,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address.street,
+    postalCode: site.address.postalCode,
+    addressLocality: site.address.locality,
+    addressRegion: site.address.region,
+    addressCountry: site.address.country,
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: site.address.geo.lat,
+    longitude: site.address.geo.lng,
+  },
+  areaServed: { '@type': 'City', name: 'Maia' },
+  medicalSpecialty: 'Alternative',
+  availableService: [
+    'Acupuntura',
+    'Auriculoterapia',
+    'Ventosaterapia',
+    'Acompanhamento alimentar',
+    'Reflexologia',
+  ].map((name) => ({ '@type': 'MedicalTherapy', name })),
+  sameAs: [site.social.instagram, site.social.facebook],
+};
+---
+
+<!doctype html>
+<html lang="pt-PT" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#003068" />
+
+    <!-- Só as faces que pintam texto acima da dobra são pré-carregadas:
+         a serifa desenha o título do hero (o LCP), o sans desenha tudo
+         o resto. -->
+    <link
+      rel="preload"
+      href="/fonts/cormorant-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/dm-sans-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="pt_PT" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogUrl} />
+
+    {
+      schema && (
+        <script
+          type="application/ld+json"
+          is:inline
+          set:html={JSON.stringify(clinic)}
+        />
+      )
+    }
+
+    {/* IDs de analítica: lidos pelo banner e só usados após opt-in. */}
+    {site.analytics.ga4 && <meta name="hv:ga4" content={site.analytics.ga4} />}
+    {site.analytics.metaPixel && <meta name="hv:pixel" content={site.analytics.metaPixel} />}
+
+    <noscript>
+      <style>
+        /* Sem JS o formulário não consegue enviar nada: esconde o que depende
+           de JS e mostra as alternativas de contacto no lugar. */
+        [data-js-only] {
+          display: none !important;
+        }
+        [data-no-js] {
+          display: flex !important;
+        }
+      </style>
+    </noscript>
+
+    <script is:inline>
+      // Marca JS disponível antes da primeira pintura, para que os reveals
+      // arranquem invisíveis só quando há JS para os revelar.
+      document.documentElement.classList.remove('no-js');
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#conteudo">Saltar para o conteúdo</a>
+    <Grain />
+    <slot />
+    <ConsentBanner />
+
+    <script>
+      // Entrada dos elementos: uma vez cada, quando chegam à vista.
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Cascata automática: os filhos de um [data-stagger] recebem o atraso
+      // pela ordem em que aparecem, sem estilos inline espalhados pelo HTML.
+      document.querySelectorAll<HTMLElement>('[data-stagger]').forEach((grupo) => {
+        const passo = Number(grupo.dataset.stagger) || 80;
+        grupo.querySelectorAll<HTMLElement>(':scope > .reveal').forEach((filho, i) => {
+          if (!filho.style.getPropertyValue('--reveal-delay')) {
+            filho.style.setProperty('--reveal-delay', `${i * passo}ms`);
+          }
+        });
+      });
+
+      const reveals = document.querySelectorAll<HTMLElement>('.reveal');
+
+      if (reduce || !('IntersectionObserver' in window)) {
+        reveals.forEach((el) => el.classList.add('is-visible'));
+      } else {
+        const io = new IntersectionObserver(
+          (entries, obs) => {
+            for (const entry of entries) {
+              // Já passou por cima da dobra (scroll rápido, âncora, recarregar
+              // a meio da página): aparece de imediato, sem animação a meio.
+              const jaPassou = entry.boundingClientRect.bottom < 0;
+              if (!entry.isIntersecting && !jaPassou) continue;
+              if (jaPassou) entry.target.style.setProperty('--reveal-delay', '0ms');
+              entry.target.classList.add('is-visible');
+              obs.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -10% 0px', threshold: 0.06 },
+        );
+        reveals.forEach((el) => io.observe(el));
+      }
+    </script>
+  </body>
+</html>

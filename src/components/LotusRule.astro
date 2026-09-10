@@ -1,0 +1,22 @@
+---
+/**
+ * Filete dourado com lótus ao centro — a assinatura da marca, tirada
+ * do flyer. Usar para separar títulos de subtítulos e fechar secções.
+ * Nunca mais do que uma vez por secção.
+ */
+interface Props {
+  align?: 'start' | 'center';
+  class?: string;
+}
+const { align = 'start', class: className } = Astro.props;
+---
+
+<div class:list={['rule-lotus', className]} data-align={align} aria-hidden="true">
+  <svg viewBox="0 0 40 20" width="56" height="28" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 17c-3.4 0-6-1.9-6-4.2 0-.8.4-1.5 1-2 1 .5 2 1.2 2.7 2.1" />
+    <path d="M20 17c3.4 0 6-1.9 6-4.2 0-.8-.4-1.5-1-2-1 .5-2 1.2-2.7 2.1" />
+    <path d="M20 17c-2 0-3.6-1.8-3.6-4 0-1.6.8-3.1 1.8-4.1.7.6 1.3 1.4 1.8 2.4" />
+    <path d="M20 17c2 0 3.6-1.8 3.6-4 0-1.6-.8-3.1-1.8-4.1-.7.6-1.3 1.4-1.8 2.4" />
+    <path d="M20 17c0-2.7.5-5.2 1.5-7-.5-1.1-1-2-1.5-2.7-.5.7-1 1.6-1.5 2.7 1 1.8 1.5 4.3 1.5 7Z" />
+  </svg>
+</div>

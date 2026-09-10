@@ -1,0 +1,34 @@
+---
+/**
+ * Grão de filme sobre toda a página.
+ *
+ * É o que impede as superfícies quase brancas de parecerem chapadas: uma
+ * textura fininha, gerada por SVG (não há ficheiro para descarregar), fixa
+ * ao ecrã para não "deslizar" com o scroll.
+ *
+ * Fica por baixo de tudo o que é interativo e não apanha o rato.
+ */
+---
+
+<div class="grao" aria-hidden="true"></div>
+
+<style>
+  .grao {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+  }
+
+  /* Em ecrãs de alta densidade o grão fica denso de mais a 1×. */
+  @media (min-resolution: 2dppx) {
+    .grao {
+      opacity: 0.04;
+      background-size: 110px 110px;
+    }
+  }
+</style>

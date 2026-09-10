@@ -1,0 +1,709 @@
+@import 'tailwindcss';
+@import './tokens.css';
+
+/* =========================================================================
+   Fontes self-hosted (sem chamada a servidores Google — RGPD + performance)
+   ========================================================================= */
+/* A serifa desenha o wordmark e o titulo do hero. Deixou de poder ser o
+   subset A-Z do wordmark: o enunciado do hero leva acentos portugueses,
+   por isso serve-se a face latina completa (37 KB). E ela que pinta o LCP,
+   logo vai pre-carregada no BaseLayout. */
+@font-face {
+  font-family: 'Cormorant Garamond Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url('/fonts/cormorant-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'DM Sans Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 1000;
+  src: url('/fonts/dm-sans-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'DM Sans Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 1000;
+  src: url('/fonts/dm-sans-latin-ext-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+    U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* =========================================================================
+   Base
+   ========================================================================= */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-h) + 1.5rem);
+    -webkit-text-size-adjust: 100%;
+    /* Permite animar alturas 'auto' — usado no acordeão da FAQ. */
+    interpolate-size: allow-keywords;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--bg-base);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.7;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    text-wrap: balance;
+    letter-spacing: var(--tracking-h2);
+    color: var(--brand);
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  img,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  ::selection {
+    background: var(--color-mist);
+    color: var(--color-navy-deep);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-teal);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+/* =========================================================================
+   Layout
+   ========================================================================= */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.container-narrow {
+  width: 100%;
+  max-width: 820px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  position: relative;
+  padding-block: var(--section-y);
+}
+
+/* Secções com halos de fundo: o conteúdo sobe acima deles.
+   Nunca usar em secções com filhos `sticky` — overflow:hidden desliga-os. */
+.tem-ambiente {
+  overflow: hidden;
+}
+
+.tem-ambiente > .container,
+.tem-ambiente > .container-narrow,
+.tem-ambiente > * {
+  position: relative;
+  z-index: 1;
+}
+
+.measure {
+  max-width: var(--measure);
+}
+
+/* Ritmo de superficies: paper -> ivory -> mist-wash -> paper */
+.surface-paper {
+  background-color: var(--color-paper);
+}
+.surface-ivory {
+  background-color: var(--color-ivory);
+}
+.surface-cloud {
+  background-color: var(--color-cloud);
+}
+.surface-white {
+  background-color: #fefdf8;
+}
+.surface-mist {
+  background-color: color-mix(in srgb, var(--color-mist) 32%, var(--color-paper));
+}
+/* Lavagens de cor da marca — a mesma família bege claríssima, com um sopro
+   de verde ou azul do emblema por baixo. Ainda "uma só claridade", nunca
+   um bege mais escuro: a diferença é a tonalidade, não o valor. */
+.surface-verde {
+  background-color: color-mix(in srgb, var(--color-green) 10%, var(--color-paper));
+}
+.surface-azul {
+  background-color: var(--color-azul-lavado);
+}
+.surface-navy {
+  background-color: var(--color-navy-deep);
+  color: var(--color-ivory);
+}
+.surface-navy h1,
+.surface-navy h2,
+.surface-navy h3 {
+  color: var(--color-ivory);
+}
+
+/* =========================================================================
+   Tipografia
+   ========================================================================= */
+/* Cabeçalho de secção centrado: eyebrow em maiúsculas espaçadas, título
+   grande e leve por baixo. Repete-se em quase todas as secções. */
+.section-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-s3);
+  max-width: 46rem;
+  margin-inline: auto;
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  text-align: center;
+}
+
+.section-head .lead {
+  margin-top: var(--spacing-s2);
+}
+
+.eyebrow {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--color-teal-deep);
+  margin: 0 0 var(--spacing-s4);
+}
+
+.surface-navy .eyebrow {
+  color: var(--color-teal-soft);
+}
+
+/* O contraste de peso é o que dá carácter: 700 no enunciado principal,
+   400–500 nos títulos de secção, 600 só onde é preciso destacar um item. */
+.h1 {
+  font-size: var(--text-h1);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: var(--tracking-display);
+}
+
+.display {
+  font-size: var(--text-display);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: var(--tracking-display);
+}
+
+.h2 {
+  font-size: var(--text-h2);
+  font-weight: 500;
+  line-height: 1.14;
+  letter-spacing: var(--tracking-h2);
+}
+
+.h3 {
+  font-size: var(--text-h3);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: var(--tracking-h3);
+}
+
+/* Uma linha do título a cor de acento — o remate do enunciado. */
+.accent-line {
+  color: var(--color-teal-deep);
+}
+
+.surface-navy .accent-line {
+  color: var(--color-teal-soft);
+}
+
+.lead {
+  font-size: var(--text-lead);
+  line-height: 1.65;
+  color: var(--color-muted);
+  font-weight: 400;
+}
+
+.surface-navy .lead {
+  color: color-mix(in srgb, var(--color-ivory) 82%, transparent);
+}
+
+.small {
+  font-size: var(--text-small);
+  font-weight: 500;
+}
+
+.note {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+/* Wordmark — capitulares largas, como no cartao e no flyer.
+   Unico sitio onde a serifa da marca aparece. */
+.wordmark {
+  font-family: var(--font-wordmark);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brand);
+  line-height: 1;
+}
+
+/* =========================================================================
+   Filete dourado + lotus — a assinatura da marca. Usar com disciplina.
+   ========================================================================= */
+.rule-lotus {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-s4);
+  width: 100%;
+  max-width: 340px;
+  color: var(--color-teal);
+}
+
+.rule-lotus::before,
+.rule-lotus::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--hairline), transparent);
+}
+
+.rule-lotus[data-align='start'] {
+  margin-inline: 0;
+}
+.rule-lotus[data-align='start']::before {
+  max-width: 28px;
+}
+
+.rule-lotus[data-align='center'] {
+  margin-inline: auto;
+}
+
+.surface-navy .rule-lotus {
+  color: var(--color-teal-soft);
+}
+.surface-navy .rule-lotus::before,
+.surface-navy .rule-lotus::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-teal-soft) 55%, transparent),
+    transparent
+  );
+}
+
+/* =========================================================================
+   Botoes
+   ========================================================================= */
+.btn {
+  --btn-y: 0px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-s2);
+  min-height: 52px;
+  padding: 0 var(--spacing-s7);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  translate: 0 var(--btn-y);
+  transition:
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    translate var(--dur) var(--ease);
+}
+
+.btn-primary {
+  background-color: var(--color-navy);
+  color: var(--color-ivory);
+  box-shadow: var(--shadow-1);
+}
+.btn-primary:hover {
+  background-color: var(--color-navy-deep);
+  --btn-y: -2px;
+  box-shadow: var(--shadow-2);
+}
+.btn-primary:active {
+  --btn-y: 0px;
+  background-color: #001a3b;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border-color: var(--color-teal);
+  color: var(--color-navy);
+}
+.btn-secondary:hover {
+  background-color: color-mix(in srgb, var(--color-teal) 10%, transparent);
+  border-color: var(--color-teal-deep);
+  --btn-y: -2px;
+}
+
+.surface-navy .btn-secondary {
+  border-color: var(--color-teal-soft);
+  color: var(--color-ivory);
+}
+.surface-navy .btn-secondary:hover {
+  background-color: color-mix(in srgb, var(--color-teal-soft) 16%, transparent);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-navy);
+  padding-inline: var(--spacing-s4);
+}
+.btn-ghost:hover {
+  background-color: color-mix(in srgb, var(--color-navy) 6%, transparent);
+}
+
+.btn-whatsapp {
+  background-color: #128c7e;
+  color: #fff;
+}
+.btn-whatsapp:hover {
+  background-color: #0e7367;
+  --btn-y: -2px;
+  box-shadow: var(--shadow-2);
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.btn[aria-busy='true'],
+.btn:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+  --btn-y: 0px;
+}
+
+/* =========================================================================
+   Link com sublinhado dourado que cresce da esquerda
+   ========================================================================= */
+.link-gold {
+  position: relative;
+  text-decoration: none;
+  background-image: linear-gradient(var(--color-teal), var(--color-teal));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size var(--dur) var(--ease);
+}
+.link-gold:hover,
+.link-gold:focus-visible {
+  background-size: 100% 1px;
+}
+
+/* =========================================================================
+   Cartoes
+   ========================================================================= */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-s3);
+  padding: clamp(1.5rem, 2.5vw, 2rem);
+  background-color: #fff;
+  border: 1px solid var(--hairline-cool);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+  transition:
+    box-shadow var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    translate var(--dur) var(--ease);
+}
+
+.card:hover,
+.card:focus-within {
+  box-shadow: var(--shadow-2);
+  border-color: var(--hairline);
+  translate: 0 -2px;
+}
+
+/* Medalhao de icone — circulo navy com icone linear claro (do flyer) */
+.medallion {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 28%,
+    var(--color-navy) 0%,
+    var(--color-navy-deep) 100%
+  );
+  color: var(--color-ivory);
+  box-shadow: 0 0 0 1px rgba(16, 88, 120, 0.28);
+}
+.medallion svg {
+  width: 28px;
+  height: 28px;
+}
+.medallion-sm {
+  width: 44px;
+  height: 44px;
+}
+.medallion-sm svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* =========================================================================
+   Chips
+   ========================================================================= */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-s2);
+  padding: 6px var(--spacing-s4);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--color-navy);
+  background-color: color-mix(in srgb, #fff 60%, transparent);
+}
+
+/* =========================================================================
+   Acessibilidade
+   ========================================================================= */
+.skip-link {
+  position: absolute;
+  left: var(--spacing-s4);
+  top: var(--spacing-s4);
+  z-index: 200;
+  padding: var(--spacing-s3) var(--spacing-s5);
+  background: var(--color-navy);
+  color: var(--color-ivory);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  text-decoration: none;
+  translate: 0 -200%;
+  transition: translate var(--dur) var(--ease);
+}
+.skip-link:focus-visible {
+  translate: 0 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* =========================================================================
+   Reveal — respiracao, nao espetaculo.
+
+   Quatro variantes, todas com a mesma curva. O atraso vem de
+   --reveal-delay, que o script atribui automaticamente aos filhos de um
+   [data-stagger] — assim uma grelha entra em cascata sem estilos inline.
+   ========================================================================= */
+.reveal {
+  opacity: 0;
+}
+
+/* `animation` e não `transition`: a transition de um componente (o lift de
+   um cartão, por exemplo) tem mais especificidade e substituía a do reveal,
+   deixando os elementos a aparecer de repente. Animações vivem num espaço
+   próprio e as duas coisas convivem.
+
+   As keyframes usam `transform`; os hovers dos componentes usam as
+   propriedades `translate`/`scale`, por isso compõem-se em vez de brigar. */
+.reveal.is-visible {
+  animation: rev-subir 700ms var(--ease) var(--reveal-delay, 0ms) both;
+}
+
+.reveal--scale.is-visible {
+  animation-name: rev-crescer;
+}
+
+.reveal--left.is-visible {
+  animation-name: rev-esquerda;
+}
+
+.reveal--right.is-visible {
+  animation-name: rev-direita;
+}
+
+.reveal--soft.is-visible {
+  animation-name: rev-suave;
+}
+
+@keyframes rev-subir {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rev-crescer {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rev-esquerda {
+  from {
+    opacity: 0;
+    transform: translateX(-22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rev-direita {
+  from {
+    opacity: 0;
+    transform: translateX(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rev-suave {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* Sem JS o conteudo tem de estar visivel */
+.no-js .reveal {
+  opacity: 1;
+  animation: none;
+}
+
+/* =========================================================================
+   Polimento de interação
+   ========================================================================= */
+
+/* A seta de um botão acompanha o cursor. */
+.btn :global(svg),
+.btn svg {
+  transition: translate var(--dur) var(--ease);
+}
+.btn:hover svg:last-child {
+  translate: 3px 0;
+}
+
+/* Slots e fotografias aproximam-se ao passar o rato. */
+.zoom-alvo {
+  overflow: hidden;
+}
+.zoom-alvo > * {
+  transition: scale var(--dur-slow) var(--ease);
+}
+.zoom-alvo:hover > * {
+  scale: 1.03;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal,
+  .reveal.is-visible {
+    opacity: 1;
+    animation: none;
+    transform: none;
+    filter: none;
+  }
+  .zoom-alvo:hover > * {
+    scale: 1;
+  }
+}

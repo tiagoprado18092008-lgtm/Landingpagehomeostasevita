@@ -1,0 +1,901 @@
+---
+import { site } from '../config/site';
+import Ambient from './Ambient.astro';
+import Icon from './Icon.astro';
+
+const configured = Boolean(site.form.endpoint) && !site.form.endpoint.includes('SEU_FORM_ID_AQUI');
+
+/* Aviso em cima da mesa durante o build. Um site publicado com o formulário
+   por ligar engole todos os pedidos, e ninguém dá por isso — é a única
+   falha aqui que não faz barulho nenhum. */
+if (!configured && import.meta.env.PROD) {
+  console.warn(
+    '\n  [Homeostase Vita] O formulário de marcação NÃO está ligado.\n' +
+      '  Define PUBLIC_FORM_ENDPOINT (ou o endpoint em src/config/site.ts).\n' +
+      '  Sem isso, o formulário encaminha as pessoas para WhatsApp/telefone\n' +
+      '  em vez de aceitar pedidos.\n'
+  );
+}
+
+/* Para onde o Formspree devolve quem submete sem JavaScript. Tem de ser
+   absoluto — daí `Astro.site`. */
+const proximaPagina = new URL('/pedido-recebido', Astro.site).href;
+---
+
+<section class="section surface-ivory contact tem-ambiente" id="marcacao" aria-labelledby="marcacao-titulo">
+  <Ambient variant="duplo" opacity={0.5} />
+
+  <div class="container">
+    <div class="contact__head">
+      <p class="eyebrow reveal">Marcação</p>
+      <h2 class="h2 reveal" id="marcacao-titulo">
+        Marque a sua consulta<br />
+        <span class="accent-line">ou fale connosco.</span>
+      </h2>
+    </div>
+
+    <div class="contact__grid">
+      <!-- ---------------------------------------------------- Formulário -->
+      <div class="contact__form-wrap reveal reveal--left">
+        <p class="contact__form-intro">
+          As consultas são realizadas mediante marcação prévia. Deixe os seus dados e
+          entramos em contacto consigo para confirmar o horário.
+        </p>
+
+        <form
+          class="contact__form"
+          data-form
+          data-whatsapp={site.phone.whatsapp}
+          novalidate
+          action={configured ? site.form.endpoint : undefined}
+          method="post"
+        >
+          <div class="field">
+            <label for="nome">Nome<span aria-hidden="true">*</span></label>
+            <input
+              id="nome"
+              name="nome"
+              type="text"
+              autocomplete="name"
+              required
+              minlength="2"
+              aria-describedby="nome-erro"
+            />
+            <p class="field__error" id="nome-erro" data-error-for="nome"></p>
+          </div>
+
+          <div class="field">
+            <label for="motivo">Motivo do contacto<span aria-hidden="true">*</span></label>
+            <textarea
+              id="motivo"
+              name="motivo"
+              rows="3"
+              required
+              minlength="4"
+              placeholder="Ex.: dores nas costas há alguns meses"
+              aria-describedby="motivo-erro"></textarea>
+            <p class="field__error" id="motivo-erro" data-error-for="motivo"></p>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="contacto">Contacto<span aria-hidden="true">*</span></label>
+              <input
+                id="contacto"
+                name="contacto"
+                type="tel"
+                inputmode="tel"
+                autocomplete="tel"
+                required
+                placeholder="912 345 678"
+                aria-describedby="contacto-erro"
+              />
+              <p class="field__error" id="contacto-erro" data-error-for="contacto"></p>
+            </div>
+
+            <div class="field">
+              <label for="email">Email<span aria-hidden="true">*</span></label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                aria-describedby="email-erro"
+              />
+              <p class="field__error" id="email-erro" data-error-for="email"></p>
+            </div>
+          </div>
+
+          <!--
+            Honeypot: invisível para pessoas, tentador para bots.
+            O nome "_gotcha" é a convenção nativa do Formspree — o próprio
+            Formspree descarta o envio se este campo vier preenchido, além
+            da verificação que já fazemos aqui em JavaScript.
+          -->
+          <div class="honeypot" aria-hidden="true">
+            <label for="_gotcha">Não preencher</label>
+            <input id="_gotcha" name="_gotcha" type="text" tabindex="-1" autocomplete="off" />
+          </div>
+
+          {
+            configured && (
+              <>
+                {/* Assunto do email que chega à clínica. O nome do campo é
+                    `_subject` — é essa a convenção do Formspree; qualquer
+                    outra passa a ser tratada como um campo normal do
+                    formulário e o email chega com o assunto por omissão. */}
+                <input
+                  type="hidden"
+                  name="_subject"
+                  value="Novo pedido de marcação — homeostasevita.pt"
+                />
+                {/* Só serve o envio nativo, sem JavaScript: com JS o envio é
+                    feito por fetch e esta redirecção nunca acontece. */}
+                <input type="hidden" name="_next" value={proximaPagina} />
+              </>
+            )
+          }
+
+          <div class="field field--consent">
+            <label class="consent" for="consentimento">
+              <input id="consentimento" name="consentimento" type="checkbox" required
+                aria-describedby="consentimento-erro" />
+              <span>
+                Autorizo o tratamento dos meus dados para efeitos de contacto e marcação,
+                nos termos da <a href="/politica-de-privacidade" class="link-gold">Política
+                de Privacidade</a>.<span aria-hidden="true">*</span>
+              </span>
+            </label>
+            <p class="field__error" id="consentimento-erro" data-error-for="consentimento"></p>
+          </div>
+
+          {
+            !configured && (
+              <p class="contact__demo">
+                <Icon name="alert" size={18} class="contact__demo-icon" />
+                <span>
+                  O envio automático ainda não está ligado. Use o WhatsApp ou o
+                  telefone — respondemos da mesma forma.
+                </span>
+              </p>
+            )
+          }
+
+          {
+            configured ? (
+              /* Sem `data-js-only`: sem JavaScript o botão faz o POST nativo
+                 para o Formspree, que devolve a pessoa a /pedido-recebido. O
+                 pedido chega à mesma — antes, quem tivesse o JS desligado
+                 ficava simplesmente sem forma de o enviar. */
+              <button type="submit" class="btn btn-primary btn-full" data-submit>
+                <span data-submit-label>Enviar pedido</span>
+                <span class="spinner" data-spinner aria-hidden="true"></span>
+              </button>
+            ) : (
+              /* Sem serviço ligado não há botão de enviar. Um botão que não
+                 envia nada é pior do que botão nenhum: dá o pedido por feito. */
+              <div class="contact__error-actions">
+                <a href={site.phone.whatsapp} class="btn btn-whatsapp" rel="noopener">
+                  <Icon name="whatsapp" size={18} />
+                  Falar por WhatsApp
+                </a>
+                <a href={`tel:${site.phone.tel}`} class="btn btn-secondary">
+                  <Icon name="phone" size={18} />
+                  {site.phone.display}
+                </a>
+              </div>
+            )
+          }
+
+          <p class="note contact__minimise" data-js-only>
+            Só pedimos o necessário para o contactarmos. Os dados não são usados para
+            mais nada nem partilhados com terceiros.
+          </p>
+        </form>
+
+        <!-- Sucesso: substitui o formulário -->
+        <div class="contact__result" data-success hidden role="status">
+          <span class="medallion" aria-hidden="true"><Icon name="check" /></span>
+          <h3 class="h3">Recebemos o seu pedido.</h3>
+          <p>Entramos em contacto consigo em breve para confirmar o horário.</p>
+          <a href={site.phone.whatsapp} class="btn btn-whatsapp" rel="noopener">
+            <Icon name="whatsapp" size={18} />
+            Falar já por WhatsApp
+          </a>
+        </div>
+
+        <!-- Erro de envio. Não é um beco: o que a pessoa escreveu fica
+             guardado, e o botão do WhatsApp leva a mensagem já redigida com
+             esses dados. Se o Formspree estiver em baixo, o contacto chega
+             na mesma — por outra via. -->
+        <div class="contact__error" data-error-panel hidden role="alert">
+          <p class="contact__error-title">
+            <Icon name="alert" size={18} class="contact__demo-icon" />
+            Não foi possível enviar o pedido.
+          </p>
+          <p class="note">
+            Os seus dados não se perderam — continuam no formulário. Tente de novo ou
+            envie-nos o pedido por WhatsApp, já preenchido.
+          </p>
+          <div class="contact__error-actions">
+            <button type="button" class="btn btn-primary" data-retry>
+              Tentar novamente
+            </button>
+            <a
+              href={site.phone.whatsapp}
+              class="btn btn-whatsapp"
+              rel="noopener"
+              data-whatsapp-fallback
+            >
+              <Icon name="whatsapp" size={18} />
+              Enviar por WhatsApp
+            </a>
+            <a href={`tel:${site.phone.tel}`} class="btn btn-secondary">
+              <Icon name="phone" size={18} />
+              {site.phone.display}
+            </a>
+          </div>
+        </div>
+
+        <p class="sr-only" role="status" aria-live="polite" data-live></p>
+      </div>
+
+      <!-- ------------------------------------------- Painel de contactos -->
+      <aside class="contact__aside reveal reveal--right" style="--reveal-delay:120ms" aria-label="Contactos e localização">
+        <!-- O painel do flyer: círculos dourados sólidos, telefone em destaque -->
+        <div class="painel">
+          <a class="painel__linha painel__linha--destaque" href={`tel:${site.phone.tel}`}>
+            <span class="painel__disco"><Icon name="phone" size={22} /></span>
+            <span class="painel__valor painel__valor--tel">{site.phone.display}</span>
+          </a>
+
+          <a class="painel__linha" href={site.phone.whatsapp} rel="noopener">
+            <span class="painel__disco"><Icon name="whatsapp" size={20} /></span>
+            <span class="painel__texto">
+              <span class="painel__rotulo">WhatsApp</span>
+              <span class="painel__valor">Enviar mensagem</span>
+            </span>
+          </a>
+
+          <a class="painel__linha" href={`mailto:${site.email}`}>
+            <span class="painel__disco"><Icon name="mail" size={20} /></span>
+            <span class="painel__texto">
+              <span class="painel__rotulo">Email</span>
+              <span class="painel__valor">{site.email}</span>
+            </span>
+          </a>
+
+          <div class="painel__linha">
+            <span class="painel__disco"><Icon name="pin" size={20} /></span>
+            <span class="painel__texto">
+              <span class="painel__rotulo">Morada</span>
+              <span class="painel__valor">
+                {site.address.street}<br />
+                {site.address.postalCode}&nbsp;{site.address.locality}
+              </span>
+            </span>
+          </div>
+
+          <div class="painel__linha">
+            <span class="painel__disco"><Icon name="clock" size={20} /></span>
+            <span class="painel__texto">
+              <span class="painel__rotulo">Consultas</span>
+              <span class="painel__valor">Mediante marcação prévia</span>
+            </span>
+          </div>
+        </div>
+
+        <p class="contact__social note">
+          <a href={site.social.instagram} class="link-gold" rel="noopener">
+            {site.social.instagramHandle}
+          </a>
+          <span aria-hidden="true">·</span>
+          <a href={site.social.facebook} class="link-gold" rel="noopener">Facebook</a>
+        </p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact__head {
+    max-width: 40ch;
+  }
+
+  .contact__head .eyebrow {
+    margin-bottom: var(--spacing-s3);
+  }
+
+  .contact__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    align-items: start;
+  }
+
+  /* --- Formulário --- */
+  .contact__form-wrap {
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    background-color: #fff;
+    border: 1px solid var(--hairline-cool);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
+  }
+
+  .contact__form-intro {
+    margin-bottom: var(--spacing-s5);
+    padding-bottom: var(--spacing-s5);
+    border-bottom: 1px solid var(--hairline-cool);
+    font-size: 0.9375rem;
+    color: var(--color-muted);
+  }
+
+  .contact__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s5);
+  }
+
+  .contact__form[hidden] {
+    display: none;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s2);
+  }
+
+  .field label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-navy);
+  }
+
+  .field label span[aria-hidden] {
+    color: var(--color-teal-deep);
+    margin-left: 2px;
+  }
+
+  .field input:not([type='checkbox']),
+  .field textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: var(--spacing-s3) var(--spacing-s4);
+    border: 1px solid var(--hairline-cool);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-paper);
+    font-size: 1rem;
+    transition:
+      border-color var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease);
+  }
+
+  .field textarea {
+    resize: vertical;
+    line-height: 1.6;
+  }
+
+  .field input:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--color-teal);
+    box-shadow: 0 0 0 3px rgba(24, 144, 160, 0.12);
+  }
+
+  .field input:focus-visible,
+  .field textarea:focus-visible {
+    outline: 2px solid var(--color-teal);
+    outline-offset: 1px;
+  }
+
+  .field[data-invalid] input,
+  .field[data-invalid] textarea {
+    border-color: var(--color-danger);
+  }
+
+  .field__error {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8125rem;
+    color: var(--color-danger);
+  }
+
+  .field__error::before {
+    content: '!';
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--color-danger);
+    color: #fff;
+    font-size: 0.6875rem;
+    font-weight: 700;
+  }
+
+  .field[data-invalid] .field__error {
+    display: flex;
+  }
+
+  .field-row {
+    display: grid;
+    gap: var(--spacing-s5);
+  }
+
+  .consent {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-s3);
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.55;
+    color: var(--color-navy-ink);
+    cursor: pointer;
+  }
+
+  .consent input {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    accent-color: var(--color-navy);
+    cursor: pointer;
+  }
+
+  .honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .contact__demo {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-s3);
+    padding: var(--spacing-s4);
+    border: 1px dashed var(--hairline);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-ivory);
+    font-size: 0.8125rem;
+    color: var(--color-teal-deep);
+  }
+
+  .contact__demo :global(.contact__demo-icon),
+  .contact__error-title :global(.contact__demo-icon),
+  .contact__nojs-title :global(.contact__demo-icon) {
+    flex: none;
+  }
+
+  .contact__minimise {
+    text-align: center;
+  }
+
+  /* Só aparece quando o <noscript> do BaseLayout entra em ação. */
+  .contact__nojs {
+    display: none;
+    flex-direction: column;
+    gap: var(--spacing-s2);
+    padding: var(--spacing-s5);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-md);
+    background-color: var(--color-ivory);
+  }
+
+  .contact__nojs-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s2);
+    font-weight: 600;
+    color: var(--color-navy);
+  }
+
+  .spinner {
+    display: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid color-mix(in srgb, var(--color-ivory) 40%, transparent);
+    border-top-color: var(--color-ivory);
+    border-radius: 50%;
+    animation: spin 700ms linear infinite;
+  }
+
+  [aria-busy='true'] .spinner {
+    display: block;
+  }
+
+  @keyframes spin {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  .contact__result,
+  .contact__error {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s4);
+  }
+
+  .contact__result {
+    align-items: center;
+    text-align: center;
+    padding-block: var(--spacing-s5);
+  }
+
+  .contact__result[hidden],
+  .contact__error[hidden] {
+    display: none;
+  }
+
+  .contact__result-demo {
+    font-size: 0.8125rem;
+    font-style: italic;
+    color: var(--color-teal-deep);
+  }
+
+  .contact__error-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s2);
+    font-weight: 600;
+    color: var(--color-danger);
+  }
+
+  .contact__error-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-s3);
+  }
+
+  /* =====================================================================
+     O painel de contactos do flyer
+     ===================================================================== */
+  .contact__aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s5);
+  }
+
+  .painel {
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-s3) var(--spacing-s5);
+    border-radius: var(--radius-lg);
+    background-color: #fff;
+    box-shadow: var(--shadow-1);
+  }
+
+  .painel__linha {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s4);
+    padding-block: var(--spacing-s4);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .painel__linha + .painel__linha {
+    border-top: 1px solid var(--hairline-cool);
+  }
+
+  /* O disco dourado sólido do impresso */
+  .painel__disco {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: var(--color-teal);
+    color: #fff;
+    transition: background-color var(--dur) var(--ease);
+  }
+
+  a.painel__linha:hover .painel__disco {
+    background-color: var(--color-teal-deep);
+  }
+
+  .painel__texto {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .painel__rotulo {
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .painel__valor {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.45;
+    color: var(--color-navy);
+    overflow-wrap: anywhere;
+  }
+
+  /* O telefone é o que mais se lê no flyer — e aqui também. */
+  .painel__valor--tel {
+    font-size: clamp(1.5rem, 2.6vw, 1.875rem);
+    font-weight: 600;
+    letter-spacing: var(--tracking-h3);
+  }
+
+  .contact__social {
+    display: flex;
+    gap: var(--spacing-s3);
+    justify-content: center;
+  }
+
+  @media (min-width: 560px) {
+    .field-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 960px) {
+    .contact__grid {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    }
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-form]');
+
+  if (form) {
+    const wrap = form.parentElement!;
+    const successPanel = wrap.querySelector<HTMLElement>('[data-success]')!;
+    const errorPanel = wrap.querySelector<HTMLElement>('[data-error-panel]')!;
+    const live = wrap.querySelector<HTMLElement>('[data-live]')!;
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const label = form.querySelector<HTMLElement>('[data-submit-label]')!;
+
+    type Rule = { test: (v: string, el: HTMLInputElement) => boolean; message: string };
+
+    const rules: Record<string, Rule> = {
+      nome: {
+        test: (v) => v.trim().length >= 2,
+        message: 'Indique o seu nome.',
+      },
+      motivo: {
+        test: (v) => v.trim().length >= 4,
+        message: 'Diga-nos em poucas palavras o motivo do contacto.',
+      },
+      contacto: {
+        // Aceita 9 dígitos nacionais, com ou sem indicativo e espaços.
+        test: (v) => /^(\+?351)?[\s.-]?9\d{2}[\s.-]?\d{3}[\s.-]?\d{3}$/.test(v.trim()),
+        message: 'Indique um número de telemóvel português válido.',
+      },
+      email: {
+        test: (v) => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v.trim()),
+        message: 'Indique um email válido para lhe podermos responder.',
+      },
+      consentimento: {
+        test: (_v, el) => el.checked,
+        message: 'Precisamos da sua autorização para o contactarmos.',
+      },
+    };
+
+    const fieldOf = (el: HTMLElement) => el.closest<HTMLElement>('.field');
+
+    const validate = (name: string): boolean => {
+      const el = form.elements.namedItem(name) as HTMLInputElement | null;
+      const rule = rules[name];
+      if (!el || !rule) return true;
+
+      const ok = rule.test(el.value, el);
+      const field = fieldOf(el);
+      const error = form.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
+
+      field?.toggleAttribute('data-invalid', !ok);
+      el.setAttribute('aria-invalid', String(!ok));
+      if (error) error.textContent = ok ? '' : rule.message;
+      return ok;
+    };
+
+    // Valida ao sair do campo; depois de errado, corrige em tempo real.
+    for (const name of Object.keys(rules)) {
+      const el = form.elements.namedItem(name) as HTMLInputElement | null;
+      if (!el) continue;
+      el.addEventListener('blur', () => validate(name));
+      el.addEventListener('input', () => {
+        if (fieldOf(el)?.hasAttribute('data-invalid')) validate(name);
+      });
+      el.addEventListener('change', () => {
+        if (el.type === 'checkbox') validate(name);
+      });
+    }
+
+    const setBusy = (busy: boolean) => {
+      submit.setAttribute('aria-busy', String(busy));
+      submit.disabled = busy;
+      label.textContent = busy ? 'A enviar…' : 'Enviar pedido';
+      form
+        .querySelectorAll<HTMLInputElement>('input, textarea')
+        .forEach((el) => (el.disabled = busy));
+    };
+
+    /* -------------------------------------------------------------------
+       Rascunho local
+
+       Escrever o motivo da consulta dá trabalho. Se a pessoa fechar o
+       separador, recarregar ou perder a ligação a meio, o que escreveu volta
+       a aparecer. Fica só no browser dela — nunca sai daqui — e é apagado
+       assim que o pedido segue.
+       ------------------------------------------------------------------- */
+    const CHAVE = 'hv:marcacao';
+    const CAMPOS = ['nome', 'motivo', 'contacto', 'email'] as const;
+
+    const campo = (nome: string) =>
+      form.elements.namedItem(nome) as HTMLInputElement | null;
+
+    const lerCampos = () => {
+      const dados: Record<string, string> = {};
+      for (const nome of CAMPOS) dados[nome] = campo(nome)?.value.trim() ?? '';
+      return dados;
+    };
+
+    const guardarRascunho = () => {
+      try {
+        const dados = lerCampos();
+        if (Object.values(dados).some(Boolean)) {
+          localStorage.setItem(CHAVE, JSON.stringify(dados));
+        }
+      } catch {
+        /* Modo privado ou armazenamento cheio: o formulário funciona na mesma. */
+      }
+    };
+
+    const limparRascunho = () => {
+      try {
+        localStorage.removeItem(CHAVE);
+      } catch {
+        /* Sem consequências. */
+      }
+    };
+
+    const reporRascunho = () => {
+      try {
+        const bruto = localStorage.getItem(CHAVE);
+        if (!bruto) return;
+        const dados = JSON.parse(bruto) as Record<string, string>;
+        for (const nome of CAMPOS) {
+          const el = campo(nome);
+          if (el && !el.value && typeof dados[nome] === 'string') el.value = dados[nome];
+        }
+      } catch {
+        limparRascunho();
+      }
+    };
+
+    reporRascunho();
+    for (const nome of CAMPOS) campo(nome)?.addEventListener('input', guardarRascunho);
+
+    /* -------------------------------------------------------------------
+       Encaminhamento para WhatsApp
+
+       A rede de segurança. Quando o envio falha, este link leva o pedido
+       inteiro já redigido: a pessoa carrega uma vez e o contacto chega,
+       sem ter de reescrever nada.
+       ------------------------------------------------------------------- */
+    const zap = wrap.querySelector<HTMLAnchorElement>('[data-whatsapp-fallback]');
+    /* O número vem do atributo, que por sua vez vem de site.ts — assim não
+       há um segundo sítio onde o número possa divergir. */
+    const whatsappBase = form.dataset.whatsapp ?? '';
+
+    const prepararWhatsapp = () => {
+      if (!zap) return;
+      const d = lerCampos();
+      const texto =
+        `Olá, gostaria de marcar uma consulta.\n\n` +
+        `Nome: ${d.nome}\n` +
+        `Telemóvel: ${d.contacto}\n` +
+        `Email: ${d.email}\n` +
+        `Motivo: ${d.motivo}`;
+      zap.href = `${whatsappBase}?text=${encodeURIComponent(texto)}`;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      errorPanel.hidden = true;
+
+      const names = Object.keys(rules);
+      const results = names.map(validate);
+
+      if (results.includes(false)) {
+        const firstBad = names[results.indexOf(false)];
+        const el = form.elements.namedItem(firstBad) as HTMLInputElement;
+        live.textContent = 'O formulário tem campos por corrigir.';
+        el.focus();
+        return;
+      }
+
+      // Honeypot preenchido: é um bot. Fingimos sucesso e não enviamos nada.
+      const trap = form.elements.namedItem('_gotcha') as HTMLInputElement;
+      if (trap?.value) {
+        form.hidden = true;
+        successPanel.hidden = false;
+        return;
+      }
+
+      setBusy(true);
+      live.textContent = 'A enviar o pedido.';
+
+      const endpoint = form.getAttribute('action');
+
+      // Sem serviço de entrega não se finge que houve entrega. Antes, isto
+      // esperava 600ms e mostrava "Recebemos o seu pedido" sem enviar nada:
+      // a pessoa saía convencida de que tinha marcado, e o pedido não
+      // existia em lado nenhum. É a forma mais silenciosa de perder um
+      // contacto, e por isso passou a ser tratada como falha.
+      if (!endpoint) {
+        setBusy(false);
+        prepararWhatsapp();
+        errorPanel.hidden = false;
+        live.textContent = 'Não foi possível enviar o pedido.';
+        errorPanel.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        return;
+      }
+
+      try {
+        // Formspree aceita JSON com Content-Type + Accept application/json.
+        const payload: Record<string, string> = {
+          _subject: 'Novo pedido de marcação — homeostasevita.pt',
+        };
+        for (const name of ['nome', 'motivo', 'contacto', 'email', '_gotcha']) {
+          const el = form.elements.namedItem(name) as HTMLInputElement | null;
+          if (el) payload[name] = el.value;
+        }
+        const consentEl = form.elements.namedItem('consentimento') as HTMLInputElement | null;
+        payload.consentimento = consentEl?.checked ? 'sim' : 'não';
+
+        // Uma ligação móvel que fica pendurada é indistinguível de sucesso.
+        // Ao fim de 15s desiste e mostra as alternativas.
+        const desistir = AbortSignal.timeout(15000);
+
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify(payload),
+          signal: desistir,
+        });
+        if (!res.ok) throw new Error(`Envio falhou: ${res.status}`);
+
+        limparRascunho();
+        form.hidden = true;
+        successPanel.hidden = false;
+        live.textContent = 'Pedido recebido. Entramos em contacto em breve.';
+        successPanel.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      } catch {
+        setBusy(false);
+        // O rascunho fica guardado e o WhatsApp leva tudo já escrito.
+        guardarRascunho();
+        prepararWhatsapp();
+        errorPanel.hidden = false;
+        live.textContent =
+          'Não foi possível enviar o pedido. Os seus dados foram guardados.';
+        errorPanel.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }
+    });
+
+    // "Tentar novamente" volta ao formulário com tudo preenchido.
+    wrap.querySelector<HTMLButtonElement>('[data-retry]')?.addEventListener('click', () => {
+      errorPanel.hidden = true;
+      form.requestSubmit();
+    });
+  }
+</script>

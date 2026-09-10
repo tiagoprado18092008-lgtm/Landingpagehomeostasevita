@@ -1,0 +1,194 @@
+---
+import Ambient from './Ambient.astro';
+import Icon from './Icon.astro';
+
+/**
+ * A acupuntura é o tratamento mais procurado e o termo que mais se pesquisa
+ * — merece um bloco só para si. Serve a conversão e serve o SEO local
+ * ("acupuntura Maia"), sem repetir o que já está nos tratamentos.
+ *
+ * A pergunta do medo das agulhas vive aqui, em destaque, porque é a objeção
+ * que mais trava uma primeira marcação.
+ */
+const pontos = [
+  'Agulhas muito finas, geralmente bem toleradas',
+  'Pontos escolhidos a partir da avaliação individual',
+  'Intervenção ajustada à sensibilidade de cada pessoa',
+];
+---
+
+<section class="section surface-navy acup tem-ambiente" aria-labelledby="acup-titulo">
+  <Ambient variant="calmo" opacity={0.16} />
+
+  <div class="container acup__inner">
+    <div class="acup__texto">
+      <p class="eyebrow reveal">Em destaque</p>
+      <h2 class="h2 reveal" id="acup-titulo">
+        Acupuntura, uma das<br />
+        <span class="accent-line">principais técnicas</span>
+      </h2>
+
+      <p class="acup__lead reveal" style="--reveal-delay:80ms">
+        A acupuntura é uma das principais técnicas utilizadas na Medicina Tradicional
+        Chinesa, podendo ser <strong>complementada por outras estratégias terapêuticas</strong>
+        de acordo com as necessidades de cada pessoa.
+      </p>
+
+      <ul class="acup__pontos reveal" style="--reveal-delay:140ms">
+        {
+          pontos.map((p) => (
+            <li>
+              <Icon name="check" size={16} class="acup__visto" />
+              {p}
+            </li>
+          ))
+        }
+      </ul>
+
+      <a href="#marcacao" class="btn btn-primary acup__cta reveal">Marcar consulta</a>
+    </div>
+
+    <!-- A objeção que mais trava uma primeira marcação, respondida à vista -->
+    <aside class="acup__duvida reveal reveal--scale" style="--reveal-delay:120ms">
+      <p class="acup__duvida-eyebrow">A pergunta mais frequente</p>
+      <p class="acup__duvida-q">A acupuntura dói?</p>
+      <p class="acup__duvida-a">
+        As agulhas de acupuntura são muito finas e, geralmente, a sua aplicação é bem
+        tolerada. A sensação varia de pessoa para pessoa: para muitas, a inserção é
+        praticamente indolor, podendo sentir-se uma ligeira picada ou uma sensação
+        momentânea de pressão, calor ou formigueiro.
+      </p>
+      <p class="acup__duvida-a">
+        Durante a sessão, procura-se garantir o maior conforto possível, ajustando a
+        intervenção à sensibilidade e às características individuais de cada pessoa.
+      </p>
+      <p class="acup__duvida-nota">
+        A Medicina Tradicional Chinesa é uma abordagem complementar de bem-estar e não
+        dispensa a avaliação e o acompanhamento médico.
+      </p>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .acup__inner {
+    display: grid;
+    gap: clamp(2rem, 4vw, 4rem);
+    align-items: center;
+  }
+
+  .acup__texto {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s5);
+  }
+
+  .acup__texto .eyebrow {
+    margin-bottom: 0;
+  }
+
+  /* Secção escura: é o destaque a meio da página, e o único navy entre o
+     hero e o rodapé. Tudo o que estava a navy sobre claro inverte. */
+  .acup {
+    --acup-hairline: color-mix(in srgb, var(--color-ivory) 16%, transparent);
+  }
+
+  .acup__lead {
+    max-width: 48ch;
+    font-size: var(--text-lead);
+    line-height: 1.65;
+    color: color-mix(in srgb, var(--color-ivory) 82%, transparent);
+  }
+
+  .acup__lead strong {
+    font-weight: 500;
+    color: var(--color-ivory);
+  }
+
+  .acup__pontos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--acup-hairline);
+  }
+
+  .acup__pontos li {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s3);
+    padding-block: var(--spacing-s4);
+    border-bottom: 1px solid var(--acup-hairline);
+    font-size: 0.9375rem;
+    color: var(--color-ivory);
+  }
+
+  .acup__pontos :global(.acup__visto) {
+    flex: none;
+    color: var(--color-teal-soft);
+  }
+
+  /* Sobre navy o btn-primary desapareceria: inverte para claro. */
+  .acup__cta {
+    align-self: flex-start;
+  }
+
+  .acup__cta.btn-primary {
+    background-color: var(--color-ivory);
+    color: var(--color-navy-deep);
+  }
+
+  .acup__cta.btn-primary:hover {
+    background-color: #fff;
+  }
+
+  /* --- Caixa da dúvida ---
+     Era navy sobre claro; com a secção a navy passa a claro sobre navy. O
+     que interessa é continuar a ser a coisa mais destacada da secção. */
+  .acup__duvida {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s3);
+    padding: clamp(1.75rem, 3vw, 2.5rem);
+    border-radius: var(--radius-xl);
+    background-color: var(--color-ivory);
+    color: var(--color-navy-ink);
+    box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.5);
+  }
+
+  .acup__duvida-eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--color-teal-deep);
+  }
+
+  .acup__duvida-q {
+    font-size: clamp(1.375rem, 2.2vw, 1.75rem);
+    font-weight: 500;
+    letter-spacing: var(--tracking-h2);
+    line-height: 1.25;
+    color: var(--color-navy);
+  }
+
+  .acup__duvida-a {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-muted);
+  }
+
+  .acup__duvida-nota {
+    margin-top: var(--spacing-s3);
+    padding-top: var(--spacing-s4);
+    border-top: 1px solid var(--hairline-cool);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: var(--color-muted);
+  }
+
+  @media (min-width: 900px) {
+    .acup__inner {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    }
+  }
+</style>

@@ -1,0 +1,82 @@
+---
+import { site } from '../config/site';
+import Icon from './Icon.astro';
+
+/**
+ * Faixa fina no topo com o essencial: onde é, e como se fala connosco.
+ * Fica acima do header e sai de vista assim que a pessoa começa a descer.
+ */
+---
+
+<div class="topbar">
+  <div class="container topbar__inner">
+    <p class="topbar__item">
+      <Icon name="pin" size={14} />
+      {site.address.street}, {site.address.postalCode}&nbsp;{site.address.locality}
+    </p>
+
+    <div class="topbar__right">
+      <a class="topbar__item" href={`tel:${site.phone.tel}`}>
+        <Icon name="phone" size={14} />
+        {site.phone.display}
+      </a>
+      <a class="topbar__item topbar__item--email" href={`mailto:${site.email}`}>
+        <Icon name="mail" size={14} />
+        {site.email}
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .topbar {
+    background-color: var(--color-navy-deep);
+    color: color-mix(in srgb, var(--color-ivory) 88%, transparent);
+  }
+
+  .topbar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-s4);
+    min-height: 38px;
+    padding-block: 6px;
+  }
+
+  .topbar__right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s5);
+  }
+
+  .topbar__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: inherit;
+    transition: color var(--dur) var(--ease);
+  }
+
+  a.topbar__item:hover {
+    color: var(--color-teal-soft);
+  }
+
+  .topbar :global(svg) {
+    flex: none;
+    color: var(--color-teal-soft);
+  }
+
+  /* Em ecrã estreito fica só o contacto — a morada repete-se no rodapé. */
+  @media (max-width: 860px) {
+    .topbar__inner > .topbar__item,
+    .topbar__item--email {
+      display: none;
+    }
+    .topbar__inner {
+      justify-content: center;
+    }
+  }
+</style>

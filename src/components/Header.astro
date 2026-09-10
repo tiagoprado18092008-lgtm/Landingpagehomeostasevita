@@ -1,0 +1,386 @@
+---
+import { site } from '../config/site';
+import Emblem from './Emblem.astro';
+import Icon from './Icon.astro';
+
+/** Navegação principal — subconjunto das secções, para não sobrecarregar. */
+const nav = [
+  { id: 'servicos', label: 'Tratamentos' },
+  { id: 'sobre', label: 'Filosofia' },
+  { id: 'percurso', label: '1.ª consulta' },
+  { id: 'terapeuta', label: 'Terapeuta' },
+  { id: 'faq', label: 'Perguntas' },
+];
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a href="#topo" class="brand" aria-label={`${site.name} — início`}>
+      <Emblem size={52} loading="eager" class="brand__mark" />
+      <span class="brand__type">
+        <span class="brand__name wordmark">Homeostase Vita</span>
+      </span>
+    </a>
+
+    <nav class="nav" aria-label="Navegação principal">
+      <ul class="nav__list">
+        {
+          nav.map((item) => (
+            <li>
+              <a href={`#${item.id}`} class="nav__link" data-nav-link={item.id}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <a href="#marcacao" class="btn btn-primary header-cta">Marcar consulta</a>
+      <button
+        type="button"
+        class="menu-toggle"
+        data-menu-toggle
+        aria-expanded="false"
+        aria-controls="menu-mobile"
+      >
+        <Icon name="menu" class="menu-toggle__open" />
+        <Icon name="close" class="menu-toggle__close" />
+        <span class="sr-only">Abrir menu</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Menu mobile em ecrã inteiro -->
+<div class="menu-panel" id="menu-mobile" data-menu-panel hidden>
+  <nav aria-label="Navegação em ecrã pequeno">
+    <ul class="menu-panel__list">
+      {
+        nav.map((item) => (
+          <li>
+            <a href={`#${item.id}`} class="menu-panel__link" data-menu-close>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+  <div class="menu-panel__actions">
+    <a href="#marcacao" class="btn btn-primary btn-full" data-menu-close>Marcar consulta</a>
+    <a href={`tel:${site.phone.tel}`} class="btn btn-secondary btn-full">
+      <Icon name="phone" size={18} />
+      Ligar {site.phone.display}
+    </a>
+    <a href={site.phone.whatsapp} class="btn btn-whatsapp btn-full" rel="noopener">
+      <Icon name="whatsapp" size={18} />
+      WhatsApp
+    </a>
+  </div>
+  <p class="menu-panel__meta note">
+    {site.address.street}<br />
+    {site.address.postalCode}&nbsp;{site.address.locality}
+  </p>
+</div>
+
+<style>
+  /* Sticky, não fixed: o header fica em fluxo e acompanha o cimo da página
+     sem tapar conteúdo nem exigir compensação de altura no main. */
+  /* Sombra permanente: separa sempre o header do conteudo, mesmo no topo
+     da pagina — nao depende de scroll para o corte ficar visivel. */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    background-color: var(--color-beige);
+    box-shadow: var(--shadow-2);
+  }
+
+  /* Ao contrário do resto da página, o header não usa a .container (max-width
+     1200px): fica de facto encostado às duas margens do ecrã, com o gutter
+     como única distância — é isso que põe o logo mesmo no canto, mesmo em
+     monitores largos, em vez de o centrar dentro de uma coluna de 1200px. */
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-s5);
+    min-height: var(--header-h);
+    width: 100%;
+    max-width: 1920px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* --- Marca ---
+     Bloco isolado à esquerda: flex: none garante que nunca cede espaço
+     à navegação, mesmo quando o vão central aperta. */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s4);
+    flex: none;
+    min-width: 0;
+    min-height: 44px;
+    text-decoration: none;
+  }
+
+  .brand__type {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .brand__name {
+    font-size: 1.375rem;
+    letter-spacing: 0.15em;
+  }
+
+  /* Em ecra estreito a marca cede primeiro: o toggle tem de caber sempre. */
+  @media (max-width: 480px) {
+    .brand__name {
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .brand__name {
+      white-space: nowrap;
+    }
+  }
+
+  /* --- Navegação --- */
+  .nav {
+    display: none;
+  }
+
+  .nav__list {
+    display: flex;
+    align-items: center;
+    gap: clamp(var(--spacing-s4), 2vw, var(--spacing-s6));
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav__link {
+    position: relative;
+    display: block;
+    white-space: nowrap;
+    padding: var(--spacing-s2) 0;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    color: var(--color-navy-ink);
+    text-decoration: none;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .nav__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 1.5px;
+    width: 0;
+    background: var(--color-teal);
+    transition: width var(--dur) var(--ease);
+  }
+
+  .nav__link:hover {
+    color: var(--color-navy);
+  }
+  .nav__link:hover::after,
+  .nav__link[aria-current='true']::after {
+    width: 100%;
+  }
+
+  /* --- Ações --- */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s3);
+    flex: none;
+  }
+
+  .header-cta {
+    display: none;
+    min-height: 52px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding-inline: var(--spacing-s6);
+  }
+
+  .menu-toggle {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    background: transparent;
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-pill);
+    color: var(--color-navy);
+    cursor: pointer;
+  }
+
+  .menu-toggle :global(svg) {
+    width: 22px;
+    height: 22px;
+  }
+
+  .menu-toggle :global(.menu-toggle__close) {
+    display: none;
+  }
+  .menu-toggle[aria-expanded='true'] :global(.menu-toggle__open) {
+    display: none;
+  }
+  .menu-toggle[aria-expanded='true'] :global(.menu-toggle__close) {
+    display: block;
+  }
+
+  /* A marcacao e a acao principal: aparece muito antes da navegacao. */
+  @media (min-width: 768px) {
+    .header-cta {
+      display: inline-flex;
+    }
+  }
+
+  /* Cinco itens a 1.0625rem, mais o wordmark completo e o botao, so cabem
+     em linha a partir de 1200px. Abaixo disso a navegacao vai para o painel,
+     em vez de encolher a letra que se quis maior.
+
+     Agora que o header já não está preso à .container de 1200px (fica
+     encostado às margens do ecrã), o vão central é grande em ecrãs largos
+     — por isso a navegação pode voltar a centrar-se nele em vez de ficar
+     colada ao logo. Marca e ações ficam cada uma no seu canto. */
+  @media (min-width: 1200px) {
+    .site-header__inner {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+    }
+    .nav {
+      display: block;
+      justify-self: center;
+    }
+    .header-actions {
+      justify-content: end;
+    }
+    .menu-toggle {
+      display: none;
+    }
+  }
+
+  /* --- Painel mobile --- */
+  .menu-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s7);
+    padding: calc(var(--header-h) + var(--spacing-s5)) var(--gutter) var(--spacing-s8);
+    background-color: var(--color-paper);
+    overflow-y: auto;
+  }
+
+  .menu-panel[hidden] {
+    display: none;
+  }
+
+  .menu-panel__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .menu-panel__link {
+    display: block;
+    padding: var(--spacing-s4) 0;
+    border-bottom: 1px solid var(--hairline-cool);
+    font-family: var(--font-sans);
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: var(--tracking-h3);
+    color: var(--color-navy);
+    text-decoration: none;
+  }
+
+  .menu-panel__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s3);
+  }
+
+  .menu-panel__meta {
+    margin-top: auto;
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-menu-panel]');
+
+  // Menu mobile.
+  if (toggle && panel) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      panel.hidden = !open;
+      document.body.style.overflow = open ? 'hidden' : '';
+      toggle.querySelector('.sr-only')!.textContent = open ? 'Fechar menu' : 'Abrir menu';
+    };
+
+    toggle.addEventListener('click', () => {
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+
+    panel.querySelectorAll('[data-menu-close]').forEach((el) =>
+      el.addEventListener('click', () => setOpen(false)),
+    );
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.hidden) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+
+    // Voltar ao layout desktop fecha o painel.
+    window.matchMedia('(min-width: 1200px)').addEventListener('change', (e) => {
+      if (e.matches) setOpen(false);
+    });
+  }
+
+  // Scroll-spy: sublinha a secção ativa.
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]')];
+  const watched = links
+    .map((link) => ({ link, el: document.getElementById(link.dataset.navLink!) }))
+    .filter((x): x is { link: HTMLAnchorElement; el: HTMLElement } => Boolean(x.el));
+
+  if (watched.length && 'IntersectionObserver' in window) {
+    const visible = new Set<HTMLElement>();
+    const spy = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const target = entry.target as HTMLElement;
+          if (entry.isIntersecting) visible.add(target);
+          else visible.delete(target);
+        }
+        // Sem nenhuma secção vigiada em vista (hero, marcação, rodapé),
+        // nenhum item fica sublinhado.
+        for (const { link, el } of watched) {
+          if (visible.has(el)) link.setAttribute('aria-current', 'true');
+          else link.removeAttribute('aria-current');
+        }
+      },
+      { rootMargin: '-45% 0px -45% 0px' },
+    );
+    watched.forEach((w) => spy.observe(w.el));
+  }
+</script>

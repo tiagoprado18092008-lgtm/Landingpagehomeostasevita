@@ -1,0 +1,149 @@
+---
+import { site } from '../config/site';
+import Icon from './Icon.astro';
+
+/**
+ * Facade do mapa: o iframe do Google só é injetado depois de a pessoa
+ * carregar em "Carregar mapa" (ou já ter dado consentimento no banner).
+ * Até lá não há cookies de terceiros nem ligação a servidores Google.
+ */
+const query = encodeURIComponent(
+  `${site.address.street}, ${site.address.postalCode} ${site.address.locality}`,
+);
+const embedSrc = `https://www.google.com/maps?q=${query}&output=embed`;
+const directions = `https://www.google.com/maps/dir/?api=1&destination=${query}`;
+---
+
+<div class="mapcard" data-mapcard data-embed={embedSrc}>
+  <div class="mapcard__facade" data-mapcard-facade>
+    <div class="mapcard__grid" aria-hidden="true"></div>
+
+    <div class="mapcard__body">
+      <span class="medallion medallion-sm" aria-hidden="true">
+        <Icon name="pin" />
+      </span>
+      <p class="mapcard__address">
+        {site.address.street}<br />
+        {site.address.postalCode}&nbsp;{site.address.locality}
+      </p>
+      <p class="note mapcard__consent">
+        O mapa é do Google e coloca cookies de terceiros. Só carrega se autorizar.
+      </p>
+      <div class="mapcard__actions">
+        <button type="button" class="btn btn-secondary" data-mapcard-load>
+          Carregar mapa
+        </button>
+        <a
+          href={directions}
+          class="btn btn-ghost"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Ver rota
+          <Icon name="external" size={16} />
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Sem aspect-ratio: combinada com um min-height, a proporção derivava a
+     LARGURA do cartão (400 × 16/11 = 582px) e transbordava em ecrã estreito.
+     Aqui a altura mínima é só altura, e a facade cresce com o conteúdo. */
+  .mapcard {
+    position: relative;
+    display: grid;
+    width: 100%;
+    min-height: 360px;
+    overflow: hidden;
+    border: 1px solid var(--hairline-cool);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-ivory);
+  }
+
+  .mapcard :global(iframe) {
+    width: 100%;
+    height: 100%;
+    min-height: 360px;
+    border: 0;
+    display: block;
+  }
+
+  /* Em fluxo, não absoluta: é a facade que define a altura do cartão, por
+     isso os botões nunca ficam cortados, seja qual for a largura. */
+  .mapcard__facade {
+    position: relative;
+    display: grid;
+    place-items: center;
+    padding: var(--spacing-s5);
+  }
+
+  /* Grelha de ruas abstrata — sugere um mapa sem carregar um. */
+  .mapcard__grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.5;
+    background-image:
+      linear-gradient(var(--hairline-cool) 1px, transparent 1px),
+      linear-gradient(90deg, var(--hairline-cool) 1px, transparent 1px),
+      linear-gradient(115deg, transparent 47%, var(--hairline) 47%, var(--hairline) 48%, transparent 48%);
+    background-size:
+      48px 48px,
+      48px 48px,
+      100% 100%;
+  }
+
+  .mapcard__body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-s3);
+    max-width: 34ch;
+    padding: var(--spacing-s5);
+    border-radius: var(--radius-md);
+    background-color: color-mix(in srgb, var(--color-paper) 92%, transparent);
+    text-align: center;
+  }
+
+  .mapcard__address {
+    font-weight: 600;
+    color: var(--color-navy);
+    line-height: 1.5;
+  }
+
+  .mapcard__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-s2);
+    margin-top: var(--spacing-s2);
+  }
+</style>
+
+<script>
+  const card = document.querySelector<HTMLElement>('[data-mapcard]');
+
+  if (card) {
+    const facade = card.querySelector<HTMLElement>('[data-mapcard-facade]');
+    const button = card.querySelector<HTMLButtonElement>('[data-mapcard-load]');
+
+    const load = () => {
+      if (card.querySelector('iframe')) return;
+      const frame = document.createElement('iframe');
+      frame.src = card.dataset.embed!;
+      frame.title = 'Mapa com a localização da Homeostase Vita, na Maia';
+      frame.loading = 'lazy';
+      frame.referrerPolicy = 'no-referrer-when-downgrade';
+      frame.allowFullscreen = true;
+      card.appendChild(frame);
+      facade?.remove();
+    };
+
+    button?.addEventListener('click', load);
+
+    // Carrega o mapa automaticamente ao abrir a página.
+    load();
+  }
+</script>

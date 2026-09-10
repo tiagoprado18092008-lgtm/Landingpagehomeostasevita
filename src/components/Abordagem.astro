@@ -1,0 +1,148 @@
+---
+import { Image } from 'astro:assets';
+import avaliacao from '../assets/img/avaliacao.jpg';
+
+/**
+ * Como se trata, em prosa — o bloco que fecha a lista de tratamentos.
+ *
+ * Substituiu os seis cartões de princípios: diziam a mesma coisa que a
+ * Filosofia diz mais abaixo, seis vezes e em caixas iguais. Aqui a mesma
+ * matéria cabe em dois parágrafos e ganha o que faltava: o método concreto.
+ *
+ * A curva no topo é o que faz o navy dos Tratamentos assentar nesta faixa em
+ * vez de bater nela a direito. Sobe da esquerda para a direita e é o único
+ * corte desenhado da página: repetido, deixava de se notar.
+ *
+ * À direita, a avaliação do pulso — a fotografia mostra literalmente o que o
+ * texto ao lado descreve. Substituiu a arte de anéis concêntricos que servia
+ * de marcador enquanto não havia imagem. Fica no rácio nativo (11:6) para não
+ * cortar nenhuma das mãos.
+ */
+---
+
+<section class="abordagem" aria-labelledby="abordagem-titulo">
+  <span class="abordagem__curva" aria-hidden="true">
+    <svg viewBox="0 0 1440 140" preserveAspectRatio="none" focusable="false">
+      <path d="M0,140 L0,96 C480,96 900,4 1440,4 L1440,140 Z" fill="currentColor" />
+    </svg>
+  </span>
+
+  <div class="container abordagem__inner">
+    <div class="abordagem__texto">
+      <p class="eyebrow reveal">Como tratamos</p>
+
+      <h2 class="h2 reveal" id="abordagem-titulo" style="--reveal-delay:40ms">
+        O tratamento começa<br />na avaliação
+      </h2>
+
+      <p class="abordagem__p reveal" style="--reveal-delay:100ms">
+        Nenhuma destas técnicas se escolhe pelo sintoma. A consulta abre com uma
+        avaliação individual — o que sente e há quanto tempo, o sono, a digestão, os
+        hábitos, o que já experimentou — e é essa leitura de conjunto que define a
+        estratégia terapêutica e as técnicas de cada sessão.
+      </p>
+
+      <p class="abordagem__p reveal" style="--reveal-delay:160ms">
+        O acompanhamento não termina aí: a evolução é revista de consulta em consulta e
+        a estratégia ajustada sempre que for preciso. Além do alívio dos sintomas,
+        trabalha-se a prevenção e os hábitos que sustentam o equilíbrio.
+      </p>
+    </div>
+
+    <figure class="abordagem__arte reveal reveal--scale" style="--reveal-delay:120ms">
+      <Image
+        class="arte__foto"
+        src={avaliacao}
+        alt="Terapeuta a avaliar o pulso no punho de uma paciente, apoiado numa almofada."
+        widths={[440, 700, 1100]}
+        sizes="(min-width: 900px) 46vw, 92vw"
+        quality={82}
+        loading="lazy"
+        decoding="async"
+      />
+    </figure>
+  </div>
+</section>
+
+<style>
+  /* Faixa fria entre o navy dos Tratamentos e o branco da Filosofia. Continua
+     a ser a claridade da casa — o que muda é a tonalidade, não o valor. */
+  .abordagem {
+    --curva-h: clamp(48px, 7vw, 118px);
+    --faixa: color-mix(in srgb, var(--color-mist) 46%, var(--color-paper));
+    position: relative;
+    background-color: var(--faixa);
+    padding-top: clamp(2.5rem, 5vw, 4rem);
+    padding-bottom: clamp(3.5rem, 7vw, 6rem);
+  }
+
+  /* Sobe por cima da secção anterior. O 1px de folga evita o fio de fundo
+     que aparece a arredondar subpixéis em certos zooms. */
+  .abordagem__curva {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(1px - var(--curva-h));
+    height: var(--curva-h);
+    color: var(--faixa);
+    pointer-events: none;
+  }
+
+  .abordagem__curva svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .abordagem__inner {
+    display: grid;
+    gap: clamp(2.25rem, 4vw, 4rem);
+    align-items: center;
+  }
+
+  .abordagem__texto .eyebrow {
+    margin-bottom: var(--spacing-s3);
+  }
+
+  /* A quebra é explícita no markup; o `text-wrap: balance` global, com uma
+     largura máxima curta, partia isto em três linhas desiguais. */
+  .abordagem__texto .h2 {
+    text-wrap: normal;
+  }
+
+  /* Sobre a faixa fria o texto corrido fica a navy-ink, não a cinzento: é
+     leitura longa e o contraste do `muted` aqui ficava no limite. */
+  .abordagem__p {
+    margin-top: var(--spacing-s5);
+    max-width: 54ch;
+    font-size: var(--text-body);
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  /* --- A fotografia: a avaliação do pulso --- */
+  .abordagem__arte {
+    position: relative;
+    margin: 0;
+    /* Rácio nativo da fotografia (1100×600): sem corte, ficam as duas mãos. */
+    aspect-ratio: 11 / 6;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    background-color: var(--color-paper);
+    box-shadow: var(--shadow-2);
+  }
+
+  .abordagem__arte :global(.arte__foto) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  @media (min-width: 900px) {
+    .abordagem__inner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+  }
+</style>

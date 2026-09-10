@@ -1,0 +1,214 @@
+---
+import concerns from '../content/concerns.json';
+import Icon from './Icon.astro';
+import Ambient from './Ambient.astro';
+
+/**
+ * As seis áreas como lista de verificação: um visto dourado, um filete a
+ * separar. Sem medalhões nem cartões — é uma lista para a pessoa se
+ * reconhecer, e lê-se de uma passagem de olhos.
+ */
+---
+
+<section class="section surface-verde areas" id="areas" aria-labelledby="areas-titulo">
+  <!-- Halos do emblema. Não se usa `.tem-ambiente` aqui: o `overflow:hidden`
+       que essa classe põe na secção desligaria o `sticky` da coluna da
+       esquerda. O próprio Ambient já recorta as suas manchas. -->
+  <Ambient variant="canto" opacity={0.9} />
+
+  <div class="container areas__inner">
+    <div class="areas__aside">
+      <p class="eyebrow reveal">Áreas de procura</p>
+      <h2 class="h2 reveal" id="areas-titulo">Em que situações pode ser utilizada</h2>
+      <p class="lead reveal" style="--reveal-delay:80ms">
+        A Medicina Tradicional Chinesa pode ser utilizada na abordagem de diferentes
+        condições de saúde, entre outras:
+      </p>
+      <a href="#marcacao" class="areas__link reveal">
+        Marcar uma avaliação
+        <Icon name="arrow" size={15} />
+      </a>
+    </div>
+
+    <div class="areas__lista">
+      <ul>
+        {
+          concerns.map((c, i) => (
+            <li class="reveal" style={`--reveal-delay:${i * 55}ms`}>
+              <Icon name="check" size={16} class={`areas__visto areas__visto--${['navy', 'teal', 'green'][i % 3]}`} />
+              <span class="areas__titulo">{c.title}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="note areas__notice reveal">
+        A intervenção é sempre personalizada, tendo em consideração os sintomas
+        apresentados, as características individuais e as necessidades de cada pessoa,
+        podendo constituir um complemento aos cuidados de saúde convencionais quando
+        adequado.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Esta secção troca o azul do eyebrow pelo verde do emblema — o sopro de
+     cor do fundo repete-se no texto, em vez de ficar só na lavagem. */
+  .areas__aside .eyebrow {
+    color: var(--color-green-deep);
+  }
+
+  .areas__inner {
+    /* Sobe acima das manchas de fundo. */
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: clamp(2rem, 4vw, 4rem);
+    align-items: start;
+  }
+
+  .areas__aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s4);
+    max-width: 34ch;
+  }
+
+  .areas__aside .eyebrow {
+    margin-bottom: 0;
+  }
+
+  .areas__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-s2);
+    align-self: flex-start;
+    margin-top: var(--spacing-s2);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-navy);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-green-deep);
+    padding-bottom: 3px;
+    transition: gap var(--dur) var(--ease);
+  }
+
+  .areas__link:hover {
+    gap: var(--spacing-s3);
+  }
+
+  /* --- A lista --- */
+  .areas__lista ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--hairline-cool);
+  }
+
+  /* Cada linha é uma superfície: a lavagem verde entra pela esquerda ao
+     passar o rato, como quem sublinha com o dedo. O padding lateral
+     negativo dá-lhe corpo sem deslocar o texto. */
+  .areas__lista li {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s4);
+    padding: var(--spacing-s4) var(--spacing-s4);
+    margin-inline: calc(var(--spacing-s4) * -1);
+    border-bottom: 1px solid var(--hairline-cool);
+    font-size: clamp(1rem, 1.3vw, 1.125rem);
+    color: var(--color-navy-ink);
+  }
+
+  .areas__lista li::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-green) 16%, transparent),
+      transparent 82%
+    );
+    transform-origin: 0 50%;
+    scale: 0 1;
+    transition: scale 420ms var(--ease);
+  }
+
+  .areas__lista li:hover::before {
+    scale: 1 1;
+  }
+
+  .areas__titulo {
+    transition: translate 420ms var(--ease);
+  }
+
+  .areas__lista li:hover .areas__titulo {
+    translate: var(--spacing-s1) 0;
+  }
+
+  .areas__lista :global(.areas__visto) {
+    flex: none;
+    color: var(--color-teal);
+  }
+
+  /* O visto desenha-se em vez de aparecer: o traço corre no momento em que
+     a linha entra, e a cascata da lista faz disso uma pulsação a descer. */
+  .areas__lista li :global(.areas__visto path) {
+    stroke-dasharray: 24;
+    stroke-dashoffset: 24;
+  }
+
+  .areas__lista li.is-visible :global(.areas__visto path) {
+    animation: tracar 560ms var(--ease) calc(var(--reveal-delay, 0ms) + 180ms) both;
+  }
+
+  @keyframes tracar {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  .areas__lista :global(.areas__visto--navy) {
+    color: var(--color-navy);
+  }
+  .areas__lista :global(.areas__visto--teal) {
+    color: var(--color-teal);
+  }
+  .areas__lista :global(.areas__visto--green) {
+    color: var(--color-green-deep);
+  }
+
+  .areas__notice {
+    margin-top: var(--spacing-s5);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .areas__lista li :global(.areas__visto path) {
+      stroke-dasharray: none;
+      stroke-dashoffset: 0;
+      animation: none;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .areas__inner {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    }
+    .areas__aside {
+      position: sticky;
+      top: calc(var(--header-h) + var(--spacing-s7));
+    }
+    /* Duas colunas de itens: seis linhas seguidas seriam uma parede. */
+    .areas__lista ul {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: var(--spacing-s6);
+      border-top: 0;
+    }
+    .areas__lista li:nth-child(-n + 2) {
+      border-top: 1px solid var(--hairline-cool);
+    }
+  }
+</style>

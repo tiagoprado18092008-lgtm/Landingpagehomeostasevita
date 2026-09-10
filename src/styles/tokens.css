@@ -1,0 +1,126 @@
+/* =========================================================================
+   Homeostase Vita — design tokens
+   Extraidos dos materiais de marca (flyer, cartao, emblema).
+   Regra: nos componentes referencia-se sempre o token, nunca o valor cru.
+   ========================================================================= */
+
+@theme {
+  /* ---- Cor: marca -------------------------------------------------- */
+  --color-navy: #003068;
+  --color-navy-deep: #00224d;
+  --color-navy-ink: #0d1f3c;
+  --color-green: #6cae42;
+  --color-green-deep: #106848;
+  --color-teal: #1890a0;
+  --color-teal-deep: #105878;
+  --color-teal-soft: #5fb9c7;
+
+  /* ---- Cor: superficies --------------------------------------------
+     Um só bege claríssimo em todo o site (referência: merakiclinics.com)
+     — nada de tom areia. O contraste entre secções vem das manchas
+     verde/azul do emblema (Ambient.astro), não de um bege mais escuro. */
+  --color-cloud: #f9f5eb;
+  --color-ivory: #faf7ee;
+  --color-beige: #fcfaf3;
+  --color-mist: #cdd8e8;
+  --color-paper: #fcfaf3;
+  --color-muted: #5a6b82;
+  --color-danger: #b5432f;
+
+  /* Fundo liso da arte do azulejo (valor amostrado do proprio PNG). A FAQ e a
+     faixa de marcacao partilham-no para que a costura entre as duas nao se
+     veja: continuam a ser duas seccoes, mas leem-se como uma so superficie. */
+  --color-mosaico: #fefefe;
+  /* Lavagem azul da seccao seguinte (Local), repetida aqui para a faixa poder
+     desvanecer ate ela sem corte. Manter em sincronia com .surface-azul. */
+  --color-azul-lavado: color-mix(in srgb, var(--color-teal) 9%, var(--color-paper));
+
+  /* ---- Tipografia ----------------------------------------------------
+     DM Sans faz todo o trabalho — títulos e corpo. A serifa fica reservada
+     ao wordmark, que é a marca desenhada e não texto de interface. */
+  --font-sans: 'DM Sans Variable', 'DM Sans', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, sans-serif;
+  --font-wordmark: 'Cormorant Garamond Variable', 'Cormorant Garamond', Georgia,
+    'Times New Roman', serif;
+  --font-cjk: 'Noto Serif SC', 'Songti SC', 'Source Han Serif SC', SimSun,
+    'Cormorant Garamond Variable', serif;
+
+  /* ---- Escala fluida ------------------------------------------------ */
+  --text-eyebrow: 0.75rem;
+  --text-small: 0.875rem;
+  --text-body: clamp(1rem, 0.3vw + 0.95rem, 1.0625rem);
+  --text-lead: clamp(1.0625rem, 1vw + 0.8rem, 1.25rem);
+  --text-h3: clamp(1.1875rem, 1.4vw, 1.5rem);
+  --text-h2: clamp(1.875rem, 3.2vw, 3rem);
+  --text-h1: clamp(2.5rem, 4.8vw + 0.5rem, 4.25rem);
+  --text-display: clamp(3rem, 6vw, 4.75rem);
+
+  /* ---- Tracking: em corpos grandes o sans precisa de fechar ---------- */
+  --tracking-display: -0.032em;
+  --tracking-h2: -0.028em;
+  --tracking-h3: -0.02em;
+  --tracking-caps: 0.18em;
+
+  /* ---- Espaco (base 4px) -------------------------------------------- */
+  --spacing-s1: 4px;
+  --spacing-s2: 8px;
+  --spacing-s3: 12px;
+  --spacing-s4: 16px;
+  --spacing-s5: 24px;
+  --spacing-s6: 32px;
+  --spacing-s7: 48px;
+  --spacing-s8: 64px;
+  --spacing-s9: 96px;
+  --spacing-s10: 128px;
+
+  /* ---- Raio ----------------------------------------------------------
+     Generoso de propósito: cantos macios são metade do ar limpo. */
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-xl: 40px;
+  --radius-pill: 999px;
+
+  /* ---- Sombra: fria e baixa. A profundidade vem do espaco. ---------- */
+  --shadow-1: 0 1px 2px rgba(0, 48, 104, 0.06);
+  --shadow-2: 0 10px 30px -12px rgba(0, 48, 104, 0.18);
+  --shadow-3: 0 24px 60px -20px rgba(0, 48, 104, 0.22);
+
+  /* ---- Breakpoints --------------------------------------------------- */
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1200px;
+}
+
+:root {
+  /* ---- Semantica ---------------------------------------------------- */
+  --bg-base: var(--color-paper);
+  --text: var(--color-navy-ink);
+  --brand: var(--color-navy);
+  --accent: var(--color-teal);
+  --hairline: rgba(16, 88, 120, 0.35);
+  --hairline-cool: rgba(0, 48, 104, 0.12);
+
+  /* ---- Layout -------------------------------------------------------- */
+  --container: 1200px;
+  --content: 1120px;
+  --measure: 62ch;
+  --gutter: clamp(1.25rem, 5vw, 4rem);
+  --section-y: clamp(4rem, 7vw, 7.5rem);
+  --header-h: 80px;
+
+  /* ---- Motion -------------------------------------------------------- */
+  --dur-fast: 150ms;
+  --dur: 260ms;
+  --dur-slow: 520ms;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* O header engorda em desktop. Tudo o que se alinha por ele acompanha:
+   scroll-padding das ancoras, sticky dos filtros, topo das paginas legais. */
+@media (min-width: 1024px) {
+  :root {
+    --header-h: 132px;
+  }
+}

@@ -1,0 +1,31 @@
+# Dependências e artefactos de build
+node_modules/
+dist/
+.astro/
+.vercel/
+
+# Ambiente — NUNCA committar. Segredos e endpoints ficam no painel da Vercel.
+.env
+.env.local
+.env.*.local
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# --- Material de trabalho, não faz parte do site -----------------------
+# Capturas de ecrã tiradas durante o desenho, só na raiz (as imagens do
+# site vivem em src/assets/ e public/, e essas entram).
+/*.png
+/*.jpg
+
+# Registos do Playwright
+.playwright-mcp/
+
+# Fotografias originais da clínica. Já estão importadas e optimizadas em
+# src/assets/img/ — o repositório não precisa dos ficheiros de câmara.
+# Ficam na tua pasta e no OneDrive.
+Nova pasta/
+
+# Estado local do Claude Code
+.claude/

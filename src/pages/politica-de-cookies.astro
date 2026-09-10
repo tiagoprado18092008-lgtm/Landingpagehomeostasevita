@@ -1,0 +1,88 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { site } from '../config/site';
+---
+
+<LegalLayout
+  title="Política de Cookies — Homeostase Vita"
+  description="Que cookies este site usa, para que servem e como pode mudar a sua escolha a qualquer momento."
+  heading="Política de Cookies"
+  updated="setembro de 2026"
+>
+  <h2>1. O essencial</h2>
+  <p>
+    Este site não coloca cookies de medição nem carrega conteúdos de terceiros antes de
+    o autorizar. Enquanto não escolher, e se recusar, o site funciona na íntegra — só
+    não recolhemos estatísticas de utilização e o mapa não é carregado.
+  </p>
+
+  <h2>2. Que cookies existem</h2>
+  <table>
+    <thead>
+      <tr><th>Cookie</th><th>Origem</th><th>Para quê</th><th>Duração</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>hv-consent</code></td>
+        <td>Este site</td>
+        <td>Guardar a sua escolha sobre cookies. Fica no seu navegador e não é enviado para lado nenhum.</td>
+        <td>Até limpar os dados do navegador</td>
+      </tr>
+      <tr>
+        <td><code>_ga</code>, <code>_ga_*</code></td>
+        <td>Google Analytics 4</td>
+        <td>Estatísticas agregadas de utilização. Só depois de aceitar.</td>
+        <td>Até 2 anos</td>
+      </tr>
+      <tr>
+        <td><code>_fbp</code></td>
+        <td>Meta Pixel</td>
+        <td>Medir o resultado de campanhas. Só depois de aceitar.</td>
+        <td>Até 3 meses</td>
+      </tr>
+      <tr>
+        <td>Cookies do Google Maps</td>
+        <td>Google</td>
+        <td>Mostrar o mapa da clínica. Só carregado se carregar em "Carregar mapa" ou aceitar os cookies.</td>
+        <td>Definida pelo Google</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>3. Mudar de ideias</h2>
+  <p>
+    Pode rever a sua escolha a qualquer momento em
+    <button type="button" class="link-gold" data-open-consent>Definições de cookies</button>,
+    também disponível no rodapé de todas as páginas. Pode ainda apagar cookies
+    diretamente nas definições do seu navegador.
+  </p>
+
+  <h2>4. Dúvidas</h2>
+  <p>
+    Para qualquer questão sobre cookies ou privacidade, escreva para
+    <a href={`mailto:${site.email}`}>{site.email}</a>. Veja também a nossa
+    <a href="/politica-de-privacidade">Política de Privacidade</a>.
+  </p>
+</LegalLayout>
+
+<style is:global>
+  .prose code {
+    padding: 2px 6px;
+    border-radius: 4px;
+    background-color: var(--color-ivory);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.875em;
+  }
+
+  .prose button.link-gold {
+    padding: 0;
+    background: none;
+    border: 0;
+    color: var(--color-navy);
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: var(--color-teal);
+    text-underline-offset: 3px;
+  }
+</style>

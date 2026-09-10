@@ -1,0 +1,168 @@
+---
+/**
+ * Consentimento RGPD.
+ *
+ * Nada de terceiros carrega antes do opt-in: GA4, Meta Pixel e o mapa do
+ * Google ficam bloqueados até "Aceitar". A escolha fica guardada e pode ser
+ * revista pelo link no rodapé.
+ */
+---
+
+<div class="consent-banner" data-consent hidden role="dialog" aria-labelledby="consent-titulo" aria-describedby="consent-texto">
+  <div class="consent-banner__inner">
+    <div>
+      <h2 class="consent-banner__title" id="consent-titulo">Cookies e privacidade</h2>
+      <p class="consent-banner__text" id="consent-texto">
+        Usamos cookies de medição e o mapa do Google apenas se autorizar. Sem a sua
+        autorização, o site funciona na mesma — só não recolhemos estatísticas.{' '}
+        <a href="/politica-de-cookies" class="link-gold">Política de Cookies</a>
+      </p>
+    </div>
+    <div class="consent-banner__actions">
+      <button type="button" class="btn btn-secondary" data-consent-reject>Recusar</button>
+      <button type="button" class="btn btn-primary" data-consent-accept>Aceitar</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .consent-banner {
+    position: fixed;
+    left: clamp(12px, 3vw, 24px);
+    right: clamp(12px, 3vw, 24px);
+    bottom: clamp(12px, 3vw, 24px);
+    z-index: 100;
+    padding: var(--spacing-s5);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-paper);
+    box-shadow: var(--shadow-3);
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .consent-banner[hidden] {
+    display: none;
+  }
+
+  .consent-banner__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s4);
+  }
+
+  .consent-banner__title {
+    font-size: 1.125rem;
+    margin-bottom: var(--spacing-s2);
+  }
+
+  .consent-banner__text {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-muted);
+  }
+
+  .consent-banner__actions {
+    display: flex;
+    gap: var(--spacing-s3);
+  }
+
+  .consent-banner__actions .btn {
+    flex: 1;
+    min-height: 44px;
+    font-size: 0.9375rem;
+  }
+
+  @media (min-width: 720px) {
+    .consent-banner__inner {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-s6);
+    }
+    .consent-banner__actions {
+      flex: none;
+    }
+    .consent-banner__actions .btn {
+      flex: none;
+    }
+  }
+</style>
+
+<script>
+  const KEY = 'hv-consent';
+  const banner = document.querySelector<HTMLElement>('[data-consent]');
+
+  /** Carrega GA4 e Meta Pixel. Só corre depois de "Aceitar". */
+  const loadAnalytics = () => {
+    const ga = document.querySelector('meta[name="hv:ga4"]')?.getAttribute('content');
+    const pixel = document.querySelector('meta[name="hv:pixel"]')?.getAttribute('content');
+
+    if (ga) {
+      const s = document.createElement('script');
+      s.async = true;
+      s.src = `https://www.googletagmanager.com/gtag/js?id=${ga}`;
+      document.head.appendChild(s);
+      // @ts-expect-error — gtag escreve no objeto global.
+      window.dataLayer = window.dataLayer || [];
+      // @ts-expect-error — assinatura variádica do gtag.
+      function gtag() { window.dataLayer.push(arguments); }
+      // @ts-expect-error — idem.
+      gtag('js', new Date());
+      // @ts-expect-error — idem.
+      gtag('config', ga, { anonymize_ip: true });
+    }
+
+    if (pixel) {
+      const s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://connect.facebook.net/en_US/fbevents.js';
+      s.onload = () => {
+        // @ts-expect-error — fbq é injetado pelo script da Meta.
+        window.fbq?.('init', pixel);
+        // @ts-expect-error — idem.
+        window.fbq?.('track', 'PageView');
+      };
+      document.head.appendChild(s);
+    }
+  };
+
+  if (banner) {
+    const stored = localStorage.getItem(KEY);
+
+    if (stored === 'aceite') {
+      loadAnalytics();
+    } else if (stored !== 'recusado') {
+      banner.hidden = false;
+    }
+
+    const close = (choice: 'aceite' | 'recusado') => {
+      try {
+        localStorage.setItem(KEY, choice);
+      } catch {
+        // Armazenamento bloqueado: a escolha vale só para esta visita.
+      }
+      banner.hidden = true;
+      if (choice === 'aceite') {
+        loadAnalytics();
+        window.dispatchEvent(new CustomEvent('hv:consent-accepted'));
+      }
+    };
+
+    banner
+      .querySelector('[data-consent-accept]')
+      ?.addEventListener('click', () => close('aceite'));
+    banner
+      .querySelector('[data-consent-reject]')
+      ?.addEventListener('click', () => close('recusado'));
+  }
+
+  // Link "Definições de cookies" no rodapé reabre a escolha.
+  document.querySelector('[data-open-consent]')?.addEventListener('click', () => {
+    localStorage.removeItem(KEY);
+    if (banner) {
+      banner.hidden = false;
+      banner.querySelector<HTMLButtonElement>('[data-consent-accept]')?.focus();
+    }
+  });
+</script>

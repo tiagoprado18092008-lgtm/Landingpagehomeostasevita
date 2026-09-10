@@ -1,0 +1,172 @@
+---
+import faq from '../content/faq.json';
+
+/**
+ * Acordeão nativo (details/summary): funciona sem JS e já traz a semântica
+ * de expansão. Linhas finas, um "+" que vira "−" — o gesto mais discreto
+ * possível para uma lista de perguntas.
+ *
+ * As respostas ainda por confirmar não entram nos dados estruturados: não se
+ * publica um placeholder como se fosse conteúdo.
+ */
+/* As respostas vêm da clínica em vários parágrafos. Nos dados estruturados
+   juntam-se num texto só, que é o que o schema.org espera. */
+const answered = faq.filter((item) => !item.a.join(' ').includes('⟨TODO'));
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: answered.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a.join(' ') },
+  })),
+};
+---
+
+<section class="section faq" id="faq" aria-labelledby="faq-titulo">
+  <div class="container-narrow">
+    <div class="section-head">
+      <p class="eyebrow reveal">Perguntas frequentes</p>
+      <h2 class="h2 reveal" id="faq-titulo">Antes da primeira consulta</h2>
+    </div>
+
+    <div class="faq__lista">
+      {
+        faq.map((item, i) => (
+          <details class="faq__item reveal" style={`--reveal-delay:${i * 45}ms`} name="faq">
+            <summary class="faq__pergunta">
+              <span class="faq__mais" aria-hidden="true" />
+              <span>{item.q}</span>
+            </summary>
+            <div class="faq__resposta">
+              {item.a.map((paragrafo) => (
+                <p>{paragrafo}</p>
+              ))}
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+
+  {
+    answered.length > 0 && (
+      <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
+    )
+  }
+</section>
+
+<style>
+  /* Mesma superficie da faixa de marcacao que vem a seguir, para que a costura
+     entre as duas seccoes nao se veja. No topo, uma rampa longa a partir do
+     bege da seccao do terapeuta: a mudanca de fundo passa a ser um degrade
+     lento em vez de uma linha. */
+  .faq {
+    background-color: var(--color-mosaico);
+    background-image: linear-gradient(
+      to bottom,
+      var(--color-cloud) 0,
+      var(--color-mosaico) clamp(6rem, 14vw, 11rem)
+    );
+  }
+
+  .faq__lista {
+    border-radius: var(--radius-lg);
+    background-color: var(--color-cloud);
+    overflow: hidden;
+  }
+
+  .faq__item + .faq__item {
+    border-top: 1px solid color-mix(in srgb, var(--color-navy) 8%, transparent);
+  }
+
+  .faq__pergunta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s4);
+    min-height: 56px;
+    padding: var(--spacing-s4) var(--spacing-s5);
+    cursor: pointer;
+    list-style: none;
+    font-size: clamp(0.9375rem, 1.2vw, 1.0625rem);
+    font-weight: 500;
+    letter-spacing: var(--tracking-h3);
+    color: var(--color-navy);
+    transition: color var(--dur) var(--ease);
+  }
+
+  .faq__pergunta::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__pergunta:hover {
+    color: var(--color-teal-deep);
+  }
+
+  /* O "+" que vira "−": duas barras, uma delas some quando abre. */
+  .faq__mais {
+    position: relative;
+    flex: none;
+    width: 16px;
+    height: 16px;
+    color: var(--color-teal-deep);
+  }
+
+  .faq__mais::before,
+  .faq__mais::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background-color: currentColor;
+    translate: -50% -50%;
+    transition:
+      rotate var(--dur) var(--ease),
+      opacity var(--dur) var(--ease);
+  }
+
+  .faq__mais::before {
+    width: 14px;
+    height: 1.5px;
+  }
+
+  .faq__mais::after {
+    width: 1.5px;
+    height: 14px;
+  }
+
+  .faq__item[open] .faq__mais::after {
+    opacity: 0;
+    rotate: 90deg;
+  }
+
+  .faq__resposta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s3);
+    padding: 0 var(--spacing-s5) var(--spacing-s5) calc(var(--spacing-s5) + 16px + var(--spacing-s4));
+    max-width: 62ch;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--color-muted);
+  }
+
+  /* Animação de altura onde o motor a suporta; noutros abre de imediato. */
+  @supports (interpolate-size: allow-keywords) {
+    .faq__item::details-content {
+      block-size: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition:
+        block-size var(--dur) var(--ease),
+        content-visibility var(--dur) var(--ease) allow-discrete,
+        opacity var(--dur) var(--ease);
+    }
+
+    .faq__item[open]::details-content {
+      block-size: auto;
+      opacity: 1;
+    }
+  }
+</style>

@@ -1,0 +1,156 @@
+---
+import Ambient from './Ambient.astro';
+import LotusRule from './LotusRule.astro';
+
+/**
+ * O bloco de filosofia: uma frase curta a dourado de um lado, o enunciado
+ * longo do outro. É a única secção com o filete e o caráter 平衡 — a
+ * assinatura da marca, usada uma vez só.
+ */
+---
+
+<section class="section surface-white sobre tem-ambiente" id="sobre" aria-labelledby="sobre-titulo">
+  <Ambient variant="canto" opacity={0.6} />
+
+  <span class="sobre__glyph" data-cjk-glyph aria-hidden="true">平衡</span>
+
+  <div class="container sobre__inner">
+    <div class="sobre__aside">
+      <p class="eyebrow reveal">A nossa filosofia</p>
+      <p class="sobre__frase reveal" id="sobre-titulo">
+        Uma abordagem centrada na pessoa.
+      </p>
+      <LotusRule class="sobre__rule reveal" align="start" />
+    </div>
+
+    <div class="sobre__body reveal reveal--right" style="--reveal-delay:100ms">
+      <p class="sobre__statement">
+        Cada pessoa é avaliada de forma individualizada. Os sintomas não são analisados
+        isoladamente, mas relacionados com outros sinais, hábitos e características
+        pessoais, permitindo construir uma <strong>visão global do estado de saúde</strong>.
+      </p>
+      <p>
+        A partir desta avaliação, é definida uma estratégia terapêutica adaptada às
+        necessidades de cada pessoa, recorrendo às técnicas mais adequadas a cada situação.
+      </p>
+      <p>
+        O acompanhamento é realizado num ambiente tranquilo e profissional, onde o tempo
+        dedicado à avaliação e a atenção às particularidades de cada caso clínico assumem
+        um papel central.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sobre {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* 平衡 — grande, ténue, nunca a competir com o texto. */
+  .sobre__glyph {
+    position: absolute;
+    right: -1.5rem;
+    top: 50%;
+    translate: 0 -50%;
+    font-family: var(--font-cjk);
+    font-size: clamp(9rem, 20vw, 17rem);
+    line-height: 0.85;
+    color: var(--color-navy);
+    opacity: 0.035;
+    letter-spacing: -0.04em;
+    pointer-events: none;
+    user-select: none;
+    writing-mode: vertical-rl;
+  }
+
+  /* Escondido até se confirmar que o dispositivo tem uma fonte CJK: dois
+     quadrados de "tofu" seriam pior do que a ausência do caráter. */
+  .sobre__glyph:not([data-cjk-ok]) {
+    visibility: hidden;
+  }
+
+  .sobre__inner {
+    position: relative;
+    display: grid;
+    gap: clamp(2rem, 4vw, 4rem);
+    align-items: start;
+  }
+
+  .sobre__aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s4);
+  }
+
+  .sobre__aside .eyebrow {
+    margin-bottom: 0;
+  }
+
+  .sobre__frase {
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: var(--tracking-h3);
+    color: var(--color-teal-deep);
+    max-width: 22ch;
+  }
+
+  .sobre :global(.sobre__rule) {
+    max-width: 180px;
+  }
+
+  .sobre__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s5);
+    max-width: 60ch;
+  }
+
+  .sobre__statement {
+    font-size: clamp(1.375rem, 2.4vw, 2rem);
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: var(--tracking-h2);
+    color: var(--color-navy);
+  }
+
+  .sobre__body p:not(.sobre__statement) {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-muted);
+  }
+
+  .sobre__body strong {
+    font-weight: 500;
+    color: var(--color-navy);
+  }
+
+  @media (min-width: 900px) {
+    .sobre__inner {
+      grid-template-columns: minmax(0, 0.62fr) minmax(0, 1.38fr);
+    }
+  }
+</style>
+
+<script>
+  // Só mostra 平衡 se existir de facto uma fonte com esses glifos.
+  const glyph = document.querySelector<HTMLElement>('[data-cjk-glyph]');
+  if (glyph) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      const stack = getComputedStyle(glyph).fontFamily;
+      ctx.font = `40px ${stack}`;
+      const withStack = ctx.measureText('平').width;
+      // Uma família inexistente força a fonte por omissão do sistema; se as
+      // larguras coincidirem, nenhuma fonte da pilha tem o glifo.
+      ctx.font = '40px "___sem-cjk___"';
+      const fallback = ctx.measureText('平').width;
+      if (withStack > 0 && Math.abs(withStack - fallback) > 0.5) {
+        glyph.setAttribute('data-cjk-ok', '');
+      }
+    }
+  }
+</script>

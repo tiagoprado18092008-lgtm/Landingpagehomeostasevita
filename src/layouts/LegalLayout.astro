@@ -1,0 +1,142 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import LotusRule from '../components/LotusRule.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  heading: string;
+  updated: string;
+}
+
+const { title, description, heading, updated } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <Header />
+
+  <main id="conteudo" class="legal">
+    <div class="container-narrow">
+      <p class="eyebrow">Informação legal</p>
+      <h1 class="h2">{heading}</h1>
+      <LotusRule align="start" />
+      <p class="note legal__updated">Última atualização: {updated}</p>
+
+      <div class="prose">
+        <slot />
+      </div>
+
+      <p class="legal__back">
+        <a href="/" class="link-gold">← Voltar à página inicial</a>
+      </p>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style is:global>
+  .legal {
+    padding-top: calc(var(--header-h) + clamp(2.5rem, 6vw, 4.5rem));
+    padding-bottom: clamp(3rem, 7vw, 6rem);
+  }
+
+  .legal .eyebrow {
+    margin-bottom: var(--spacing-s3);
+  }
+
+  .legal__updated {
+    margin-top: var(--spacing-s4);
+  }
+
+  .prose {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    max-width: var(--measure);
+  }
+
+  .prose h2 {
+    font-size: var(--text-h3);
+    margin-top: var(--spacing-s8);
+    margin-bottom: var(--spacing-s4);
+  }
+
+  .prose h2:first-child {
+    margin-top: 0;
+  }
+
+  .prose h3 {
+    font-size: 1.125rem;
+    margin-top: var(--spacing-s6);
+    margin-bottom: var(--spacing-s3);
+  }
+
+  .prose p,
+  .prose ul,
+  .prose ol {
+    margin-bottom: var(--spacing-s4);
+    color: var(--color-navy-ink);
+  }
+
+  .prose ul,
+  .prose ol {
+    padding-left: 1.25rem;
+  }
+
+  .prose li {
+    margin-bottom: var(--spacing-s2);
+  }
+
+  .prose li::marker {
+    color: var(--color-teal);
+  }
+
+  .prose a {
+    color: var(--color-navy);
+    text-decoration: underline;
+    text-decoration-color: var(--hairline);
+    text-underline-offset: 3px;
+  }
+
+  .prose a:hover {
+    text-decoration-color: var(--color-teal);
+  }
+
+  .prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var(--spacing-s5);
+    font-size: 0.9375rem;
+  }
+
+  .prose th,
+  .prose td {
+    padding: var(--spacing-s3);
+    border-bottom: 1px solid var(--hairline-cool);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .prose th {
+    font-weight: 600;
+    color: var(--color-navy);
+  }
+
+  .prose .todo {
+    display: inline-block;
+    padding: 2px 8px;
+    border: 1px dashed var(--hairline);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-ivory);
+    color: var(--color-teal-deep);
+    font-style: italic;
+    font-size: 0.9375rem;
+  }
+
+  .legal__back {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    padding-top: var(--spacing-s5);
+    border-top: 1px solid var(--hairline-cool);
+  }
+</style>

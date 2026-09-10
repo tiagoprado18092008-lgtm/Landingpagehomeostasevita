@@ -1,0 +1,32 @@
+[
+  {
+    "icon": "person",
+    "title": "Avaliação individualizada",
+    "description": "Cada acompanhamento começa pela compreensão da pessoa, dos seus sintomas e das suas características individuais."
+  },
+  {
+    "icon": "yinyang",
+    "title": "Visão global da saúde",
+    "description": "Os diferentes sintomas e manifestações são analisados de forma integrada, procurando compreender as suas interligações e o organismo como um todo."
+  },
+  {
+    "icon": "needles",
+    "title": "Intervenção personalizada",
+    "description": "A estratégia terapêutica é definida de acordo com a avaliação realizada e pode integrar diferentes técnicas da Medicina Tradicional Chinesa."
+  },
+  {
+    "icon": "hands",
+    "title": "Acompanhamento individualizado",
+    "description": "A evolução é acompanhada ao longo das consultas, permitindo adaptar a estratégia terapêutica sempre que necessário."
+  },
+  {
+    "icon": "leaf",
+    "title": "Prevenção e equilíbrio",
+    "description": "Além da intervenção sobre os sintomas, valoriza-se a prevenção e a adoção de hábitos que favoreçam o equilíbrio e o bem-estar."
+  },
+  {
+    "icon": "lotus",
+    "title": "Diversidade de técnicas",
+    "description": "De acordo com cada situação, podem ser utilizadas diferentes técnicas, como acupuntura, auriculoterapia, ventosaterapia ou reflexologia."
+  }
+]

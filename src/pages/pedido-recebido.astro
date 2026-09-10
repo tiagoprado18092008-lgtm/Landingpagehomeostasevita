@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../config/site';
+
+/**
+ * Destino do formulário quando o envio é feito pelo browser, sem JavaScript.
+ *
+ * O Formspree redireciona para cá através do campo oculto `_next`. Com
+ * JavaScript activo esta página nunca chega a ser vista — o painel de
+ * sucesso aparece no lugar do formulário, sem recarregar a página.
+ *
+ * Fora do sitemap e dos motores de busca: não é uma página de conteúdo, é o
+ * fim de um percurso.
+ */
+---
+
+<BaseLayout
+  title="Pedido recebido — Homeostase Vita"
+  description="Recebemos o seu pedido de marcação."
+  noindex
+>
+  <Header />
+
+  <main id="conteudo" class="section recebido">
+    <div class="container-narrow recebido__caixa">
+      <span class="medallion" aria-hidden="true"><Icon name="check" /></span>
+
+      <h1 class="h2">Recebemos o seu pedido.</h1>
+      <p class="lead">
+        Entramos em contacto consigo em breve para confirmar o horário. Se preferir
+        falar já connosco, use um dos contactos abaixo.
+      </p>
+
+      <div class="recebido__acoes">
+        <a href={site.phone.whatsapp} class="btn btn-whatsapp" rel="noopener">
+          <Icon name="whatsapp" size={18} />
+          Falar por WhatsApp
+        </a>
+        <a href={`tel:${site.phone.tel}`} class="btn btn-secondary">
+          <Icon name="phone" size={18} />
+          {site.phone.display}
+        </a>
+      </div>
+
+      <p class="note">
+        <a href="/" class="link-gold">Voltar ao início</a>
+      </p>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .recebido {
+    display: grid;
+    place-items: center;
+    min-height: 60svh;
+  }
+
+  .recebido__caixa {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-s4);
+    text-align: center;
+  }
+
+  .recebido__caixa .lead {
+    max-width: 46ch;
+  }
+
+  .recebido__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-s3);
+    margin-top: var(--spacing-s3);
+  }
+</style>
