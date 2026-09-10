@@ -73,12 +73,12 @@ const faqSchema = {
 
   .faq__lista {
     border-radius: var(--radius-lg);
-    background-color: var(--color-cloud);
+    background-color: var(--color-navy);
     overflow: hidden;
   }
 
   .faq__item + .faq__item {
-    border-top: 1px solid color-mix(in srgb, var(--color-navy) 8%, transparent);
+    border-top: 1px solid color-mix(in srgb, #fff 14%, transparent);
   }
 
   .faq__pergunta {
@@ -92,7 +92,7 @@ const faqSchema = {
     font-size: clamp(0.9375rem, 1.2vw, 1.0625rem);
     font-weight: 500;
     letter-spacing: var(--tracking-h3);
-    color: var(--color-navy);
+    color: #fff;
     transition: color var(--dur) var(--ease);
   }
 
@@ -101,7 +101,7 @@ const faqSchema = {
   }
 
   .faq__pergunta:hover {
-    color: var(--color-teal-deep);
+    color: color-mix(in srgb, #fff 78%, var(--color-teal));
   }
 
   /* O "+" que vira "−": duas barras, uma delas some quando abre. */
@@ -110,7 +110,7 @@ const faqSchema = {
     flex: none;
     width: 16px;
     height: 16px;
-    color: var(--color-teal-deep);
+    color: color-mix(in srgb, #fff 70%, transparent);
   }
 
   .faq__mais::before,
@@ -149,7 +149,7 @@ const faqSchema = {
     max-width: 62ch;
     font-size: 0.9375rem;
     line-height: 1.7;
-    color: var(--color-muted);
+    color: color-mix(in srgb, #fff 78%, transparent);
   }
 
   /* Animação de altura onde o motor a suporta; noutros abre de imediato. */

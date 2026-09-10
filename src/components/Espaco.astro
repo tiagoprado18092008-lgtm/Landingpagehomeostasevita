@@ -2,8 +2,8 @@
 import { Image } from 'astro:assets';
 
 import sala from '../assets/img/espaco-sala.png';
-import gabinete from '../assets/img/espaco-gabinete.png';
-import espera from '../assets/img/espaco-espera.png';
+import gabinete from '../assets/img/espaco-gabinete.jpeg';
+import hall from '../assets/img/espaco-hall.jpeg';
 import exterior from '../assets/img/espaco-exterior.png';
 
 /**
@@ -17,7 +17,7 @@ import exterior from '../assets/img/espaco-exterior.png';
  *
  * TODO(cliente): a descrição do espaço foi escrita a partir das fotografias.
  * Confirmar com a Teresa antes de publicar — sobretudo se a sala comum e a
- * sala de espera são mesmo de uso partilhado e se o relvado é acessível.
+ * hall de entrada são mesmo de uso partilhado e se o relvado é acessível.
  *
  * As fotografias são pequenas (a maior tem 629px de largura). O mosaico está
  * dimensionado para elas: nenhum lado renderizado passa muito da largura do
@@ -35,13 +35,13 @@ const fotos = [
     src: gabinete,
     variante: 'estreita',
     legenda: 'Gabinete de consulta',
-    alt: 'Gabinete com marquesa, candeeiro de mesa e uma planta junto à janela.',
+    alt: 'Gabinete de consulta com sofá, poltrona, tapete e uma janela ampla com cortinados claros.',
   },
   {
-    src: espera,
+    src: hall,
     variante: 'estreita',
-    legenda: 'Sala de espera',
-    alt: 'Sala de espera com cadeiras de madeira e tecido claro em torno de uma mesa de apoio.',
+    legenda: 'Hall de entrada',
+    alt: 'Hall de entrada do edifício, com balcão de recepção, orquídeas e o letreiro do espaço.',
   },
   {
     src: exterior,
@@ -59,7 +59,7 @@ const fotos = [
       <h2 class="h2 reveal" id="espaco-titulo">Onde vai ser recebido</h2>
       <p class="lead reveal" style="--reveal-delay:80ms">
         As consultas decorrem em gabinete próprio, dentro de um espaço partilhado na
-        Maia — amplo, luminoso e tranquilo, com sala de espera e relvado exterior.
+        Maia — amplo, luminoso e tranquilo, com hall de entrada e relvado exterior.
       </p>
     </div>
 
@@ -85,7 +85,7 @@ const fotos = [
     </div>
 
     <p class="espaco__nota note reveal">
-      A sala comum e a sala de espera são de uso partilhado com outros profissionais do
+      A sala comum e o hall de entrada são de uso partilhado com outros profissionais do
       edifício. As consultas são sempre mediante marcação prévia.
     </p>
   </div>

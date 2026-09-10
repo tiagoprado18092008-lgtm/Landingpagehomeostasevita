@@ -29,3 +29,5 @@ Nova pasta/
 
 # Estado local do Claude Code
 .claude/
+
+.vercel
