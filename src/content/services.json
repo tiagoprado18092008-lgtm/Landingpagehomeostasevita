@@ -2,8 +2,8 @@
   {
     "icon": "needles",
     "name": "Acupuntura",
-    "description": "A principal técnica da Medicina Tradicional Chinesa, com aplicação de agulhas em pontos escolhidos a partir da avaliação individual.",
-    "detail": "As agulhas são muito finas e a aplicação é, geralmente, bem tolerada. Os pontos não são fixos: mudam de sessão para sessão, consoante a avaliação e a evolução.",
+    "description": "É a técnica amplamente utilizada na Medicina Tradicional Chinesa, sobretudo no Ocidente. Caracteriza-se pela aplicação de agulhas em pontos específicos do corpo (acupontos), de acordo com a avaliação energética e funcional de cada pessoa.",
+    "detail": "A estimulação provocada pela inserção da agulha tem impactos ao nível do sistema nervoso, através dos neurotransmissores, promovendo a libertação de substâncias pelo organismo para promover a cura. As agulhas são muito finas e a inserção é, geralmente, bem tolerada. Os pontos podem variar de sessão para sessão, consoante a avaliação e a evolução da condição de saúde.",
     "photo": "foto: sessão de acupuntura",
     "image": "acupuntura",
     "alt": "Aplicação de agulhas de acupuntura nas costas de uma pessoa deitada."
@@ -11,8 +11,8 @@
   {
     "icon": "ear",
     "name": "Auriculoterapia",
-    "description": "Estímulo de pontos do pavilhão auricular, integrado na estratégia terapêutica quando adequado à situação.",
-    "detail": "Aplica-se no ouvido externo, com estímulos pequenos que podem permanecer no local entre sessões. Entra como complemento de outra técnica, e não isoladamente.",
+    "description": "Técnica terapêutica que utiliza a estimulação de pontos específicos no pavilhão auricular como forma de estimular respostas no organismo.",
+    "detail": "Aplica-se no ouvido externo, sendo a auriculoterapia um microssistema que representa todo o corpo humano, sendo integrada na estratégia terapêutica quando adequada à situação.",
     "photo": "foto: auriculoterapia",
     "image": "auriculoterapia",
     "alt": "Colocação de um ponto de estímulo no pavilhão auricular de uma paciente."
@@ -20,8 +20,8 @@
   {
     "icon": "head",
     "name": "Craniopuntura",
-    "description": "Estímulo de zonas do couro cabeludo, integrado na estratégia terapêutica de acordo com a avaliação individual.",
-    "detail": "Trabalha-se com agulhas muito finas em zonas definidas do couro cabeludo. As zonas escolhidas saem da mesma avaliação que orienta as restantes técnicas.",
+    "description": "Estímulo de pontos e áreas específicas do couro cabeludo, estando integrada na estratégia terapêutica de acordo com o diagnóstico individual.",
+    "detail": "Pode ser utilizada em diversas patologias e desequilíbrios energéticos e funcionais, recorrendo a um sistema de correspondência próprio.",
     "photo": "foto: sessão de craniopuntura",
     "image": "craniopuntura",
     "alt": "Aplicação de agulhas de craniopuntura no couro cabeludo de uma pessoa."

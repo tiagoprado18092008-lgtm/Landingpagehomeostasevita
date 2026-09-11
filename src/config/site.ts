@@ -51,28 +51,23 @@ export const site = {
     firstName: 'Teresa',
     lastName: 'Morais' as string | null,
     bio:
-      'Formada em Medicina Tradicional Chinesa, com uma atuação personalizada e ' +
-      'integrada, orientada para a saúde física e emocional. A formação contínua ' +
-      'permite uma atualização constante e o aprofundamento de conhecimentos na ' +
-      'avaliação e abordagem terapêutica de diferentes condições de saúde. É ' +
-      'valorizada uma visão global de cada pessoa, relacionando sintomas, hábitos ' +
-      'e estilo de vida, no sentido de promover a homeostase e o equilíbrio do ' +
-      'organismo.' as string | null,
+      'Profissional da Medicina Tradicional Chinesa, com formação em Acupuntura e ' +
+      'cédula profissional emitida pela Administração Central do Sistema de Saúde, ' +
+      'I.P. (ACSS). Possui formação especializada em Acupuntura Neurocraniana e ' +
+      'Neuroauricular, complementada por formação na área da Nutrição Ortomolecular, ' +
+      'que amplia a sua perspetiva sobre a relação entre alimentação, funcionamento ' +
+      'do organismo e equilíbrio global.' as string | null,
   },
 
   /**
    * Formulário de marcação — envia para o Formspree em JSON.
-   *
-   * >>> SUBSTITUIR "SEU_FORM_ID_AQUI" pelo ID do formulário depois de criar
-   * >>> a conta em https://formspree.io (Settings → o teu formulário → Endpoint).
    *
    * Também pode ser definido via PUBLIC_FORM_ENDPOINT no .env — útil para
    * usar um endpoint diferente em preview/produção sem tocar no código.
    * Essa variável, quando definida, tem prioridade sobre o valor abaixo.
    */
   form: {
-    endpoint:
-      import.meta.env.PUBLIC_FORM_ENDPOINT || 'https://formspree.io/f/SEU_FORM_ID_AQUI',
+    endpoint: import.meta.env.PUBLIC_FORM_ENDPOINT || 'https://formspree.io/f/xgaeqrlj',
     provider: import.meta.env.PUBLIC_FORM_PROVIDER || 'formspree',
   },
 

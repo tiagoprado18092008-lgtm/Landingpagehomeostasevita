@@ -55,9 +55,9 @@ const servicesEn: Service[] = [
     name: 'Acupuncture',
     anchor: 'Acupuntura',
     description:
-      'The main technique of Traditional Chinese Medicine, applying needles at points chosen from an individual assessment.',
+      'The technique most widely used in Traditional Chinese Medicine, particularly in the West. It involves applying needles at specific points of the body (acupoints), according to each person’s energetic and functional assessment.',
     detail:
-      'The needles are very fine and the application is generally well tolerated. The points are not fixed: they change from session to session, according to the assessment and how things progress.',
+      'The stimulation produced by inserting the needle has effects at the level of the nervous system, through neurotransmitters, prompting the body to release substances that support healing. The needles are very fine and insertion is generally well tolerated. The points may vary from session to session, according to the assessment and how the health condition progresses.',
     photo: 'photo: acupuncture session',
     image: 'acupuntura',
     alt: 'Acupuncture needles being placed on the back of a person lying down.',
@@ -67,9 +67,9 @@ const servicesEn: Service[] = [
     name: 'Auriculotherapy',
     anchor: 'Auriculoterapia',
     description:
-      'Stimulation of points on the outer ear, integrated into the therapeutic strategy where appropriate to the situation.',
+      'A therapeutic technique that uses the stimulation of specific points on the outer ear as a way of prompting responses in the body.',
     detail:
-      'It is applied to the outer ear, with small stimuli that may stay in place between sessions. It comes in as a complement to another technique, not on its own.',
+      'It is applied to the outer ear, auriculotherapy being a microsystem that represents the whole human body, and is integrated into the therapeutic strategy where appropriate to the situation.',
     photo: 'photo: auriculotherapy',
     image: 'auriculoterapia',
     alt: 'A stimulation point being placed on the outer ear of a patient.',
@@ -79,9 +79,9 @@ const servicesEn: Service[] = [
     name: 'Craniopuncture',
     anchor: 'Craniopuntura',
     description:
-      'Stimulation of zones of the scalp, integrated into the therapeutic strategy according to the individual assessment.',
+      'Stimulation of specific points and areas of the scalp, integrated into the therapeutic strategy according to the individual diagnosis.',
     detail:
-      'It works with very fine needles on defined zones of the scalp. The zones chosen come from the same assessment that guides the other techniques.',
+      'It may be used in a range of conditions and energetic and functional imbalances, drawing on a correspondence system of its own.',
     photo: 'photo: craniopuncture session',
     image: 'craniopuntura',
     alt: 'Craniopuncture needles being applied to the scalp of a person.',
@@ -133,7 +133,7 @@ const concernsEn: Concern[] = [
   { icon: 'joints', title: 'Muscle pain' },
   { icon: 'lotus', title: 'Stress, anxiety and insomnia' },
   { icon: 'energy', title: 'Allergies, rhinitis and sinusitis' },
-  { icon: 'yinyang', title: 'Imbalance' },
+  { icon: 'yinyang', title: 'Physical and emotional imbalances' },
 ];
 
 const faqEn: FaqItem[] = [
@@ -149,7 +149,7 @@ const faqEn: FaqItem[] = [
   {
     q: 'In what situations can Traditional Chinese Medicine be used?',
     a: [
-      'Traditional Chinese Medicine can be used in addressing different health conditions, such as digestive and intestinal problems, migraines, muscle pain, stress, anxiety, insomnia, allergies, rhinitis and sinusitis, and situations of imbalance.',
+      'Traditional Chinese Medicine can be used in addressing different health conditions, namely situations of pain, muscle tension, migraines, digestive and intestinal changes, stress, anxiety, insomnia, allergies, rhinitis and sinusitis, among others.',
       'The intervention is always personalised, taking into account the symptoms presented, the individual characteristics and the needs of each person, and may serve as a complement to conventional health care where appropriate.',
     ],
   },
@@ -197,6 +197,7 @@ const techniquesPt = [
   'Moxabustão',
   'Fitoterapia',
   'Dietética chinesa',
+  'Massagem Tuina',
 ];
 
 const techniquesEn = [
@@ -206,6 +207,7 @@ const techniquesEn = [
   'Moxibustion',
   'Herbal medicine',
   'Chinese dietetics',
+  'Tuina massage',
 ];
 
 export const getTechniques = (locale: Locale): string[] =>

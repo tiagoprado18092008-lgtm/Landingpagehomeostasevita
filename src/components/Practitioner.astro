@@ -18,7 +18,9 @@ const { firstName, lastName } = site.practitioner;
 /* A biografia vem do dicionário, para existir nas duas línguas. O `site.ts`
    mantém o original português como fonte de verdade do espaço; quando lá
    estiver a `null` (por confirmar), o bloco pendente continua a aparecer. */
-const bio = site.practitioner.bio ? t('practitioner.bio') : null;
+const bio = site.practitioner.bio
+  ? [t('practitioner.bio1'), t('practitioner.bio2'), t('practitioner.bio3')]
+  : null;
 
 const tecnicas = getTechniques(locale);
 ---
@@ -49,7 +51,9 @@ const tecnicas = getTechniques(locale);
       <div class="terapeuta__corpo">
         {
           bio ? (
-            <p class="terapeuta__bio">{bio}</p>
+            <div class="terapeuta__bio">
+              {bio.map((paragrafo) => <p>{paragrafo}</p>)}
+            </div>
           ) : (
             <div class="terapeuta__pendente">
               <p class="terapeuta__pendente-titulo">
@@ -164,7 +168,12 @@ const tecnicas = getTechniques(locale);
     gap: var(--spacing-s5);
   }
 
+  /* A biografia são três parágrafos: o espaçamento entre eles vive aqui,
+     para que o corpo do cartão continue a respirar como quando era um só. */
   .terapeuta__bio {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s3);
     font-size: var(--text-lead);
     line-height: 1.65;
     color: var(--color-muted);

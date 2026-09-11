@@ -69,16 +69,16 @@ const pt = {
   'services.eyebrow': 'Tratamentos',
   'services.title': 'Os nossos tratamentos',
   'services.intro':
-    'De acordo com os sintomas, as características e as necessidades de cada pessoa, podem ser utilizadas diferentes técnicas da Medicina Tradicional Chinesa e áreas complementares.',
+    'De acordo com os sintomas, as características e as necessidades de cada pessoa, podem ser utilizadas diferentes técnicas da Medicina Tradicional Chinesa.',
   'services.note':
     'A escolha das técnicas resulta da avaliação individual feita em consulta.',
 
   // --- Abordagem ---
   'approach.title': 'Como tratamos na Homeostase Vita',
   'approach.p1':
-    'Com raízes na Medicina Tradicional Chinesa, olhamos o corpo como um todo interligado em vez de tratar o sintoma isolado. Cada tratamento é desenhado à medida da pessoa, a partir de uma avaliação individual, e pode incluir acupuntura, auriculoterapia, craniopuntura, moxabustão, fitoterapia e dietética chinesa.',
+    'Com raízes na Medicina Tradicional Chinesa, olhamos o corpo como um todo interligado em vez de tratar o sintoma isolado. Cada tratamento é desenhado à medida da pessoa, a partir de uma avaliação individual, e pode incluir acupuntura, auriculoterapia, craniopuntura, moxabustão, fitoterapia, dietética chinesa e massagem Tuina.',
   'approach.p2':
-    'Acompanhamos um leque alargado de queixas agudas e crónicas — dor, problemas digestivos, stress, fadiga, perturbações do sono e desequilíbrios hormonais — devolvendo o equilíbrio e cuidando da saúde a longo prazo.',
+    'Acompanhamos um leque alargado de queixas agudas e crónicas — dor, problemas digestivos e intestinais, enxaquecas, stress, fadiga, perturbações do sono e desequilíbrios hormonais — devolvendo o equilíbrio e cuidando da saúde a longo prazo.',
   'approach.imgAlt':
     'Terapeuta a avaliar o pulso no punho de uma paciente, apoiado numa almofada.',
 
@@ -101,7 +101,7 @@ const pt = {
     'A Medicina Tradicional Chinesa pode ser utilizada na abordagem de diferentes condições de saúde, tais como:',
   'areas.link': 'Marcar uma avaliação',
   'areas.notice':
-    'A intervenção é sempre personalizada, tendo em consideração os sintomas apresentados, as características individuais e as necessidades de cada pessoa, podendo constituir um complemento aos cuidados de saúde convencionais quando adequado.',
+    'A intervenção é sempre personalizada, partindo da análise dos sintomas e das características de cada pessoa para compreender o seu padrão e orientar a intervenção de forma adequada.',
 
   // --- Acupuntura em destaque ---
   'acup.eyebrow': 'Em destaque',
@@ -133,7 +133,7 @@ const pt = {
     'A observação da língua e a avaliação do pulso são elementos importantes desta avaliação, a par das questões dirigidas a cada situação.',
   'process.step3Title': 'Estratégia terapêutica',
   'process.step3Text':
-    'Da avaliação resulta uma estratégia adequada à situação, que pode integrar acupuntura, auriculoterapia ou craniopuntura.',
+    'Da avaliação resulta uma estratégia adequada à situação, que pode integrar acupuntura, auriculoterapia, craniopuntura, entre outras.',
   'process.step4Title': 'Consultas de seguimento',
   'process.step4Text':
     'Permitem acompanhar a evolução e ajustar a intervenção sempre que necessário, ao longo do acompanhamento.',
@@ -147,8 +147,12 @@ const pt = {
   'practitioner.licence': 'Cédula ACSS n.º',
   'practitioner.techniques': 'Técnicas praticadas',
   'practitioner.bioPending': 'Biografia por confirmar',
-  'practitioner.bio':
-    'Formada em Medicina Tradicional Chinesa, com uma atuação personalizada e integrada, orientada para a saúde física e emocional. A formação contínua permite uma atualização constante e o aprofundamento de conhecimentos na avaliação e abordagem terapêutica de diferentes condições de saúde. É valorizada uma visão global de cada pessoa, relacionando sintomas, hábitos e estilo de vida, no sentido de promover a homeostase e o equilíbrio do organismo.',
+  'practitioner.bio1':
+    'Profissional da Medicina Tradicional Chinesa, com formação em Acupuntura e cédula profissional emitida pela Administração Central do Sistema de Saúde, I.P. (ACSS). Possui formação especializada em Acupuntura Neurocraniana e Neuroauricular, complementada por formação na área da Nutrição Ortomolecular, que amplia a sua perspetiva sobre a relação entre alimentação, funcionamento do organismo e equilíbrio global.',
+  'practitioner.bio2':
+    'A sua prática assenta numa visão integrada da pessoa, procurando compreender os sintomas apresentados, mas também a forma como estes se relacionam com diferentes aspetos do organismo, hábitos e estilo de vida. A avaliação e a intervenção são adaptadas às características de cada caso, com especial atenção ao equilíbrio físico e emocional.',
+  'practitioner.bio3':
+    'A formação contínua constitui uma parte essencial da sua prática profissional, permitindo aprofundar conhecimentos e acompanhar a evolução das diferentes áreas de intervenção. O objetivo é proporcionar um acompanhamento rigoroso, personalizado e fundamentado, orientado para a recuperação do equilíbrio e da homeostase do organismo.',
 
   // --- FAQ ---
   'faq.eyebrow': 'Perguntas frequentes',
@@ -371,16 +375,16 @@ const en: Record<UiKey, string> = {
   'services.eyebrow': 'Treatments',
   'services.title': 'Our treatments',
   'services.intro':
-    'According to the symptoms, characteristics and needs of each person, different techniques of Traditional Chinese Medicine and complementary areas may be used.',
+    'According to the symptoms, characteristics and needs of each person, different techniques of Traditional Chinese Medicine may be used.',
   'services.note':
     'The choice of techniques follows from the individual assessment made during the consultation.',
 
   // --- Abordagem ---
   'approach.title': 'How we treat at Homeostase Vita',
   'approach.p1':
-    'Rooted in Traditional Chinese Medicine, we look at the body as an interconnected whole rather than treating an isolated symptom. Each treatment is designed around the person, based on an individual assessment, and may include acupuncture, auriculotherapy, craniopuncture, moxibustion, herbal medicine and Chinese dietetics.',
+    'Rooted in Traditional Chinese Medicine, we look at the body as an interconnected whole rather than treating an isolated symptom. Each treatment is designed around the person, based on an individual assessment, and may include acupuncture, auriculotherapy, craniopuncture, moxibustion, herbal medicine, Chinese dietetics and Tuina massage.',
   'approach.p2':
-    'We work with a wide range of acute and chronic complaints — pain, digestive problems, stress, fatigue, sleep disturbances and hormonal imbalances — restoring balance and caring for health over the long term.',
+    'We work with a wide range of acute and chronic complaints — pain, digestive and intestinal problems, migraines, stress, fatigue, sleep disturbances and hormonal imbalances — restoring balance and caring for health over the long term.',
   'approach.imgAlt':
     'Therapist assessing the pulse at a patient’s wrist, resting on a cushion.',
 
@@ -403,7 +407,7 @@ const en: Record<UiKey, string> = {
     'Traditional Chinese Medicine can be used in addressing different health conditions, such as:',
   'areas.link': 'Book an assessment',
   'areas.notice':
-    'The intervention is always personalised, taking into account the symptoms presented, the individual characteristics and the needs of each person, and may serve as a complement to conventional health care where appropriate.',
+    'The intervention is always personalised, starting from an analysis of each person’s symptoms and characteristics in order to understand their pattern and guide the intervention appropriately.',
 
   // --- Acupuntura em destaque ---
   'acup.eyebrow': 'In focus',
@@ -436,7 +440,7 @@ const en: Record<UiKey, string> = {
     'Observation of the tongue and assessment of the pulse are important elements of this evaluation, alongside questions directed at each situation.',
   'process.step3Title': 'Therapeutic strategy',
   'process.step3Text':
-    'The assessment leads to a strategy suited to the situation, which may bring together acupuncture, auriculotherapy or craniopuncture.',
+    'The assessment leads to a strategy suited to the situation, which may bring together acupuncture, auriculotherapy, craniopuncture, among others.',
   'process.step4Title': 'Follow-up consultations',
   'process.step4Text':
     'These make it possible to track progress and adjust the intervention whenever necessary, throughout the course of care.',
@@ -450,8 +454,12 @@ const en: Record<UiKey, string> = {
   'practitioner.licence': 'ACSS licence no.',
   'practitioner.techniques': 'Techniques practised',
   'practitioner.bioPending': 'Biography to be confirmed',
-  'practitioner.bio':
-    'Trained in Traditional Chinese Medicine, with a personalised and integrated practice oriented towards physical and emotional health. Continuing education allows for constant updating and for deepening knowledge in the assessment and therapeutic approach to different health conditions. A whole view of each person is valued, relating symptoms, habits and lifestyle, with the aim of promoting homeostasis and balance in the body.',
+  'practitioner.bio1':
+    'A Traditional Chinese Medicine professional, trained in Acupuncture and holding a professional licence issued by the Portuguese Central Administration of the Health System (ACSS). She holds specialised training in Neurocranial and Neuroauricular Acupuncture, complemented by training in Orthomolecular Nutrition, which broadens her perspective on the relationship between diet, how the body functions and overall balance.',
+  'practitioner.bio2':
+    'Her practice rests on an integrated view of the person, seeking to understand the symptoms presented but also the way these relate to different aspects of the body, habits and lifestyle. Assessment and intervention are adapted to the characteristics of each case, with particular attention to physical and emotional balance.',
+  'practitioner.bio3':
+    'Continuing education is an essential part of her professional practice, allowing her to deepen her knowledge and keep pace with developments across her different areas of work. The aim is to provide rigorous, personalised and well-founded care, oriented towards restoring balance and homeostasis in the body.',
 
   // --- FAQ ---
   'faq.eyebrow': 'Frequently asked questions',
