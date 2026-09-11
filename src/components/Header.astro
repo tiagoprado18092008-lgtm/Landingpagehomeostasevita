@@ -3,7 +3,7 @@ import { site } from '../config/site';
 import Emblem from './Emblem.astro';
 import Icon from './Icon.astro';
 import LangSwitch from './LangSwitch.astro';
-import { localeFromPath, type Locale } from '../i18n';
+import { localeFromPath, localizePath, type Locale } from '../i18n';
 import { useTranslations } from '../i18n/ui';
 
 interface Props {
@@ -19,6 +19,20 @@ const { sobreFoto = true } = Astro.props;
 
 const locale: Locale = localeFromPath(Astro.url.pathname);
 const t = useTranslations(locale);
+
+/*
+ * O logo tem de voltar à página inicial a partir de qualquer sítio —
+ * incluindo as páginas legais, que não têm a secção #topo. Só na própria
+ * home é que faz sentido usar a âncora (scroll suave, sem recarregar).
+ */
+const home = localizePath('/', locale);
+const norm = (p: string) => (p.length > 1 ? p.replace(/\/+$/, '') : p);
+const estaNaHome = norm(Astro.url.pathname) === norm(home);
+const brandHref = estaNaHome ? '#topo' : home;
+
+/* As secções (#servicos, #marcacao, ...) só existem na home — nas páginas
+   legais o link tem de levar lá primeiro e só depois saltar para a âncora. */
+const secaoHref = (id: string) => (estaNaHome ? `#${id}` : `${home}#${id}`);
 
 /** Navegação principal — subconjunto das secções, para não sobrecarregar. */
 const nav = [
@@ -38,7 +52,7 @@ const navPainel = [
 
 <header class="site-header" data-header data-solido={sobreFoto ? undefined : 'true'} data-sobre-foto={String(sobreFoto)}>
   <div class="site-header__inner">
-    <a href="#topo" class="brand" aria-label={`${site.name} — ${t('common.homeAria')}`}>
+    <a href={brandHref} class="brand" aria-label={`${site.name} — ${t('common.homeAria')}`}>
       <Emblem size={52} loading="eager" class="brand__mark" />
       <span class="brand__type">
         <span class="brand__name wordmark">Homeostase Vita</span>
@@ -50,7 +64,7 @@ const navPainel = [
         {
           nav.map((item) => (
             <li>
-              <a href={`#${item.id}`} class="nav__link" data-nav-link={item.id}>
+              <a href={secaoHref(item.id)} class="nav__link" data-nav-link={item.id}>
                 {item.label}
               </a>
             </li>
@@ -61,7 +75,7 @@ const navPainel = [
 
     <div class="header-actions">
       <LangSwitch compacto />
-      <a href="#marcacao" class="btn btn-primary header-cta">{t('common.book')}</a>
+      <a href={secaoHref('marcacao')} class="btn btn-primary header-cta">{t('common.book')}</a>
       <button
         type="button"
         class="menu-toggle"
@@ -86,7 +100,7 @@ const navPainel = [
       {
         navPainel.map((item, i) => (
           <li style={`--i:${i}`}>
-            <a href={`#${item.id}`} class="menu-panel__link" data-menu-close>
+            <a href={secaoHref(item.id)} class="menu-panel__link" data-menu-close>
               {item.label}
             </a>
           </li>
@@ -95,7 +109,7 @@ const navPainel = [
     </ul>
   </nav>
   <div class="menu-panel__actions">
-    <a href="#marcacao" class="btn btn-primary btn-full" data-menu-close>{t('common.book')}</a>
+    <a href={secaoHref('marcacao')} class="btn btn-primary btn-full" data-menu-close>{t('common.book')}</a>
     <a href={`tel:${site.phone.tel}`} class="btn btn-secondary btn-full">
       <Icon name="phone" size={18} />
       {t('common.call')} {site.phone.display}
