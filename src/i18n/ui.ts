@@ -171,7 +171,7 @@ const pt = {
   'space.alt1': 'Sala ampla e luminosa, com janelas de chão ao tecto viradas para um relvado.',
   'space.cap2': 'Gabinete de consulta',
   'space.alt2':
-    'Gabinete de consulta com sofá, poltrona, tapete e uma janela ampla com cortinados claros.',
+    'Gabinete de consulta com marquesa, cómoda, candeeiro e uma janela com cortinados claros.',
   'space.cap3': 'Hall de entrada',
   'space.alt3':
     'Hall de entrada do edifício, com balcão de recepção, orquídeas e o letreiro do espaço.',
@@ -475,7 +475,7 @@ const en: Record<UiKey, string> = {
     'A spacious, bright room with floor-to-ceiling windows looking onto a lawn.',
   'space.cap2': 'Consultation room',
   'space.alt2':
-    'Consultation room with a sofa, armchair, rug and a large window with light curtains.',
+    'Consultation room with a treatment table, chest of drawers, lamp and a window with light curtains.',
   'space.cap3': 'Entrance hall',
   'space.alt3':
     'The building’s entrance hall, with a reception desk, orchids and the venue sign.',

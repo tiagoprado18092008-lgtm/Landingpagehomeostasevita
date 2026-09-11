@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 
 import sala from '../assets/img/espaco-sala.png';
-import gabinete from '../assets/img/espaco-gabinete.jpeg';
+import gabinete from '../assets/img/espaco-gabinete-marquesa.png';
 import hall from '../assets/img/espaco-hall.png';
 import exterior from '../assets/img/espaco-exterior.png';
 import { localeFromPath, type Locale } from '../i18n';
@@ -28,8 +28,8 @@ const t = useTranslations(locale);
  * A sala, o exterior e a hall já vêm de originais grandes (~1500px de largura
  * nas horizontais, 1100x1430 na hall), por isso os cortes largos que existiam
  * para disfarçar ficheiros pequenos deixaram de ser precisos. O gabinete é a
- * excepção: continua a ser uma fotografia de telemóvel, vertical, e é por isso
- * que fica numa peça estreita onde o rácio lhe assenta.
+ * excepção: fica numa peça estreita, onde o rácio lhe assenta (1381x1139,
+ * quase quadrado, contra o 8/7 do corte).
  */
 const fotos = [
   { src: sala, variante: 'larga', legenda: t('space.cap1'), alt: t('space.alt1') },
