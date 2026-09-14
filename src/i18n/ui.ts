@@ -52,7 +52,7 @@ const pt = {
   'hero.titleA': 'Homeostase Vita — Espaço',
   'hero.titleB': ' de Medicina Tradicional Chinesa',
   'hero.sub':
-    'Espaço integrativo na Maia. Avaliação individual e acompanhamento continuado para dores persistentes, saúde emocional e um equilíbrio que dura.',
+    'Espaço integrativo na Maia. Avaliação individual e acompanhamento continuado para dores persistentes, saúde emocional e um equilíbrio duradouro.',
   'hero.imgAlt':
     'Agulhas de acupuntura a serem colocadas nas costas de uma pessoa, durante uma sessão.',
 
@@ -136,7 +136,7 @@ const pt = {
     'Da avaliação resulta uma estratégia adequada à situação, que pode integrar acupuntura, auriculoterapia, craniopuntura, entre outras.',
   'process.step4Title': 'Consultas de seguimento',
   'process.step4Text':
-    'Permitem acompanhar a evolução e ajustar a intervenção sempre que necessário, ao longo do acompanhamento.',
+    'Permitem acompanhar a evolução e ajustar a intervenção sempre que necessário ao longo do tempo.',
   'process.bookingStrong': 'Marcação prévia',
   'process.bookingText': 'As consultas são realizadas mediante marcação',
 
@@ -213,7 +213,7 @@ const pt = {
   'contact.submitBusy': 'A enviar…',
   'contact.whatsappTalk': 'Falar por WhatsApp',
   'contact.minimise':
-    'Só pedimos o necessário para o contactarmos. Os dados não são usados para mais nada nem partilhados com terceiros.',
+    'Só pedimos o necessário para o contactarmos. Os dados não são usados para qualquer outro fim nem partilhados com terceiros.',
   'contact.successTitle': 'Recebemos o seu pedido.',
   'contact.successText': 'Entramos em contacto consigo em breve para confirmar o horário.',
   'contact.successWhatsapp': 'Falar já por WhatsApp',
@@ -358,7 +358,7 @@ const en: Record<UiKey, string> = {
   'hero.titleA': 'Homeostase Vita — Traditional',
   'hero.titleB': ' Chinese Medicine Space',
   'hero.sub':
-    'An integrative space in Maia. Individual assessment and continued care for persistent pain, emotional health and balance that lasts.',
+    'An integrative space in Maia. Individual assessment and continued care for persistent pain, emotional health and lasting balance.',
   'hero.imgAlt':
     'Acupuncture needles being placed on a person’s back during a session.',
 
@@ -443,7 +443,7 @@ const en: Record<UiKey, string> = {
     'The assessment leads to a strategy suited to the situation, which may bring together acupuncture, auriculotherapy, craniopuncture, among others.',
   'process.step4Title': 'Follow-up consultations',
   'process.step4Text':
-    'These make it possible to track progress and adjust the intervention whenever necessary, throughout the course of care.',
+    'These make it possible to track progress and adjust the intervention whenever necessary over time.',
   'process.bookingStrong': 'Prior appointment',
   'process.bookingText': 'Consultations take place by appointment',
 
@@ -523,7 +523,7 @@ const en: Record<UiKey, string> = {
   'contact.submitBusy': 'Sending…',
   'contact.whatsappTalk': 'Message us on WhatsApp',
   'contact.minimise':
-    'We only ask for what we need in order to contact you. Your data is not used for anything else, nor shared with third parties.',
+    'We only ask for what we need in order to contact you. Your data is not used for any other purpose nor shared with third parties.',
   'contact.successTitle': 'We have received your request.',
   'contact.successText': 'We will be in touch shortly to confirm a time.',
   'contact.successWhatsapp': 'Message us on WhatsApp now',

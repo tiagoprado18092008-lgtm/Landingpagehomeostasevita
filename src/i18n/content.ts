@@ -69,7 +69,7 @@ const servicesEn: Service[] = [
     description:
       'A therapeutic technique that uses the stimulation of specific points on the outer ear as a way of prompting responses in the body.',
     detail:
-      'It is applied to the outer ear, auriculotherapy being a microsystem that represents the whole human body, and is integrated into the therapeutic strategy where appropriate to the situation.',
+      'It is applied to the outer ear. As auriculotherapy is a microsystem representing the whole human body, it is integrated into the therapeutic strategy where appropriate to the situation.',
     photo: 'photo: auriculotherapy',
     image: 'auriculoterapia',
     alt: 'A stimulation point being placed on the outer ear of a patient.',
