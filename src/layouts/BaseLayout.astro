@@ -12,6 +12,7 @@ import {
 import { useTranslations } from '../i18n/ui';
 import ConsentBanner from '../components/ConsentBanner.astro';
 import Grain from '../components/Grain.astro';
+import Tracking from '../components/Tracking.astro';
 
 interface Props {
   title: string;
@@ -157,6 +158,8 @@ const clinic = {
     {/* IDs de analítica: lidos pelo banner e só usados após opt-in. */}
     {site.analytics.ga4 && <meta name="hv:ga4" content={site.analytics.ga4} />}
     {site.analytics.metaPixel && <meta name="hv:pixel" content={site.analytics.metaPixel} />}
+    {site.analytics.googleAds.id && <meta name="hv:ads" content={site.analytics.googleAds.id} />}
+    {site.analytics.clarity && <meta name="hv:clarity" content={site.analytics.clarity} />}
 
     <noscript>
       <style>
@@ -183,6 +186,7 @@ const clinic = {
     <Grain />
     <slot />
     <ConsentBanner />
+    <Tracking />
 
     <script>
       // Entrada dos elementos: uma vez cada, quando chegam à vista.
