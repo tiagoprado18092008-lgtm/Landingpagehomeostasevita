@@ -99,25 +99,68 @@ const t = useTranslations(locale);
   const KEY = 'hv-consent';
   const banner = document.querySelector<HTMLElement>('[data-consent]');
 
-  /** Carrega GA4 e Meta Pixel. Só corre depois de "Aceitar". */
+  /**
+   * Carrega Google Ads, GA4, Clarity e Meta Pixel. Só corre depois de
+   * "Aceitar" — antes disso não sai nenhum pedido para terceiros.
+   */
   const loadAnalytics = () => {
-    const ga = document.querySelector('meta[name="hv:ga4"]')?.getAttribute('content');
-    const pixel = document.querySelector('meta[name="hv:pixel"]')?.getAttribute('content');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const w = window as any;
+    if (w.__hvAnalyticsLoaded) return;
+    w.__hvAnalyticsLoaded = true;
 
-    if (ga) {
+    const meta = (name: string) =>
+      document.querySelector(`meta[name="hv:${name}"]`)?.getAttribute('content') || '';
+    const ga = meta('ga4');
+    const ads = meta('ads');
+    const clarity = meta('clarity');
+    const pixel = meta('pixel');
+
+    const tagId = ads || ga;
+    if (tagId) {
+      w.dataLayer = w.dataLayer || [];
+      w.gtag = function gtag() {
+        // eslint-disable-next-line prefer-rest-params
+        w.dataLayer.push(arguments);
+      };
+      // Consent Mode v2 (modo básico): as tags só existem depois do opt-in,
+      // mas a Google exige o sinal explícito para tráfego do EEE.
+      // ad_personalization fica negado: sem remarketing numa página de saúde.
+      w.gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+      });
+      w.gtag('consent', 'update', {
+        ad_storage: 'granted',
+        ad_user_data: 'granted',
+        ad_personalization: 'denied',
+        analytics_storage: 'granted',
+      });
+      w.gtag('js', new Date());
+      if (ga) w.gtag('config', ga);
+      if (ads) w.gtag('config', ads);
+
       const s = document.createElement('script');
       s.async = true;
-      s.src = `https://www.googletagmanager.com/gtag/js?id=${ga}`;
+      s.src = `https://www.googletagmanager.com/gtag/js?id=${tagId}`;
       document.head.appendChild(s);
-      // @ts-expect-error — gtag escreve no objeto global.
-      window.dataLayer = window.dataLayer || [];
-      // @ts-expect-error — assinatura variádica do gtag.
-      function gtag() { window.dataLayer.push(arguments); }
-      // @ts-expect-error — idem.
-      gtag('js', new Date());
-      // @ts-expect-error — idem.
-      gtag('config', ga, { anonymize_ip: true });
     }
+
+    if (clarity && !w.clarity) {
+      w.clarity = function clarityQueue() {
+        // eslint-disable-next-line prefer-rest-params
+        (w.clarity.q = w.clarity.q || []).push(arguments);
+      };
+      const s = document.createElement('script');
+      s.async = true;
+      s.src = `https://www.clarity.ms/tag/${clarity}`;
+      document.head.appendChild(s);
+      w.clarity('consent');
+    }
+
+    window.dispatchEvent(new CustomEvent('hv:analytics-ready'));
 
     if (pixel) {
       const s = document.createElement('script');

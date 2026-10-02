@@ -1,0 +1,156 @@
+---
+/**
+ * Medição de contactos — Google Ads, GA4 e Microsoft Clarity.
+ *
+ * Nada sai daqui antes do opt-in: os eventos só são enviados se o banner
+ * já tiver carregado as tags (window.gtag / window.clarity existem). Sem
+ * consentimento, as funções correm e não fazem nada.
+ *
+ * O que é medido:
+ *   pedido_marcacao    — o Formspree respondeu 2xx ao formulário
+ *   contacto_telefone  — clique num link tel:
+ *   contacto_whatsapp  — clique num link wa.me, ou envio pelo chat
+ *   contacto_email     — clique num mailto:
+ *   inicio_formulario  — primeiro foco num campo do formulário de marcação
+ *
+ * Nenhum evento leva conteúdo do formulário: o "Motivo do contacto" é
+ * dado de saúde e não sai para o Google nem para a Microsoft.
+ */
+import { site } from '../config/site';
+
+const { googleAds, formEndpoint } = {
+  googleAds: site.analytics.googleAds,
+  formEndpoint: new URL(site.form.endpoint).host,
+};
+const adsId = googleAds.id;
+const labels = googleAds.labels;
+---
+
+<script is:inline define:vars={{ adsId, labels, formEndpoint }}>
+  (function () {
+    if (window.__hvTracking) return;
+    window.__hvTracking = true;
+
+    // Conversões do Ads só uma vez por sessão; eventos GA4 todas as vezes.
+    function jaEnviada(chave) {
+      try {
+        if (sessionStorage.getItem('hv-conv-' + chave)) return true;
+        sessionStorage.setItem('hv-conv-' + chave, '1');
+      } catch (e) {
+        /* armazenamento bloqueado: segue sem deduplicar */
+      }
+      return false;
+    }
+
+    /** Secção onde o clique aconteceu — diz que CTA é que converte. */
+    function zonaDe(el) {
+      var s = el && el.closest ? el.closest('section[id], [id]') : null;
+      return (s && s.id) || 'desconhecida';
+    }
+
+    function enviar(nome, rotulo, params) {
+      var gtag = window.gtag;
+      if (typeof gtag === 'function') {
+        gtag('event', nome, params || {});
+        if (adsId && rotulo && !jaEnviada(nome)) {
+          gtag('event', 'conversion', { send_to: adsId + '/' + rotulo });
+        }
+      }
+      if (typeof window.clarity === 'function') {
+        try {
+          window.clarity('event', nome);
+        } catch (e) {}
+      }
+    }
+
+    var ultimoLead = 0;
+    function lead(origem) {
+      var agora = Date.now();
+      if (agora - ultimoLead < 10000) return;
+      ultimoLead = agora;
+      enviar('pedido_marcacao', labels.lead, { method: origem || 'formulario' });
+    }
+
+    function whatsapp(zona) {
+      enviar('contacto_whatsapp', labels.whatsapp, { method: 'whatsapp', link_zone: zona });
+    }
+
+    window.hvTrack = { lead: lead, event: enviar };
+
+    // --- Cliques em telefone / WhatsApp / email ---------------------------
+    document.addEventListener(
+      'click',
+      function (ev) {
+        var alvo = ev.target;
+        if (!alvo || typeof alvo.closest !== 'function') return;
+        var a = alvo.closest('a[href]');
+        if (!a) return;
+        var href = a.getAttribute('href') || '';
+        var zona = zonaDe(a);
+
+        if (href.indexOf('tel:') === 0) {
+          enviar('contacto_telefone', labels.phone, { method: 'telefone', link_zone: zona });
+        } else if (href.indexOf('wa.me') > -1 || href.indexOf('whatsapp') > -1) {
+          whatsapp(zona);
+        } else if (href.indexOf('mailto:') === 0) {
+          enviar('contacto_email', '', { method: 'email', link_zone: zona });
+        }
+      },
+      true
+    );
+
+    // --- Chat: envia por window.open, não por link ------------------------
+    var abrirNativo = window.open;
+    window.open = function (url) {
+      try {
+        if (typeof url === 'string' && url.indexOf('wa.me') > -1) whatsapp('chat-panel');
+      } catch (e) {}
+      return abrirNativo.apply(window, arguments);
+    };
+
+    // --- Formulário de marcação: início de preenchimento ------------------
+    var comecou = false;
+    document.addEventListener(
+      'focusin',
+      function (ev) {
+        if (comecou) return;
+        var el = ev.target;
+        if (!el || typeof el.closest !== 'function') return;
+        if (!el.closest('form.contact__form')) return;
+        comecou = true;
+        enviar('inicio_formulario', '', { method: 'formulario' });
+      },
+      true
+    );
+
+    // --- Formulário de marcação: envio com sucesso ------------------------
+    // O handler do Contact.astro faz preventDefault + fetch. Observamos o
+    // fetch e só contamos quando o Formspree responde 2xx.
+    if (typeof window.fetch === 'function' && formEndpoint) {
+      var fetchNativo = window.fetch;
+      window.fetch = function (input) {
+        var url = '';
+        try {
+          url = typeof input === 'string' ? input : (input && input.url) || String(input);
+        } catch (e) {}
+        var resultado = fetchNativo.apply(this, arguments);
+        if (url.indexOf(formEndpoint) > -1) {
+          resultado
+            .then(function (res) {
+              if (res && res.ok) lead('formulario');
+            })
+            .catch(function () {});
+        }
+        return resultado;
+      };
+    }
+
+    // --- Rede de segurança: página de confirmação (envio sem JS) ----------
+    var p = location.pathname;
+    if (p.indexOf('/pedido-recebido') === 0 || p.indexOf('/en/request-received') === 0) {
+      // As tags podem ainda estar a carregar: espera pelo sinal do banner.
+      if (typeof window.gtag === 'function') lead('pagina_confirmacao');
+      else window.addEventListener('hv:analytics-ready', function () { lead('pagina_confirmacao'); }, { once: true });
+    }
+  })();
+</script>
