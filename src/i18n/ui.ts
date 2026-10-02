@@ -269,7 +269,7 @@ const pt = {
   // --- Consentimento ---
   'consent.title': 'Cookies e privacidade',
   'consent.text':
-    'Usamos cookies de medição e o mapa do Google apenas se autorizar. Sem a sua autorização, o site funciona na mesma — só não recolhemos estatísticas.',
+    'Usamos cookies de medição — estatísticas de utilização e resultados dos nossos anúncios — e o mapa do Google apenas se autorizar. Sem a sua autorização, o site funciona na mesma — só não recolhemos estatísticas.',
   'consent.policy': 'Política de Cookies',
   'consent.reject': 'Recusar',
   'consent.accept': 'Aceitar',
@@ -579,7 +579,7 @@ const en: Record<UiKey, string> = {
   // --- Consentimento ---
   'consent.title': 'Cookies and privacy',
   'consent.text':
-    'We use measurement cookies and the Google map only with your permission. Without it the site works just the same — we simply do not collect statistics.',
+    'We use measurement cookies — usage statistics and the results of our ads — and the Google map only with your permission. Without it the site works just the same — we simply do not collect statistics.',
   'consent.policy': 'Cookie Policy',
   'consent.reject': 'Decline',
   'consent.accept': 'Accept',
