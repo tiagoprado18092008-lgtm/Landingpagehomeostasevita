@@ -71,9 +71,28 @@ export const site = {
     provider: import.meta.env.PUBLIC_FORM_PROVIDER || 'formspree',
   },
 
+  /**
+   * Medição — nada disto carrega antes de o visitante aceitar no banner.
+   * As variáveis PUBLIC_* do Vercel, se definidas, têm prioridade.
+   */
   analytics: {
-    ga4: import.meta.env.PUBLIC_GA4_ID ?? '',
+    /** GA4 — propriedade "Homeostase Vita", fluxo homeostasevita.pt */
+    ga4: import.meta.env.PUBLIC_GA4_ID || 'G-ZVB2XD7C55',
     metaPixel: import.meta.env.PUBLIC_META_PIXEL_ID ?? '',
+    /** Microsoft Clarity — gravações e heatmaps, com máscara Strict. */
+    clarity: import.meta.env.PUBLIC_CLARITY_ID || '',
+    /** Google Ads 557-279-4074 — etiqueta e rótulos das ações de conversão. */
+    googleAds: {
+      id: import.meta.env.PUBLIC_GOOGLE_ADS_ID || 'AW-18485179839',
+      labels: {
+        /** Pedido de marcação (formulário) — principal */
+        lead: 'M5AzCL-aj44dEL_rte5E',
+        /** Clique no telefone — principal */
+        phone: 'T0c2CMKaj44dEL_rte5E',
+        /** Clique no WhatsApp — secundária */
+        whatsapp: 'wHTPCM34ho4dEL_rte5E',
+      },
+    },
   },
 } as const;
 
