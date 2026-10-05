@@ -177,6 +177,7 @@ const pt = {
   'space.my.text':
     'O My Coplace é o espaço de saúde e bem-estar na Maia onde a Homeostase Vita recebe os seus pacientes, em gabinete próprio e sempre mediante marcação prévia.',
   'space.my.alt': 'Logótipo do My Coplace',
+  'space.my.visit': 'Visitar o site do My Coplace',
   'space.cap1': 'Sala comum, com acesso ao exterior',
   'space.alt1': 'Sala ampla e luminosa, com janelas de chão ao tecto viradas para um relvado.',
   'space.cap2': 'Gabinete de consulta',
@@ -490,6 +491,7 @@ const en: Record<UiKey, string> = {
   'space.my.text':
     'My Coplace is the health and wellbeing space in Maia where Homeostase Vita sees its patients, in a dedicated room and always by prior appointment.',
   'space.my.alt': 'My Coplace logo',
+  'space.my.visit': 'Visit the My Coplace website',
   'space.cap1': 'Common room, with access to the outside',
   'space.alt1':
     'A spacious, bright room with floor-to-ceiling windows looking onto a lawn.',

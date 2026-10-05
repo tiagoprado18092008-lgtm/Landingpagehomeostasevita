@@ -49,12 +49,13 @@ const fotos = [
     </div>
 
     <div class="espaco__my reveal">
-      <span class="espaco__my-logo">
+      <a class="espaco__my-logo" href="https://mycoplacecoworking.com/" target="_blank" rel="noopener" aria-label={t('space.my.visit')}>
         <Image src={mycoplace} alt={t('space.my.alt')} width={220} quality={90} loading="lazy" decoding="async" />
-      </span>
+      </a>
       <div class="espaco__my-texto">
         <h3 class="espaco__my-titulo">{t('space.my.title')}</h3>
         <p>{t('space.my.text')}</p>
+        <a class="espaco__my-link" href="https://mycoplacecoworking.com/" target="_blank" rel="noopener">{t('space.my.visit')}</a>
       </div>
     </div>
 
@@ -123,6 +124,20 @@ const fotos = [
     text-align: center;
     color: var(--color-muted);
     line-height: 1.65;
+  }
+
+  .espaco__my-link {
+    align-self: center;
+    font-weight: 500;
+    color: var(--color-teal-deep);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (min-width: 640px) {
+    .espaco__my-link {
+      align-self: flex-start;
+    }
   }
 
   .espaco__my-titulo {
