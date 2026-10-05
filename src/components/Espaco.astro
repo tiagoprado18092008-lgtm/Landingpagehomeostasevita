@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 
 import sala from '../assets/img/espaco-sala.png';
 import gabinete from '../assets/img/espaco-gabinete-marquesa.png';
+import mycoplace from '../assets/img/mycoplace-logo.png';
 import hall from '../assets/img/espaco-hall.png';
 import exterior from '../assets/img/espaco-exterior.png';
 import { localeFromPath, type Locale } from '../i18n';
@@ -47,6 +48,16 @@ const fotos = [
       <p class="lead reveal" style="--reveal-delay:80ms">{t('space.lead')}</p>
     </div>
 
+    <div class="espaco__my reveal">
+      <span class="espaco__my-logo">
+        <Image src={mycoplace} alt={t('space.my.alt')} width={220} quality={90} loading="lazy" decoding="async" />
+      </span>
+      <div class="espaco__my-texto">
+        <h3 class="espaco__my-titulo">{t('space.my.title')}</h3>
+        <p>{t('space.my.text')}</p>
+      </div>
+    </div>
+
     <div class="espaco__galeria" data-stagger="90">
       {
         fotos.map((f) => (
@@ -78,6 +89,56 @@ const fotos = [
      azul chapado de ponta a ponta. */
   .espaco .section-head {
     margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .espaco__my {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    max-width: 64rem;
+    margin: 0 auto clamp(1.5rem, 3vw, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    border-radius: var(--radius-xl);
+    background-color: #fff;
+    box-shadow: var(--shadow-2);
+  }
+
+  .espaco__my-logo {
+    flex: none;
+    width: clamp(120px, 22vw, 160px);
+  }
+
+  .espaco__my-logo :global(img) {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .espaco__my-texto {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s2);
+    max-width: 52ch;
+    text-align: center;
+    color: var(--color-muted);
+    line-height: 1.65;
+  }
+
+  .espaco__my-titulo {
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+    font-weight: 500;
+    color: var(--color-navy);
+  }
+
+  @media (min-width: 640px) {
+    .espaco__my {
+      flex-direction: row;
+    }
+
+    .espaco__my-texto {
+      text-align: left;
+    }
   }
 
   .espaco__galeria {

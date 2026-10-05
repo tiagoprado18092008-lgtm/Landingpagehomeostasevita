@@ -152,7 +152,9 @@ const pt = {
   'practitioner.bio2':
     'A sua prática assenta numa visão integrada da pessoa, procurando compreender os sintomas apresentados, mas também a forma como estes se relacionam com diferentes aspetos do organismo, hábitos e estilo de vida. A avaliação e a intervenção são adaptadas às características de cada caso, com especial atenção ao equilíbrio físico e emocional.',
   'practitioner.bio3':
-    'A formação contínua constitui uma parte essencial da sua prática profissional, permitindo aprofundar conhecimentos e acompanhar a evolução das diferentes áreas de intervenção. O objetivo é proporcionar um acompanhamento rigoroso, personalizado e fundamentado, orientado para a recuperação do equilíbrio e da homeostase do organismo.',
+    '<strong>A formação contínua constitui uma parte essencial da sua prática profissional</strong>, permitindo aprofundar conhecimentos e acompanhar a evolução das diferentes áreas de intervenção. Recentemente, participou num congresso na área da Saúde Integrativa e Funcional, que incluiu um <strong>Dia de Formação em Saúde (Health Training Day)</strong>, dedicado à atualização e partilha de conhecimentos com profissionais e referências da área, entre os quais o <a href="https://lairribeiro.com.br/" target="_blank" rel="noopener">Dr. Lair Ribeiro</a>, promovido pela <a href="https://integrativeacademy.pt/" target="_blank" rel="noopener">Academia de Saúde Integrativa</a>.',
+  'practitioner.bio4':
+    'O contacto com diferentes perspetivas e conhecimentos constitui uma oportunidade de aprendizagem e contribui para uma prática profissional em constante atualização.',
 
   // --- FAQ ---
   'faq.eyebrow': 'Perguntas frequentes',
@@ -171,6 +173,10 @@ const pt = {
     'As consultas decorrem em gabinete próprio, dentro de um espaço partilhado na Maia — amplo, luminoso e tranquilo, com hall de entrada e relvado exterior.',
   'space.note':
     'A sala comum e o hall de entrada são de uso partilhado com outros profissionais do edifício. As consultas são sempre mediante marcação prévia.',
+  'space.my.title': 'Os tratamentos decorrem no My Coplace',
+  'space.my.text':
+    'O My Coplace é o espaço de saúde e bem-estar na Maia onde a Homeostase Vita recebe os seus pacientes, em gabinete próprio e sempre mediante marcação prévia.',
+  'space.my.alt': 'Logótipo do My Coplace',
   'space.cap1': 'Sala comum, com acesso ao exterior',
   'space.alt1': 'Sala ampla e luminosa, com janelas de chão ao tecto viradas para um relvado.',
   'space.cap2': 'Gabinete de consulta',
@@ -459,7 +465,9 @@ const en: Record<UiKey, string> = {
   'practitioner.bio2':
     'Her practice rests on an integrated view of the person, seeking to understand the symptoms presented but also the way these relate to different aspects of the body, habits and lifestyle. Assessment and intervention are adapted to the characteristics of each case, with particular attention to physical and emotional balance.',
   'practitioner.bio3':
-    'Continuing education is an essential part of her professional practice, allowing her to deepen her knowledge and keep pace with developments across her different areas of work. The aim is to provide rigorous, personalised and well-founded care, oriented towards restoring balance and homeostasis in the body.',
+    '<strong>Continuing education is an essential part of her professional practice</strong>, allowing her to deepen her knowledge and keep pace with developments across her different areas of work. She recently attended a congress on Integrative and Functional Health, which included a <strong>Health Training Day</strong> dedicated to updating and sharing knowledge with professionals and leading figures in the field, among them <a href="https://lairribeiro.com.br/" target="_blank" rel="noopener">Dr. Lair Ribeiro</a>, organised by the <a href="https://integrativeacademy.pt/" target="_blank" rel="noopener">Integrative Health Academy</a>.',
+  'practitioner.bio4':
+    'Exposure to different perspectives and knowledge is a learning opportunity and helps keep her professional practice constantly up to date.',
 
   // --- FAQ ---
   'faq.eyebrow': 'Frequently asked questions',
@@ -478,6 +486,10 @@ const en: Record<UiKey, string> = {
     'Consultations take place in a dedicated room within a shared space in Maia — spacious, bright and quiet, with an entrance hall and a lawn outside.',
   'space.note':
     'The common room and the entrance hall are shared with other professionals in the building. Consultations are always by prior appointment.',
+  'space.my.title': 'Treatments take place at My Coplace',
+  'space.my.text':
+    'My Coplace is the health and wellbeing space in Maia where Homeostase Vita sees its patients, in a dedicated room and always by prior appointment.',
+  'space.my.alt': 'My Coplace logo',
   'space.cap1': 'Common room, with access to the outside',
   'space.alt1':
     'A spacious, bright room with floor-to-ceiling windows looking onto a lawn.',
