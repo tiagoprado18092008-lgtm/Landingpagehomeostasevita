@@ -48,14 +48,21 @@ const labels = googleAds.labels;
       return (s && s.id) || 'desconhecida';
     }
 
-    function enviar(nome, rotulo, params) {
+    // `cb` corre quando o Ads confirma o envio — ou logo, se não há nada a
+    // esperar (sem consentimento, conversão já contada nesta sessão).
+    function enviar(nome, rotulo, params, cb) {
       var gtag = window.gtag;
+      var aEspera = false;
       if (typeof gtag === 'function') {
         gtag('event', nome, params || {});
         if (adsId && rotulo && !jaEnviada(nome)) {
-          gtag('event', 'conversion', { send_to: adsId + '/' + rotulo });
+          var conv = { send_to: adsId + '/' + rotulo };
+          if (cb) conv.event_callback = cb;
+          aEspera = Boolean(cb);
+          gtag('event', 'conversion', conv);
         }
       }
+      if (cb && !aEspera) cb();
       if (typeof window.clarity === 'function') {
         try {
           window.clarity('event', nome);
@@ -71,8 +78,8 @@ const labels = googleAds.labels;
       enviar('pedido_marcacao', labels.lead, { method: origem || 'formulario' });
     }
 
-    function whatsapp(zona) {
-      enviar('contacto_whatsapp', labels.whatsapp, { method: 'whatsapp', link_zone: zona });
+    function whatsapp(zona, cb) {
+      enviar('contacto_whatsapp', labels.whatsapp, { method: 'whatsapp', link_zone: zona }, cb);
     }
 
     window.hvTrack = { lead: lead, event: enviar };
@@ -91,7 +98,23 @@ const labels = googleAds.labels;
         if (href.indexOf('tel:') === 0) {
           enviar('contacto_telefone', labels.phone, { method: 'telefone', link_zone: zona });
         } else if (href.indexOf('wa.me') > -1 || href.indexOf('whatsapp') > -1) {
-          whatsapp(zona);
+          // Mesmo separador: a navegação cancelaria o pedido. Espera pela
+          // confirmação do Ads (callback), com saída garantida ao fim de 800 ms.
+          var mesmoSeparador =
+            a.target !== '_blank' && !ev.ctrlKey && !ev.metaKey && !ev.shiftKey && ev.button === 0;
+          if (mesmoSeparador) {
+            ev.preventDefault();
+            var feito = false;
+            var seguir = function () {
+              if (feito) return;
+              feito = true;
+              window.location.href = a.href;
+            };
+            whatsapp(zona, seguir);
+            setTimeout(seguir, 800);
+          } else {
+            whatsapp(zona);
+          }
         } else if (href.indexOf('mailto:') === 0) {
           enviar('contacto_email', '', { method: 'email', link_zone: zona });
         }
