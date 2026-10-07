@@ -36,6 +36,7 @@ export const site = {
 
   credentials: {
     acss: 'C-0062490',
+    acssFito: 'C-0040925',
   },
 
   /*

@@ -2,6 +2,8 @@
 import { site } from '../config/site';
 import Ambient from './Ambient.astro';
 import Icon from './Icon.astro';
+import { Image } from 'astro:assets';
+import retrato from '../assets/img/teresa.jpg';
 import { localeFromPath, type Locale } from '../i18n';
 import { useTranslations } from '../i18n/ui';
 import { getTechniques } from '../i18n/content';
@@ -10,8 +12,7 @@ const locale: Locale = localeFromPath(Astro.url.pathname);
 const t = useTranslations(locale);
 
 /**
- * Sem fotografia — as únicas fotografias da página são as dos tratamentos.
- * A credibilidade vem da cédula, da biografia e das técnicas praticadas.
+ * Retrato da Teresa, cédulas (MTC e Fitoterapia), biografia e técnicas.
  */
 const { firstName, lastName } = site.practitioner;
 
@@ -36,7 +37,14 @@ const tecnicas = getTechniques(locale);
 
     <div class="terapeuta__cartao reveal reveal--scale">
       <div class="terapeuta__id">
-        <span class="terapeuta__inicial" aria-hidden="true">{firstName.charAt(0)}</span>
+        <Image
+          src={retrato}
+          alt={t('practitioner.photoAlt')}
+          class="terapeuta__foto"
+          widths={[280, 420, 560]}
+          sizes="(min-width: 860px) 280px, 70vw"
+          loading="lazy"
+        />
         <p class="terapeuta__nome">
           {firstName}{' '}
           {lastName ?? <span class="pendente">⟨apelido⟩</span>}
@@ -44,7 +52,11 @@ const tecnicas = getTechniques(locale);
         <p class="terapeuta__papel">{t('practitioner.role')}</p>
         <p class="terapeuta__cedula">
           <Icon name="check" size={15} />
-          {t('practitioner.licence')} {site.credentials.acss}
+          {t('practitioner.licence')} {site.credentials.acss} ({t('spec.tcm')})
+        </p>
+        <p class="terapeuta__cedula">
+          <Icon name="check" size={15} />
+          {t('practitioner.licence')} {site.credentials.acssFito} ({t('spec.phyto')})
         </p>
       </div>
 
@@ -103,7 +115,16 @@ const tecnicas = getTechniques(locale);
     gap: var(--spacing-s2);
   }
 
-  /* A inicial faz o papel do retrato, sem fingir que há uma fotografia. */
+  .terapeuta__foto {
+    width: 100%;
+    max-width: 280px;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 28%;
+    margin-bottom: var(--spacing-s3);
+    border-radius: var(--radius-lg, 20px);
+  }
+
   .terapeuta__inicial {
     display: grid;
     place-items: center;
@@ -147,7 +168,7 @@ const tecnicas = getTechniques(locale);
     align-items: center;
     gap: var(--spacing-s2);
     align-self: flex-start;
-    margin-top: var(--spacing-s3);
+    margin-top: var(--spacing-s2);
     padding: 6px var(--spacing-s4);
     border-radius: var(--radius-pill);
     background-color: var(--color-ivory);
