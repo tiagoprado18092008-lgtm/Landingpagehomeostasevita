@@ -111,41 +111,20 @@ const t = useTranslations(locale);
 
     const meta = (name: string) =>
       document.querySelector(`meta[name="hv:${name}"]`)?.getAttribute('content') || '';
-    const ga = meta('ga4');
-    const ads = meta('ads');
     const clarity = meta('clarity');
     const pixel = meta('pixel');
 
-    const tagId = ads || ga;
-    if (tagId) {
-      w.dataLayer = w.dataLayer || [];
-      w.gtag = function gtag() {
-        // eslint-disable-next-line prefer-rest-params
-        w.dataLayer.push(arguments);
-      };
-      // Consent Mode v2 (modo básico): as tags só existem depois do opt-in,
-      // mas a Google exige o sinal explícito para tráfego do EEE.
+    // A etiqueta Google já carrega no <head> com tudo negado (Consent Mode
+    // v2 avançado) e a escolha guardada já foi reaplicada lá. Aqui só falta
+    // o sinal de "aceite" quando ele acontece nesta visita.
+    if (typeof w.gtag === 'function') {
       // ad_personalization fica negado: sem remarketing numa página de saúde.
-      w.gtag('consent', 'default', {
-        ad_storage: 'denied',
-        ad_user_data: 'denied',
-        ad_personalization: 'denied',
-        analytics_storage: 'denied',
-      });
       w.gtag('consent', 'update', {
         ad_storage: 'granted',
         ad_user_data: 'granted',
         ad_personalization: 'denied',
         analytics_storage: 'granted',
       });
-      w.gtag('js', new Date());
-      if (ga) w.gtag('config', ga);
-      if (ads) w.gtag('config', ads);
-
-      const s = document.createElement('script');
-      s.async = true;
-      s.src = `https://www.googletagmanager.com/gtag/js?id=${tagId}`;
-      document.head.appendChild(s);
     }
 
     if (clarity && !w.clarity) {
@@ -192,6 +171,16 @@ const t = useTranslations(locale);
         // Armazenamento bloqueado: a escolha vale só para esta visita.
       }
       banner.hidden = true;
+      if (choice === 'recusado') {
+        // Quem volta atrás numa escolha anterior: retira já o consentimento.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window as any).gtag?.('consent', 'update', {
+          ad_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied',
+          analytics_storage: 'denied',
+        });
+      }
       if (choice === 'aceite') {
         loadAnalytics();
         window.dispatchEvent(new CustomEvent('hv:consent-accepted'));
