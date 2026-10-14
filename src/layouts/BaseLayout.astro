@@ -13,6 +13,7 @@ import { useTranslations } from '../i18n/ui';
 import ConsentBanner from '../components/ConsentBanner.astro';
 import Grain from '../components/Grain.astro';
 import Tracking from '../components/Tracking.astro';
+import { GOOGLE_ADS_ID, GA4_ID } from '../config/tracking';
 
 interface Props {
   title: string;
@@ -94,6 +95,40 @@ const clinic = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Consent Mode v2 (avançado): tudo negado por defeito, ANTES da etiqueta.
+         Sem consentimento a Google só recebe pings sem cookies. A escolha
+         guardada pelo banner (hv-consent) é reaplicada logo aqui. -->
+    <script is:inline define:vars={{ adsId: GOOGLE_ADS_ID, ga4Id: GA4_ID }}>
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function gtag() {
+        dataLayer.push(arguments);
+      };
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        wait_for_update: 500,
+      });
+      var hvEscolha = null;
+      try {
+        hvEscolha = localStorage.getItem('hv-consent');
+      } catch (e) {}
+      if (hvEscolha === 'aceite') {
+        // ad_personalization fica negado: sem remarketing numa página de saúde.
+        gtag('consent', 'update', {
+          ad_storage: 'granted',
+          ad_user_data: 'granted',
+          ad_personalization: 'denied',
+          analytics_storage: 'granted',
+        });
+      }
+      gtag('js', new Date());
+      gtag('config', adsId);
+      if (ga4Id) gtag('config', ga4Id);
+    </script>
+    <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}></script>
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
