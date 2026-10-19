@@ -19,7 +19,7 @@ const pt = {
   'common.skipToContent': 'Saltar para o conteúdo',
   'common.homeAria': 'início',
   'common.complementaryNotice':
-    'A Medicina Tradicional Chinesa é uma abordagem complementar de bem-estar e não dispensa a avaliação e o acompanhamento médico.',
+    'A Medicina Tradicional Chinesa é uma abordagem complementar de bem-estar que não dispensa a avaliação e o acompanhamento médico.',
 
   // --- Idioma ---
   'lang.switchTo': 'English',

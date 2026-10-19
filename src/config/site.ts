@@ -119,4 +119,4 @@ export const sections = [
  * e não substitui acompanhamento médico. Repetido nas áreas e na FAQ.
  */
 export const complementaryNotice =
-  'A Medicina Tradicional Chinesa é uma abordagem complementar de bem-estar e não dispensa a avaliação e o acompanhamento médico.';
+  'A Medicina Tradicional Chinesa é uma abordagem complementar de bem-estar que não dispensa a avaliação e o acompanhamento médico.';
