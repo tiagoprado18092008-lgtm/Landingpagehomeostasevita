@@ -1,279 +1,210 @@
 ---
-import { site } from '../config/site';
-import Ambient from './Ambient.astro';
-import Icon from './Icon.astro';
 import { Image } from 'astro:assets';
-import retrato from '../assets/img/teresa.jpg';
+import { site } from '../config/site';
+import teresa from '../assets/img/teresa.jpg';
 import { localeFromPath, type Locale } from '../i18n';
 import { useTranslations } from '../i18n/ui';
-import { getTechniques } from '../i18n/content';
 
 const locale: Locale = localeFromPath(Astro.url.pathname);
 const t = useTranslations(locale);
 
 /**
- * Retrato da Teresa, cédulas (MTC e Fitoterapia), biografia e técnicas.
+ * Quem vai tratar de mim, e se tem habilitação para isso. Vem logo a seguir
+ * aos tratamentos, porque é a segunda dúvida de quem pondera marcar: a
+ * pessoa, a formação e as duas cédulas da ACSS, ditas com todas as letras.
+ *
+ * Painel navy recolhido das margens; o retrato vai num círculo — a forma da
+ * página — que a base do painel corta.
  */
-const { firstName, lastName } = site.practitioner;
-
-/* A biografia vem do dicionário, para existir nas duas línguas. O `site.ts`
-   mantém o original português como fonte de verdade do espaço; quando lá
-   estiver a `null` (por confirmar), o bloco pendente continua a aparecer. */
-const bio = site.practitioner.bio
-  ? [t('practitioner.bio1'), t('practitioner.bio2'), t('practitioner.bio3'), t('practitioner.bio4')]
-  : null;
-
-const tecnicas = getTechniques(locale);
+const cedulas = [
+  { area: t('spec.tcm'), numero: site.credentials.acss },
+  { area: t('spec.phyto'), numero: site.credentials.acssFito },
+];
 ---
 
-<section class="section section-lg surface-sand terapeuta tem-ambiente" id="terapeuta" aria-labelledby="terapeuta-titulo">
-  <Ambient variant="canto" opacity={0.55} />
-
-  <div class="container">
-    <div class="section-head">
-      <p class="eyebrow reveal">{t('practitioner.eyebrow')}</p>
-      <h2 class="h2 reveal" id="terapeuta-titulo">{t('practitioner.title')}</h2>
+<section class="terapeuta" id="terapeuta" aria-labelledby="terapeuta-titulo">
+  <div class="terapeuta__painel">
+    <div class="terapeuta__esquerda">
+      <h2 class="terapeuta__titulo reveal" id="terapeuta-titulo">{t('lp.p.title')}</h2>
+      <div class="terapeuta__retrato reveal">
+        <Image
+          src={teresa}
+          alt={t('practitioner.photoAlt')}
+          widths={[480, 720, 1000]}
+          sizes="(min-width: 900px) 30vw, 100vw"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
     </div>
 
-    <div class="terapeuta__cartao reveal reveal--scale">
-      <div class="terapeuta__id">
-        <Image
-          src={retrato}
-          alt={t('practitioner.photoAlt')}
-          class="terapeuta__foto"
-          widths={[280, 420, 560]}
-          sizes="(min-width: 860px) 280px, 70vw"
-          loading="lazy"
-        />
-        <p class="terapeuta__nome">
-          {firstName}{' '}
-          {lastName ?? <span class="pendente">⟨apelido⟩</span>}
-        </p>
-        <p class="terapeuta__papel">{t('practitioner.role')}</p>
-        <p class="terapeuta__cedula">
-          <Icon name="check" size={15} />
-          {t('practitioner.licence')} {site.credentials.acss} ({t('spec.tcm')})
-        </p>
-        <p class="terapeuta__cedula">
-          <Icon name="check" size={15} />
-          {t('practitioner.licence')} {site.credentials.acssFito} ({t('spec.phyto')})
-        </p>
+    <div class="terapeuta__direita" data-stagger="80">
+      <div class="terapeuta__bloco reveal">
+        <h3 class="terapeuta__sub">{t('lp.p.trainTitle')}</h3>
+        <p>{t('practitioner.bio1')}</p>
+        <p set:html={t('practitioner.bio3')} />
       </div>
 
-      <div class="terapeuta__corpo">
-        {
-          bio ? (
-            <div class="terapeuta__bio">
-              {bio.map((paragrafo) => <p set:html={paragrafo} />)}
-            </div>
-          ) : (
-            <div class="terapeuta__pendente">
-              <p class="terapeuta__pendente-titulo">
-                <Icon name="alert" size={17} class="terapeuta__alerta" />
-                {t('practitioner.bioPending')}
-              </p>
-              <p class="note">
-                ⟨TODO: 2 a 4 frases sobre a formação e a abordagem da Teresa, a validar
-                pelo espaço antes de publicar. Não deve incluir anos de experiência nem
-                formações que não estejam confirmadas.⟩
-              </p>
-            </div>
-          )
-        }
-
-        <div class="terapeuta__tecnicas">
-          <p class="terapeuta__tecnicas-titulo">{t('practitioner.techniques')}</p>
-          <ul>
-            {tecnicas.map((t) => <li>{t}</li>)}
-          </ul>
-        </div>
-
-        <a href="#marcacao" class="btn btn-primary terapeuta__cta">{t('common.book')}</a>
+      <div class="terapeuta__bloco reveal">
+        <h3 class="terapeuta__sub">{t('lp.p.practiceTitle')}</h3>
+        <p>{t('practitioner.bio2')}</p>
       </div>
+
+      <div class="terapeuta__bloco reveal">
+        <h3 class="terapeuta__sub">{t('lp.p.credTitle')}</h3>
+        <ul class="terapeuta__cedulas" role="list">
+          {
+            cedulas.map((c) => (
+              <li>
+                <span class="terapeuta__ponto" aria-hidden="true" />
+                <span>
+                  {c.area} — <strong>n.º {c.numero}</strong>
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <a href="#marcacao" class="btn terapeuta__btn reveal">{t('lp.p.book')}</a>
     </div>
   </div>
 </section>
 
 <style>
-  /* Esta secção troca o dourado do eyebrow pelo verde do emblema. */
-  .section-head .eyebrow {
-    color: var(--color-green-deep);
+  .terapeuta {
+    padding: clamp(10px, 1.4vw, 20px);
+    background-color: var(--color-paper);
   }
 
-  .terapeuta__cartao {
+  .terapeuta__painel {
     display: grid;
-    gap: clamp(1.5rem, 3vw, 3rem);
-    padding: clamp(1.75rem, 3.5vw, 3rem);
-    border-radius: var(--radius-xl);
+    gap: clamp(2rem, 4vw, 3rem);
+    overflow: hidden;
+    padding: clamp(2.5rem, 5vw, 3.5rem) clamp(1.25rem, 4vw, 3.5rem) 0;
+    background-color: var(--color-navy-deep);
+    color: var(--color-ivory);
+  }
+
+  .terapeuta__titulo {
+    max-width: 16ch;
+    font-size: var(--t-h2);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    color: var(--color-ivory);
+  }
+
+  .terapeuta__direita {
+    display: grid;
+    gap: clamp(2rem, 4vw, 2.75rem);
+    align-content: start;
+  }
+
+  .terapeuta__sub {
+    font-family: var(--font-sans);
+    font-size: var(--t-lead);
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--color-ivory);
+  }
+
+  .terapeuta__bloco {
+    display: grid;
+    gap: var(--spacing-s3);
+    max-width: 52ch;
+    font-size: var(--t-body);
+    line-height: 1.6;
+  }
+
+  .terapeuta__bloco :global(a) {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .terapeuta__bloco :global(strong) {
+    font-weight: 600;
+  }
+
+  .terapeuta__cedulas {
+    display: grid;
+    gap: var(--spacing-s3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .terapeuta__cedulas li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-s3);
+  }
+  .terapeuta__ponto {
+    flex: none;
+    width: 0.7em;
+    height: 0.7em;
+    border-radius: 50%;
+    background-color: var(--color-green);
+  }
+
+  .terapeuta__btn {
+    justify-self: start;
+    background-color: var(--color-ivory);
+    color: var(--color-navy-deep);
+  }
+  .terapeuta__btn:hover {
     background-color: #fff;
   }
 
-  /* --- Identificação --- */
-  .terapeuta__id {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-s2);
+  /* O retrato inteiro, na proporção do original (2:3): a pessoa vê-se da
+     cabeça à cintura, sem máscara a cortar-lhe os ombros. */
+  .terapeuta__retrato {
+    width: min(100%, 26rem);
+    aspect-ratio: 2 / 3;
+    margin-top: clamp(1rem, 3vw, 2rem);
+    overflow: hidden;
+    border-radius: var(--radius-foto);
+    background-color: #dfe3e8;
   }
-
-  .terapeuta__foto {
+  .terapeuta__retrato :global(img) {
     width: 100%;
-    max-width: 280px;
-    aspect-ratio: 4 / 5;
+    height: 100%;
     object-fit: cover;
-    object-position: 50% 28%;
-    margin-bottom: var(--spacing-s3);
-    border-radius: var(--radius-lg, 20px);
   }
 
-  .terapeuta__inicial {
-    display: grid;
-    place-items: center;
-    width: 84px;
-    height: 84px;
-    margin-bottom: var(--spacing-s3);
-    border-radius: 50%;
-    background: radial-gradient(
-      circle at 32% 28%,
-      var(--color-navy) 0%,
-      var(--color-navy-deep) 100%
-    );
-    color: var(--color-ivory);
-    font-size: 2rem;
-    font-weight: 500;
-    letter-spacing: 0;
-    box-shadow: 0 0 0 1px rgba(16, 88, 120, 0.28);
+  /* No telemóvel o retrato fecha o painel, depois do texto. */
+  @media (max-width: 899px) {
+    .terapeuta__painel {
+      display: flex;
+      flex-direction: column;
+    }
+    .terapeuta__esquerda {
+      display: contents;
+    }
+    .terapeuta__retrato {
+      order: 3;
+      margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+    }
+    .terapeuta__direita {
+      order: 2;
+    }
   }
 
-  .terapeuta__nome {
-    font-size: clamp(1.5rem, 2.2vw, 1.875rem);
-    font-weight: 500;
-    letter-spacing: var(--tracking-h2);
-    color: var(--color-navy);
-  }
-
-  .pendente {
-    font-style: italic;
-    font-weight: 400;
-    font-size: 0.7em;
-    color: var(--color-teal-deep);
-  }
-
-  .terapeuta__papel {
-    font-size: 0.9375rem;
-    color: var(--color-muted);
-  }
-
-  .terapeuta__cedula {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-s2);
-    align-self: flex-start;
-    margin-top: var(--spacing-s2);
-    padding: 6px var(--spacing-s4);
-    border-radius: var(--radius-pill);
-    background-color: var(--color-ivory);
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: var(--color-navy);
-  }
-
-  .terapeuta__cedula :global(svg) {
-    flex: none;
-    color: var(--color-teal-deep);
-  }
-
-  /* --- Corpo --- */
-  .terapeuta__corpo {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-s5);
-  }
-
-  /* A biografia são três parágrafos: o espaçamento entre eles vive aqui,
-     para que o corpo do cartão continue a respirar como quando era um só. */
-  .terapeuta__bio {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-s3);
-    font-size: var(--text-lead);
-    line-height: 1.65;
-    color: var(--color-muted);
-  }
-
-  .terapeuta__bio :global(strong) {
-    font-weight: 600;
-    color: var(--color-navy);
-  }
-
-  .terapeuta__bio :global(a) {
-    color: var(--color-teal-deep);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
-  .terapeuta__pendente {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-s2);
-    padding: var(--spacing-s5);
-    border: 1px dashed var(--hairline);
-    border-radius: var(--radius-md);
-    background-color: var(--color-ivory);
-  }
-
-  .terapeuta__pendente-titulo {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-s2);
-    font-weight: 600;
-    font-size: 0.9375rem;
-    color: var(--color-teal-deep);
-  }
-
-  .terapeuta__pendente-titulo :global(.terapeuta__alerta) {
-    flex: none;
-  }
-
-  .terapeuta__tecnicas {
-    padding-top: var(--spacing-s5);
-    border-top: 1px solid var(--hairline-cool);
-  }
-
-  .terapeuta__tecnicas-titulo {
-    margin-bottom: var(--spacing-s3);
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: var(--tracking-caps);
-    text-transform: uppercase;
-    color: var(--color-muted);
-  }
-
-  .terapeuta__tecnicas ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-s2);
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .terapeuta__tecnicas li {
-    padding: 6px var(--spacing-s4);
-    border: 1px solid var(--hairline);
-    border-radius: var(--radius-pill);
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--color-navy);
-  }
-
-  .terapeuta__cta {
-    align-self: flex-start;
-  }
-
-  @media (min-width: 860px) {
-    .terapeuta__cartao {
-      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
-      align-items: start;
+  @media (min-width: 900px) {
+    .terapeuta__painel {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: clamp(2rem, 5vw, 5rem);
+      padding: clamp(3rem, 4vw, 3.5rem) clamp(2.5rem, 5vw, 5rem) 0;
+    }
+    .terapeuta__esquerda {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .terapeuta__retrato {
+      width: min(30vw, 26rem);
+      margin: clamp(2rem, 4vw, 3rem) 0 clamp(3rem, 5vw, 4rem);
+    }
+    .terapeuta__direita {
+      padding-bottom: clamp(3rem, 5vw, 4rem);
     }
   }
 </style>

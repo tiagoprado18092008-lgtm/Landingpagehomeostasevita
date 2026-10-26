@@ -1,4 +1,5 @@
 ---
+import { site } from '../config/site';
 import Icon from './Icon.astro';
 import { localeFromPath, type Locale } from '../i18n';
 import { useTranslations } from '../i18n/ui';
@@ -6,343 +7,187 @@ import { useTranslations } from '../i18n/ui';
 const locale: Locale = localeFromPath(Astro.url.pathname);
 const t = useTranslations(locale);
 
-
 /**
- * Como funciona a consulta — desenhada como um meridiano.
- *
- * Deixou de ser uma fila de quatro cartões. O percurso da consulta é um
- * canal: um filete atravessa a secção e enche-se à medida que se rola, e
- * cada etapa é um ponto sobre esse canal que acende quando o enchimento
- * lá chega. É a única peça da página com movimento ligado ao scroll —
- * o assunto do espaço são canais e pontos, e é aqui que isso se vê.
- *
- * Sem cartões, sem sombras, sem numeração: a posição no canal já diz a
- * ordem, e o ponto já é o medalhão. Três marcadores para a mesma
- * informação seriam dois a mais.
- *
- * Degradação: onde não há `animation-timeline`, o canal enche-se de uma
- * vez quando a secção entra em vista (via .reveal); com
- * prefers-reduced-motion fica cheio e quieto.
+ * O que acontece quando chego. À esquerda, fixos enquanto se lê, o título e
+ * o lead. À direita, os três passos e, a fechar, a objeção que mais trava a
+ * marcação ("dói?"), respondida com o texto da própria clínica e com os
+ * botões ao lado.
  */
 const passos = [
-  { icon: 'person', titulo: t('process.step1Title'), texto: t('process.step1Text') },
-  { icon: 'yinyang', titulo: t('process.step2Title'), texto: t('process.step2Text') },
-  { icon: 'needles', titulo: t('process.step3Title'), texto: t('process.step3Text') },
-  { icon: 'hands', titulo: t('process.step4Title'), texto: t('process.step4Text') },
+  { nome: t('lp.c.s1'), texto: t('lp.c.s1Text'), cor: 'verde' },
+  { nome: t('lp.c.s2'), texto: t('process.step3Text'), cor: 'teal' },
+  { nome: t('lp.c.s3'), texto: t('process.step4Text'), cor: 'navy' },
 ];
 ---
 
-<section class="section surface-azul percurso" id="percurso" aria-labelledby="percurso-titulo">
-  <div class="container">
-    <div class="section-head">
-      <p class="eyebrow reveal">{t('process.eyebrow')}</p>
-      <h2 class="h2 reveal" id="percurso-titulo">{t('process.title')}</h2>
-      <p class="lead reveal">{t('process.lead')}</p>
+<section class="section passos" id="percurso" aria-labelledby="percurso-titulo">
+  <div class="container passos__grelha">
+    <div class="passos__cabeca">
+      <h2 class="passos__titulo reveal" id="percurso-titulo">{t('lp.c.title')}</h2>
+      <p class="passos__lead reveal">{t('process.lead')}</p>
     </div>
 
-    <div class="canal">
-      <!-- O canal: leito fixo, enchimento ligado ao scroll. -->
-      <div class="canal__linha reveal" aria-hidden="true">
-        <span class="canal__enche"></span>
-      </div>
-
-      <ol class="canal__passos" data-stagger="140">
+    <div class="passos__corpo">
+      <ol class="passos__lista" data-stagger="90">
         {
           passos.map((p) => (
-            <li class="etapa reveal">
-              <span class="etapa__ponto" aria-hidden="true">
-                <Icon name={p.icon} size={24} />
-              </span>
-              <div class="etapa__corpo">
-                <h3 class="h3 etapa__titulo">{p.titulo}</h3>
-                <p class="etapa__texto">{p.texto}</p>
+            <li class={`passo passo--${p.cor} reveal`}>
+              <span class="passo__ponto" aria-hidden="true" />
+              <div>
+                <h3 class="passo__nome">{p.nome}</h3>
+                <p class="passo__texto">{p.texto}</p>
               </div>
             </li>
           ))
         }
       </ol>
-    </div>
 
-    <p class="marcacao-nota reveal">
-      <Icon name="check" size={18} class="marcacao-nota__icone" />
-      <span>
-        <strong>{t('process.bookingStrong')}</strong>
-        {t('process.bookingText')}
-      </span>
-    </p>
+      <div class="passos__dor reveal">
+        <h3 class="passos__pergunta">{t('lp.c.hurtQ')}</h3>
+        <p class="passos__resposta">{t('lp.c.hurtA')}</p>
+        <p class="passos__marcacao">
+          <strong>{t('process.bookingStrong')}.</strong>
+          {t('process.bookingText')}.
+        </p>
+        <div class="passos__acoes">
+          <a href="#marcacao" class="btn passos__marcar">{t('common.book')}</a>
+          <a href={site.phone.whatsapp} class="btn btn-whatsapp" rel="noopener">
+            <Icon name="whatsapp" size={18} />
+            WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 <style>
-  /* =====================================================================
-     O canal
-     ===================================================================== */
-  .canal {
-    position: relative;
+  .passos {
+    background-color: var(--color-paper);
   }
 
-  /* --- Telemóvel e tablet: o canal desce pela esquerda ---------------- */
-  /* O leito leva `.reveal` só para o observador lhe tocar (é ele que dispara
-     o enchimento no fallback). Não deve entrar a subir como o resto: uma
-     linha absoluta a deslizar 24px lia-se como erro de layout. */
-  .canal__linha.reveal,
-  .canal__linha.reveal.is-visible {
-    opacity: 1;
-    animation: none;
-  }
-
-  .canal__linha {
-    position: absolute;
-    left: 27px;
-    top: 12px;
-    bottom: 12px;
-    width: 2px;
-    border-radius: 2px;
-    background-color: color-mix(in srgb, var(--color-navy) 12%, transparent);
-    overflow: hidden;
-  }
-
-  .canal__enche {
-    display: block;
-    width: 100%;
-    height: 100%;
-    border-radius: inherit;
-    background: linear-gradient(
-      180deg,
-      var(--color-navy) 0%,
-      var(--color-teal) 62%,
-      var(--color-green) 100%
-    );
-    transform-origin: 50% 0;
-    scale: 1 0;
-  }
-
-  /* --- Os pontos ------------------------------------------------------ */
-  .canal__passos {
-    position: relative;
+  .passos__grelha {
     display: grid;
-    gap: clamp(2rem, 4vw, 2.75rem);
-    list-style: none;
+    gap: clamp(2rem, 5vw, 3rem);
+  }
+
+  .passos__titulo {
+    font-size: var(--t-h2);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    color: var(--color-navy-deep);
+  }
+
+  .passos__lead {
+    max-width: 44ch;
+    margin-top: var(--spacing-s5);
+    font-size: var(--t-lead);
+    line-height: 1.4;
+    color: var(--color-navy-ink);
+  }
+
+  /* --- Os passos -------------------------------------------------------- */
+  .passos__lista {
+    display: grid;
+    gap: clamp(1.75rem, 3.5vw, 2.5rem);
     margin: 0;
     padding: 0;
+    list-style: none;
   }
 
-  .etapa {
+  /* A ordem lê-se de cima para baixo; o ponto de cor é o do emblema. */
+  .passo {
     display: grid;
-    grid-template-columns: 56px minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr);
     gap: var(--spacing-s5);
     align-items: start;
   }
-
-  /* O ponto assenta sobre o canal: fundo opaco para o filete não passar
-     por trás do vidro. Fechado por omissão, aberto quando a etapa entra. */
-  .etapa__ponto {
-    display: grid;
-    place-items: center;
-    width: 56px;
-    height: 56px;
+  .passo__ponto {
+    width: 18px;
+    height: 18px;
+    margin-top: 0.45em;
     border-radius: 50%;
-    background-color: var(--color-paper);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-navy) 18%, transparent);
-    color: var(--color-navy);
-    transition:
-      background-color 520ms var(--ease),
-      color 520ms var(--ease),
-      box-shadow 520ms var(--ease);
+    background-color: var(--ponto);
+  }
+  .passo--verde {
+    --ponto: var(--color-green-deep);
+  }
+  .passo--teal {
+    --ponto: var(--color-teal);
+  }
+  .passo--navy {
+    --ponto: var(--color-navy);
   }
 
-  /* O acender. O atraso herda o --reveal-delay da cascata, por isso os
-     quatro pontos acendem em sequência, no sentido do enchimento. */
-  .etapa.is-visible .etapa__ponto {
-    background-color: var(--color-navy);
-    color: var(--color-teal-soft);
-    box-shadow:
-      inset 0 0 0 1px transparent,
-      0 0 0 6px color-mix(in srgb, var(--color-teal) 14%, transparent);
-    transition-delay: var(--reveal-delay, 0ms);
-  }
-
-  /* Uma única onda que sai do ponto no momento em que acende. */
-  .etapa.is-visible .etapa__ponto::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    box-shadow: 0 0 0 1px var(--color-teal);
-    animation: onda 1100ms var(--ease) var(--reveal-delay, 0ms) both;
-  }
-
-  .etapa__ponto {
-    position: relative;
-  }
-
-  @keyframes onda {
-    from {
-      opacity: 0.7;
-      scale: 1;
-    }
-    to {
-      opacity: 0;
-      scale: 1.9;
-    }
-  }
-
-  .etapa__corpo {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-s2);
-    padding-top: var(--spacing-s2);
-  }
-
-  .etapa__titulo {
-    color: var(--color-navy);
-  }
-
-  .etapa__texto {
-    max-width: 46ch;
-    font-size: 0.9375rem;
-    line-height: 1.7;
-    color: var(--color-muted);
-  }
-
-  /* =====================================================================
-     Desktop: o canal deita-se e atravessa a secção
-     ===================================================================== */
-  @media (min-width: 1040px) {
-    /* O canal nasce no primeiro ponto e morre no último — não se prolonga
-       para lá dele. Com quatro colunas iguais de gap `g`, a distância entre
-       os dois centros é 75% da largura mais 0.75g. */
-    .canal__linha {
-      left: 28px;
-      right: auto;
-      top: 27px;
-      bottom: auto;
-      width: calc(75% + 0.75 * var(--spacing-s6));
-      height: 2px;
-    }
-
-    .canal__enche {
-      background: linear-gradient(
-        90deg,
-        var(--color-navy) 0%,
-        var(--color-teal) 62%,
-        var(--color-green) 100%
-      );
-      transform-origin: 0 50%;
-      scale: 0 1;
-    }
-
-    .canal__passos {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: var(--spacing-s6);
-    }
-
-    .etapa {
-      grid-template-columns: minmax(0, 1fr);
-      /* A linha do ponto vale exactamente o ponto. Deixada a `auto`, o
-         line-box do SVG dava alturas diferentes de coluna para coluna e os
-         quatro parágrafos arrancavam desalinhados. */
-      grid-template-rows: 56px auto;
-      gap: var(--spacing-s5);
-      /* O ponto tem de morder o canal: margem própria para o alinhar. */
-      padding-right: var(--spacing-s5);
-    }
-
-    .etapa__ponto {
-      align-self: start;
-    }
-
-    .etapa__corpo {
-      padding-top: 0;
-    }
-
-    /* Duas linhas reservadas ao título para os quatro parágrafos arrancarem
-       da mesma altura — um dos títulos quebra, e sem isto a fila desalinha. */
-    .etapa__titulo {
-      min-height: calc(2 * 1.3em);
-    }
-  }
-
-  /* =====================================================================
-     O enchimento
-     ===================================================================== */
-
-  /* Onde há timelines de scroll, o canal enche-se ao ritmo de quem rola —
-     é o movimento responder a uma acção, não um efeito a tocar sozinho. */
-  @supports (animation-timeline: view()) {
-    .canal__enche {
-      animation: encher linear both;
-      animation-timeline: view();
-      animation-range: cover 12% cover 62%;
-    }
-  }
-
-  /* Sem timelines: enche-se de uma vez, quando a secção chega. */
-  @supports not (animation-timeline: view()) {
-    .canal__linha.is-visible .canal__enche {
-      animation: encher 1600ms var(--ease) both;
-    }
-  }
-
-  @keyframes encher {
-    from {
-      scale: 1 0;
-    }
-    to {
-      scale: 1 1;
-    }
-  }
-
-  @media (min-width: 1040px) {
-    @keyframes encher {
-      from {
-        scale: 0 1;
-      }
-      to {
-        scale: 1 1;
-      }
-    }
-  }
-
-  /* =====================================================================
-     A nota de marcação
-     ===================================================================== */
-  .marcacao-nota {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--spacing-s3);
-    margin-top: clamp(2.5rem, 5vw, 3.5rem);
-    padding-top: var(--spacing-s6);
-    border-top: 1px solid var(--hairline-cool);
-    font-size: 0.9375rem;
-    line-height: 1.6;
-    color: var(--color-muted);
-  }
-
-  .marcacao-nota :global(.marcacao-nota__icone) {
-    flex: none;
-    margin-top: 2px;
-    color: var(--color-teal-deep);
-  }
-
-  .marcacao-nota strong {
-    display: block;
+  .passo__nome {
+    font-family: var(--font-sans);
+    font-size: var(--t-lead);
     font-weight: 600;
-    color: var(--color-navy);
+    letter-spacing: 0;
+    line-height: 1.25;
+    color: var(--color-navy-deep);
+  }
+  .passo__texto {
+    max-width: 52ch;
+    margin-top: var(--spacing-s2);
+    font-size: var(--t-body);
+    color: var(--color-navy-ink);
   }
 
-  /* O canal fica cheio e quieto. */
-  @media (prefers-reduced-motion: reduce) {
-    .canal__enche {
-      animation: none;
-      scale: 1 1;
+  /* --- "Dói?": painel navy que fecha a secção com os botões. ------------ */
+  .passos__dor {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    padding: clamp(1.75rem, 4vw, 2.75rem);
+    background-color: var(--color-navy-deep);
+    color: var(--color-ivory);
+  }
+  .passos__pergunta {
+    font-size: clamp(2rem, 3.4vw, 2.75rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--color-ivory);
+  }
+  .passos__resposta {
+    max-width: 44ch;
+    margin-top: var(--spacing-s4);
+    font-size: var(--t-lead);
+    line-height: 1.4;
+  }
+  .passos__marcacao {
+    margin-top: var(--spacing-s4);
+    font-size: var(--t-body);
+  }
+  .passos__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-s3);
+    margin-top: var(--spacing-s5);
+  }
+  .passos__marcar {
+    background-color: var(--color-ivory);
+    color: var(--color-navy-deep);
+  }
+  .passos__marcar:hover {
+    background-color: #fff;
+  }
+
+  @media (max-width: 599px) {
+    .passos__acoes .btn {
+      flex: 1 1 100%;
     }
-    .etapa .etapa__ponto {
-      transition: none;
+  }
+
+  /* Ecrã largo: título e lead numa coluna à esquerda, fixos enquanto o
+     texto passa; passos e painel na coluna da direita. */
+  @media (min-width: 900px) {
+    .passos__grelha {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      column-gap: clamp(3rem, 6vw, 6rem);
     }
-    .etapa.is-visible .etapa__ponto::after {
-      animation: none;
-      content: none;
+    .passos__cabeca {
+      align-self: start;
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
     }
   }
 </style>

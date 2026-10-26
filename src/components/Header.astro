@@ -8,14 +8,11 @@ import { useTranslations } from '../i18n/ui';
 
 interface Props {
   /**
-   * O header só pode ficar transparente por cima de uma fotografia de hero.
-   * Páginas sem hero (legais, confirmações) passam `sobreFoto={false}` e o
-   * header nasce sólido — caso contrário a marca sai branca sobre fundo claro.
+   * Mantido por compatibilidade com as páginas legais. O header deixou de
+   * ficar transparente por cima do hero: é sempre sólido.
    */
   sobreFoto?: boolean;
 }
-
-const { sobreFoto = true } = Astro.props;
 
 const locale: Locale = localeFromPath(Astro.url.pathname);
 const t = useTranslations(locale);
@@ -34,29 +31,21 @@ const brandHref = estaNaHome ? '#topo' : home;
    legais o link tem de levar lá primeiro e só depois saltar para a âncora. */
 const secaoHref = (id: string) => (estaNaHome ? `#${id}` : `${home}#${id}`);
 
-/** Navegação principal — subconjunto das secções, para não sobrecarregar. */
+/** Navegação principal — pela ordem da página. */
 const nav = [
   { id: 'servicos', label: t('nav.treatments') },
-  { id: 'sobre', label: t('nav.philosophy') },
-  { id: 'percurso', label: t('nav.firstVisit') },
   { id: 'terapeuta', label: t('nav.therapist') },
-];
-
-/** O painel em ecrã pequeno tem espaço de sobra: leva a lista completa. */
-const navPainel = [
-  ...nav,
-  { id: 'espaco', label: t('nav.space') },
+  { id: 'percurso', label: t('nav.firstVisit') },
+  { id: 'espaco', label: t('lp.nav.space') },
   { id: 'faq', label: t('nav.questions') },
 ];
 ---
 
-<header class="site-header" data-header data-solido={sobreFoto ? undefined : 'true'} data-sobre-foto={String(sobreFoto)}>
+<header class="site-header" data-header>
   <div class="site-header__inner">
     <a href={brandHref} class="brand" aria-label={`${site.name} — ${t('common.homeAria')}`}>
-      <Emblem size={52} loading="eager" class="brand__mark" />
-      <span class="brand__type">
-        <span class="brand__name wordmark">Homeostase Vita</span>
-      </span>
+      <Emblem size={44} loading="eager" class="brand__mark" />
+      <span class="brand__name wordmark">Homeostase Vita</span>
     </a>
 
     <nav class="nav" aria-label={t('nav.main')}>
@@ -75,6 +64,10 @@ const navPainel = [
 
     <div class="header-actions">
       <LangSwitch compacto />
+      <a href={`tel:${site.phone.tel}`} class="header-tel" aria-label={`${t('common.call')} ${site.phone.display}`}>
+        <Icon name="phone" size={18} />
+        <span class="header-tel__numero">{site.phone.display}</span>
+      </a>
       <a href={secaoHref('marcacao')} class="btn btn-primary header-cta">{t('common.book')}</a>
       <button
         type="button"
@@ -98,7 +91,7 @@ const navPainel = [
   <nav aria-label={t('nav.small')}>
     <ul class="menu-panel__list">
       {
-        navPainel.map((item, i) => (
+        nav.map((item, i) => (
           <li style={`--i:${i}`}>
             <a href={secaoHref(item.id)} class="menu-panel__link" data-menu-close>
               {item.label}
@@ -121,121 +114,71 @@ const navPainel = [
   </div>
   <LangSwitch class="menu-panel__lang" />
 
-  <p class="menu-panel__meta note">
+  <p class="menu-panel__meta">
     {site.address.street}<br />
     {site.address.postalCode}&nbsp;{site.address.locality}
   </p>
 </div>
 
 <style>
-  /* Fixed, não sticky: o header tem de poder assentar POR CIMA da
-     fotografia do hero sem lhe roubar altura. O hero compensa-o sozinho
-     com padding-top; as restantes páginas já usavam --header-h.
-
-     No topo é transparente e a marca lê-se em claro sobre a fotografia —
-     é isso que faz o header pertencer à composição em vez de ser uma barra
-     pousada em cima dela. Passado o primeiro ecrã ganha fundo, filete e
-     letra escura. Quem entra a meio (âncora, recarregar) vê-o já sólido: o
-     script decide no arranque, não só ao scroll. */
+  /* Barra lisa, sempre sólida: a marca, cinco links, o telefone e a
+     marcação. Num anúncio a pessoa decide nos primeiros segundos — o
+     telefone e o botão não podem depender de rolar a página. */
   .site-header {
     position: fixed;
     inset-inline: 0;
     top: 0;
     z-index: 90;
-    background-color: transparent;
-    border-bottom: 1px solid transparent;
-    transition:
-      background-color var(--dur-slow) var(--ease),
-      border-color var(--dur-slow) var(--ease),
-      backdrop-filter var(--dur-slow) var(--ease);
+    background-color: var(--color-paper);
+    transition: background-color var(--dur) var(--ease);
   }
 
-  .site-header[data-solido='true'] {
-    background-color: color-mix(in srgb, var(--color-beige) 88%, transparent);
-    backdrop-filter: blur(14px) saturate(1.4);
-    border-bottom-color: var(--hairline-cool);
+  /* Ao rolar, um degrau de tom separa a barra do que passa por baixo. */
+  .site-header[data-rolou='true'] {
+    background-color: var(--color-step);
   }
 
-  /* Sobre a fotografia, tudo o que é texto passa a claro. */
-  .site-header:not([data-solido='true']) .brand__name,
-  .site-header:not([data-solido='true']) .nav__link {
-    color: var(--color-ivory);
-    text-shadow: 0 1px 20px rgba(3, 18, 42, 0.5);
-  }
-
-  .site-header:not([data-solido='true']) .menu-toggle {
-    color: var(--color-ivory);
-    border-color: color-mix(in srgb, var(--color-ivory) 42%, transparent);
-  }
-
-  .site-header:not([data-solido='true']) .header-cta {
-    background-color: color-mix(in srgb, var(--color-ivory) 14%, transparent);
-    color: var(--color-ivory);
-    border-color: color-mix(in srgb, var(--color-ivory) 46%, transparent);
-    backdrop-filter: blur(3px);
-    box-shadow: none;
-  }
-  .site-header:not([data-solido='true']) .header-cta:hover {
-    background-color: var(--color-ivory);
-    color: var(--color-navy-deep);
-    border-color: var(--color-ivory);
-  }
-
-  /* Ao contrário do resto da página, o header não usa a .container (max-width
-     1200px): fica de facto encostado às duas margens do ecrã, com o gutter
-     como única distância — é isso que põe o logo mesmo no canto, mesmo em
-     monitores largos, em vez de o centrar dentro de uma coluna de 1200px. */
   .site-header__inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--spacing-s5);
+    gap: var(--spacing-s4);
     min-height: var(--header-h);
     width: 100%;
-    max-width: 1920px;
+    /* Mais larga do que a página: marca, cinco links, idioma, telefone e
+       botão só cabem numa linha com esta folga. */
+    max-width: 1440px;
     margin-inline: auto;
     padding-inline: var(--gutter);
   }
 
-  /* --- Marca ---
-     Bloco isolado à esquerda: flex: none garante que nunca cede espaço
-     à navegação, mesmo quando o vão central aperta. */
   .brand {
     display: flex;
     align-items: center;
-    gap: var(--spacing-s4);
+    gap: var(--spacing-s3);
     flex: none;
     min-width: 0;
     min-height: 44px;
     text-decoration: none;
   }
 
-  .brand__type {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
   .brand__name {
-    font-size: 1.375rem;
-    letter-spacing: 0.15em;
+    font-size: 1.25rem;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
   }
 
-  /* Em ecra estreito a marca cede primeiro: o toggle tem de caber sempre. */
   @media (max-width: 480px) {
+    .brand :global(.brand__mark) {
+      width: 36px;
+      height: auto;
+    }
     .brand__name {
-      font-size: 1rem;
-      letter-spacing: 0.12em;
+      font-size: 0.9375rem;
+      letter-spacing: 0.1em;
     }
   }
 
-  @media (min-width: 768px) {
-    .brand__name {
-      white-space: nowrap;
-    }
-  }
-
-  /* --- Navegação --- */
   .nav {
     display: none;
   }
@@ -243,71 +186,74 @@ const navPainel = [
   .nav__list {
     display: flex;
     align-items: center;
-    gap: clamp(var(--spacing-s6), 3.2vw, var(--spacing-s8));
+    gap: clamp(var(--spacing-s5), 2.2vw, var(--spacing-s6));
     list-style: none;
     margin: 0;
     padding: 0;
   }
 
-  /* Discreta de propósito: pequena, espaçada, em maiúsculas curtas. A
-     navegação indica, não anuncia — não compete com o título do hero. */
   .nav__link {
-    position: relative;
     display: block;
     white-space: nowrap;
     padding: var(--spacing-s2) 0;
-    font-size: 0.8125rem;
+    font-size: var(--t-small);
     font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
     color: var(--color-navy-ink);
     text-decoration: none;
+    text-underline-offset: 0.4em;
+    text-decoration-thickness: 2px;
     transition: color var(--dur) var(--ease);
   }
 
-  /* O filete abre do centro para fora — mais contido do que varrer da
-     esquerda, e não sugere uma direcção de leitura que não existe. */
-  .nav__link::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 1px;
-    background: currentColor;
-    scale: 0 1;
-    transition: scale var(--dur) var(--ease);
-  }
-
   .nav__link:hover,
-  .nav__link:focus-visible {
-    color: var(--color-teal-deep);
-  }
-  .site-header:not([data-solido='true']) .nav__link:hover,
-  .site-header:not([data-solido='true']) .nav__link:focus-visible {
-    color: #fff;
-  }
-  .nav__link:hover::after,
-  .nav__link:focus-visible::after,
-  .nav__link[aria-current='true']::after {
-    scale: 1 1;
+  .nav__link:focus-visible,
+  .nav__link[aria-current='true'] {
+    color: var(--color-navy);
+    text-decoration-line: underline;
   }
 
-  /* --- Ações --- */
   .header-actions {
     display: flex;
     align-items: center;
-    gap: var(--spacing-s3);
+    gap: var(--spacing-s2);
     flex: none;
+  }
+
+  /* Telefone: só o ícone, num disco, no telemóvel; o número por extenso a
+     partir do tablet. É o contacto que mais converte numa clínica local. */
+  .header-tel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-s2);
+    min-width: 48px;
+    height: 48px;
+    padding-inline: var(--spacing-s3);
+    border-radius: var(--radius-pill);
+    background-color: var(--color-step-2);
+    color: var(--color-navy-deep);
+    font-size: var(--t-small);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color var(--dur) var(--ease),
+      scale var(--dur-fast) var(--ease);
+  }
+  .header-tel:hover {
+    background-color: color-mix(in srgb, var(--color-navy) 17%, var(--color-paper));
+  }
+  .header-tel:active {
+    scale: 0.95;
+  }
+  .header-tel__numero {
+    display: none;
   }
 
   .header-cta {
     display: none;
-    min-height: 46px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    min-height: 48px;
+    font-size: var(--t-small);
     padding-inline: var(--spacing-s5);
   }
 
@@ -318,15 +264,19 @@ const navPainel = [
     height: 48px;
     padding: 0;
     background: transparent;
-    border: 1px solid var(--hairline);
+    border: 0;
     border-radius: var(--radius-pill);
     color: var(--color-navy);
     cursor: pointer;
+    transition: background-color var(--dur) var(--ease);
+  }
+  .menu-toggle:hover {
+    background-color: var(--color-step);
   }
 
   .menu-toggle :global(svg) {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
   }
 
   .menu-toggle :global(.menu-toggle__close) {
@@ -339,32 +289,32 @@ const navPainel = [
     display: block;
   }
 
-  /* A marcacao e a acao principal: aparece muito antes da navegacao. */
+  /* Até ao desktop o idioma vive no painel: o espaço da barra é do telefone. */
+  @media (max-width: 1279px) {
+    .header-actions :global(.lang) {
+      display: none;
+    }
+  }
+
   @media (min-width: 768px) {
     .header-cta {
       display: inline-flex;
     }
+    .header-tel__numero {
+      display: inline;
+    }
+    .header-tel {
+      padding-inline: var(--spacing-s4);
+      background-color: transparent;
+    }
+    .header-tel:hover {
+      background-color: var(--color-step);
+    }
   }
 
-  /* Cinco itens a 1.0625rem, mais o wordmark completo e o botao, so cabem
-     em linha a partir de 1200px. Abaixo disso a navegacao vai para o painel,
-     em vez de encolher a letra que se quis maior.
-
-     Agora que o header já não está preso à .container de 1200px (fica
-     encostado às margens do ecrã), o vão central é grande em ecrãs largos
-     — por isso a navegação pode voltar a centrar-se nele em vez de ficar
-     colada ao logo. Marca e ações ficam cada uma no seu canto. */
-  @media (min-width: 1200px) {
-    .site-header__inner {
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-    }
+  @media (min-width: 1280px) {
     .nav {
       display: block;
-      justify-self: center;
-    }
-    .header-actions {
-      justify-content: end;
     }
     .menu-toggle {
       display: none;
@@ -378,8 +328,8 @@ const navPainel = [
     z-index: 80;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-s7);
-    padding: calc(var(--header-h) + var(--spacing-s5)) var(--gutter) var(--spacing-s8);
+    gap: var(--spacing-s6);
+    padding: calc(var(--header-h) + var(--spacing-s4)) var(--gutter) var(--spacing-s7);
     background-color: var(--color-paper);
     overflow-y: auto;
     overscroll-behavior: contain;
@@ -395,19 +345,17 @@ const navPainel = [
     padding: 0;
     display: flex;
     flex-direction: column;
+    gap: var(--spacing-s1);
   }
 
-  /* Os itens são navegação, não títulos: seguem a sans do resto do menu,
-     num corpo generoso para o toque, com filete fino e cascata de entrada. */
   .menu-panel__link {
     display: block;
-    padding: clamp(var(--spacing-s4), 2.4vh, var(--spacing-s5)) 0;
-    border-bottom: 1px solid var(--hairline-cool);
-    font-family: var(--font-sans);
-    font-size: clamp(1.125rem, 4.4vw, 1.375rem);
+    padding: var(--spacing-s2) 0;
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 8vw, 2.5rem);
     font-weight: 500;
-    letter-spacing: var(--tracking-sans);
-    color: var(--color-navy);
+    line-height: 1.15;
+    color: var(--color-navy-deep);
     text-decoration: none;
     transition: color var(--dur) var(--ease);
   }
@@ -450,64 +398,30 @@ const navPainel = [
     gap: var(--spacing-s3);
   }
 
-  /* O selector de idioma fica acima da morada, no fim do painel. */
   .menu-panel__lang {
     align-self: start;
   }
 
   .menu-panel__meta {
     margin-top: auto;
+    font-size: var(--t-small);
+    color: var(--color-navy-ink);
   }
 </style>
 
 <script>
-  // Header sólido: a partir do momento em que o hero deixa de estar debaixo
-  // dele. Um sentinela invisível no topo evita ouvir o evento de scroll.
   const header = document.querySelector<HTMLElement>('[data-header]');
 
-  // Duas razões independentes para o header estar sólido: já passámos o
-  // hero, ou o painel de menu está aberto por cima de um fundo claro.
-  // Guardadas em separado para que fechar o menu no topo da página devolva
-  // o header ao modo transparente em vez de o deixar preso em sólido.
-  // Sem fotografia por baixo (páginas legais, confirmações) o header é
-  // sólido desde o início e nunca volta ao modo claro.
-  const sobreFoto = header?.dataset.sobreFoto !== 'false';
-
-  let passouHero = !sobreFoto;
-  let menuAberto = false;
-
-  const aplicarHeader = () => {
-    header?.setAttribute('data-solido', String(passouHero || menuAberto));
-  };
-
-  /** Chamado pelo menu para forçar o fundo enquanto o painel está aberto. */
-  const marcarMenu = (aberto: boolean) => {
-    menuAberto = aberto;
-    aplicarHeader();
-  };
-
-  if (header && sobreFoto) {
+  // Degrau de tom depois de rolar. Um sentinela evita ouvir o scroll.
+  if (header && 'IntersectionObserver' in window) {
     const sentinela = document.createElement('div');
     sentinela.setAttribute('aria-hidden', 'true');
     sentinela.style.cssText =
-      'position:absolute;top:0;left:0;width:1px;height:70svh;pointer-events:none;';
+      'position:absolute;top:0;left:0;width:1px;height:24px;pointer-events:none;';
     document.body.prepend(sentinela);
-
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(
-        ([e]) => {
-          passouHero = !e.isIntersecting;
-          aplicarHeader();
-        },
-        { threshold: 0 },
-      ).observe(sentinela);
-    } else {
-      passouHero = true;
-    }
-
-    aplicarHeader();
-  } else {
-    aplicarHeader();
+    new IntersectionObserver(([e]) => {
+      header.dataset.rolou = String(!e.isIntersecting);
+    }).observe(sentinela);
   }
 
   const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
@@ -517,9 +431,6 @@ const navPainel = [
   if (toggle && panel) {
     const setOpen = (open: boolean) => {
       toggle.setAttribute('aria-expanded', String(open));
-      // O painel é claro: com ele aberto o header não pode estar em modo
-      // "sobre a fotografia", ou a marca ficaria branca sobre bege.
-      marcarMenu(open);
       panel.hidden = !open;
       document.body.style.overflow = open ? 'hidden' : '';
       // Os rótulos vêm do HTML (traduzidos no servidor), não de literais aqui.
@@ -543,7 +454,7 @@ const navPainel = [
     });
 
     // Voltar ao layout desktop fecha o painel.
-    window.matchMedia('(min-width: 1200px)').addEventListener('change', (e) => {
+    window.matchMedia('(min-width: 1280px)').addEventListener('change', (e) => {
       if (e.matches) setOpen(false);
     });
   }
@@ -563,8 +474,6 @@ const navPainel = [
           if (entry.isIntersecting) visible.add(target);
           else visible.delete(target);
         }
-        // Sem nenhuma secção vigiada em vista (hero, marcação, rodapé),
-        // nenhum item fica sublinhado.
         for (const { link, el } of watched) {
           if (visible.has(el)) link.setAttribute('aria-current', 'true');
           else link.removeAttribute('aria-current');

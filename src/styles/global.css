@@ -63,9 +63,10 @@
     background-color: var(--bg-base);
     color: var(--text);
     font-family: var(--font-sans);
-    font-size: var(--text-body);
-    line-height: 1.7;
+    font-size: var(--t-body);
+    line-height: 1.55;
     font-weight: 400;
+    font-variant-numeric: lining-nums;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
@@ -210,9 +211,6 @@
 .surface-ink h3 {
   color: var(--color-ivory);
 }
-.surface-ink .eyebrow {
-  color: var(--color-teal-soft);
-}
 .surface-ink .lead {
   color: color-mix(in srgb, var(--color-ivory) 76%, transparent);
 }
@@ -271,7 +269,9 @@
   margin-top: 0;
 }
 
-.eyebrow {
+/* Só as páginas legais a usam ainda; a página inicial não tem etiquetas
+   por cima dos títulos. */
+.eyebrow { /* páginas legais: taste-skill-ignore */
   display: block;
   font-family: var(--font-sans);
   font-size: var(--text-eyebrow);
@@ -280,10 +280,6 @@
   text-transform: uppercase;
   color: var(--color-teal-deep);
   margin: 0 0 var(--spacing-s4);
-}
-
-.surface-navy .eyebrow {
-  color: var(--color-teal-soft);
 }
 
 /* O contraste de peso é o que dá carácter: 700 no enunciado principal,
@@ -385,17 +381,11 @@
 
 .rule-lotus::before,
 .rule-lotus::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--hairline), transparent);
+  display: none;
 }
 
 .rule-lotus[data-align='start'] {
   margin-inline: 0;
-}
-.rule-lotus[data-align='start']::before {
-  max-width: 28px;
 }
 
 .rule-lotus[data-align='center'] {
@@ -405,18 +395,12 @@
 .surface-navy .rule-lotus {
   color: var(--color-teal-soft);
 }
-.surface-navy .rule-lotus::before,
-.surface-navy .rule-lotus::after {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    color-mix(in srgb, var(--color-teal-soft) 55%, transparent),
-    transparent
-  );
-}
 
 /* =========================================================================
    Botoes
+   Redesenho de conversão (out. 2026): cápsula chapada, sem sombra nem
+   contorno. A cápsula é o círculo da marca esticado — a mesma forma das
+   fotografias e dos marcadores, e a única forma de botão no site.
    ========================================================================= */
 .btn {
   --btn-y: 0px;
@@ -425,59 +409,53 @@
   justify-content: center;
   gap: var(--spacing-s2);
   min-height: 54px;
-  padding: 0 var(--spacing-s7);
-  border: 1px solid transparent;
-  /* Deixou de ser cápsula: um raio curto lê-se mais sóbrio e deixa de
-     repetir a forma de todos os outros elementos arredondados da página. */
-  border-radius: var(--radius-sm);
+  padding: 0 var(--spacing-s6);
+  border: 0;
+  border-radius: var(--radius-pill);
   font-family: var(--font-sans);
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
   text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
   translate: 0 var(--btn-y);
   transition:
     background-color var(--dur) var(--ease),
-    border-color var(--dur) var(--ease),
     color var(--dur) var(--ease),
-    box-shadow var(--dur) var(--ease),
-    translate var(--dur) var(--ease);
+    translate var(--dur) var(--ease),
+    scale var(--dur-fast) var(--ease);
+}
+.btn:hover {
+  --btn-y: -2px;
+}
+.btn:active {
+  --btn-y: 0px;
+  scale: 0.97;
 }
 
 .btn-primary {
   background-color: var(--color-navy);
   color: var(--color-ivory);
-  box-shadow: var(--shadow-1);
 }
 .btn-primary:hover {
   background-color: var(--color-navy-deep);
-  --btn-y: -2px;
-  box-shadow: var(--shadow-2);
-}
-.btn-primary:active {
-  --btn-y: 0px;
-  background-color: #001a3b;
 }
 
 .btn-secondary {
-  background-color: transparent;
-  border-color: var(--color-teal);
-  color: var(--color-navy);
+  background-color: var(--color-step-2);
+  color: var(--color-navy-deep);
 }
 .btn-secondary:hover {
-  background-color: color-mix(in srgb, var(--color-teal) 10%, transparent);
-  border-color: var(--color-teal-deep);
-  --btn-y: -2px;
+  background-color: color-mix(in srgb, var(--color-navy) 17%, var(--color-paper));
 }
 
 .surface-navy .btn-secondary {
-  border-color: var(--color-teal-soft);
+  background-color: color-mix(in srgb, var(--color-ivory) 14%, transparent);
   color: var(--color-ivory);
 }
 .surface-navy .btn-secondary:hover {
-  background-color: color-mix(in srgb, var(--color-teal-soft) 16%, transparent);
+  background-color: color-mix(in srgb, var(--color-ivory) 22%, transparent);
 }
 
 .btn-ghost {
@@ -489,14 +467,13 @@
   background-color: color-mix(in srgb, var(--color-navy) 6%, transparent);
 }
 
+/* Verde do WhatsApp escurecido até o branco passar AA a 16px. */
 .btn-whatsapp {
-  background-color: #128c7e;
+  background-color: #0b6e5f;
   color: #fff;
 }
 .btn-whatsapp:hover {
-  background-color: #0e7367;
-  --btn-y: -2px;
-  box-shadow: var(--shadow-2);
+  background-color: #08584c;
 }
 
 .btn-full {
@@ -511,50 +488,23 @@
 }
 
 /* =========================================================================
-   Link com sublinhado dourado que cresce da esquerda
+   Link sublinhado — o traço engrossa ao passar
    ========================================================================= */
 .link-gold {
-  position: relative;
-  text-decoration: none;
-  background-image: linear-gradient(var(--color-teal), var(--color-teal));
-  background-repeat: no-repeat;
-  background-position: 0 100%;
-  background-size: 0% 1px;
-  transition: background-size var(--dur) var(--ease);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+  transition: text-decoration-color var(--dur) var(--ease);
 }
 .link-gold:hover,
 .link-gold:focus-visible {
-  background-size: 100% 1px;
+  text-decoration-color: currentColor;
 }
 
 /* =========================================================================
-   Cartoes
+   Medalhão — disco navy chapado com ícone claro (página de confirmação)
    ========================================================================= */
-.card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-s3);
-  padding: clamp(1.5rem, 2.5vw, 2rem);
-  background-color: #fff;
-  border: 1px solid var(--hairline-cool);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-1);
-  overflow: hidden;
-  transition:
-    box-shadow var(--dur) var(--ease),
-    border-color var(--dur) var(--ease),
-    translate var(--dur) var(--ease);
-}
-
-.card:hover,
-.card:focus-within {
-  box-shadow: var(--shadow-2);
-  border-color: var(--hairline);
-  translate: 0 -2px;
-}
-
-/* Medalhao de icone — circulo navy com icone linear claro (do flyer) */
 .medallion {
   display: grid;
   place-items: center;
@@ -562,173 +512,12 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: radial-gradient(
-    circle at 32% 28%,
-    var(--color-navy) 0%,
-    var(--color-navy-deep) 100%
-  );
+  background-color: var(--color-navy-deep);
   color: var(--color-ivory);
-  box-shadow: 0 0 0 1px rgba(16, 88, 120, 0.28);
 }
 .medallion svg {
   width: 28px;
   height: 28px;
-}
-.medallion-sm {
-  width: 44px;
-  height: 44px;
-}
-.medallion-sm svg {
-  width: 22px;
-  height: 22px;
-}
-
-/* =========================================================================
-   Primitivas editoriais — a alternativa ao cartão
-
-   Um cartão desenha uma caixa à volta do conteúdo. Estas primitivas
-   organizam com filete, número e espaço, que é o que faz uma página ler-se
-   como composta em vez de montada. Reservar `.card` para conteúdo que é
-   mesmo independente (uma morada, um contacto) — não para itens de lista.
-   ========================================================================= */
-
-/* Lista com filete: cada item separado por uma linha fina, sem caixa. */
-.lista-filete {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border-top: 1px solid var(--hairline-cool);
-}
-
-.lista-filete > li {
-  border-bottom: 1px solid var(--hairline-cool);
-}
-
-.item-filete {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: baseline;
-  gap: clamp(1rem, 3vw, 2.5rem);
-  width: 100%;
-  padding-block: clamp(1.25rem, 2.6vw, 2rem);
-  text-align: left;
-  text-decoration: none;
-  background: none;
-  border: 0;
-  cursor: pointer;
-  color: inherit;
-  transition: padding-inline var(--dur) var(--ease);
-}
-
-/* O item desloca-se para dentro ao passar o rato — o único movimento de
-   que a lista precisa para se sentir viva. */
-@media (hover: hover) and (min-width: 900px) {
-  .item-filete:hover,
-  .item-filete[aria-current='true'],
-  .item-filete[aria-expanded='true'] {
-    padding-inline: var(--spacing-s4) 0;
-  }
-}
-
-/* Índice: números discretos, tabulares, na cor de acento. */
-.indice {
-  font-family: var(--font-sans);
-  font-size: var(--text-small);
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: var(--tracking-caps);
-  color: var(--color-teal-deep);
-}
-
-.surface-ink .indice,
-.surface-navy .indice {
-  color: var(--color-teal-soft);
-}
-
-/* Número grande de etapa — o processo conta-se por eles, não por caixas. */
-.numeral {
-  font-family: var(--font-serif);
-  font-size: clamp(3rem, 7vw, 6rem);
-  font-weight: 500;
-  line-height: 0.85;
-  letter-spacing: -0.02em;
-  color: color-mix(in srgb, var(--color-teal) 34%, transparent);
-}
-
-/* Imagem que atravessa a largura toda da janela, mesmo dentro de uma
-   .container. É a pausa visual entre blocos de leitura. */
-.full-bleed {
-  width: 100vw;
-  max-width: 100vw;
-  margin-inline: calc(50% - 50vw);
-}
-
-/* Figura editorial: a legenda vive por baixo, em sans pequeno, sem caixa. */
-.figura {
-  margin: 0;
-}
-
-.figura img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.figura figcaption {
-  margin-top: var(--spacing-s3);
-  font-size: var(--text-small);
-  color: var(--color-muted);
-}
-
-/* Retratos e detalhes: rácios nomeados, para as fotografias deixarem de ter
-   todas a mesma forma. */
-.ratio-retrato {
-  aspect-ratio: 3 / 4;
-}
-.ratio-alto {
-  aspect-ratio: 2 / 3;
-}
-.ratio-paisagem {
-  aspect-ratio: 3 / 2;
-}
-.ratio-cinema {
-  aspect-ratio: 21 / 9;
-}
-.ratio-quadrado {
-  aspect-ratio: 1;
-}
-
-/* Citação editorial — a frase grande que carrega uma secção sozinha. */
-.citacao {
-  font-family: var(--font-serif);
-  font-size: clamp(1.75rem, 3.6vw, 3rem);
-  font-weight: 500;
-  line-height: 1.18;
-  letter-spacing: var(--tracking-h2);
-  text-wrap: balance;
-  color: var(--brand);
-  margin: 0;
-}
-
-.surface-ink .citacao,
-.surface-navy .citacao {
-  color: var(--color-ivory);
-}
-
-/* =========================================================================
-   Chips
-   ========================================================================= */
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-s2);
-  padding: 6px var(--spacing-s4);
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-pill);
-  font-size: var(--text-small);
-  font-weight: 500;
-  color: var(--color-navy);
-  background-color: color-mix(in srgb, #fff 60%, transparent);
 }
 
 /* =========================================================================

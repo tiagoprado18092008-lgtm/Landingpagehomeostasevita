@@ -16,7 +16,7 @@ const t = useTranslations(locale);
 <div class="consent-banner" data-consent hidden role="dialog" aria-labelledby="consent-titulo" aria-describedby="consent-texto">
   <div class="consent-banner__inner">
     <div>
-      <h2 class="consent-banner__title" id="consent-titulo">{t('consent.title')}</h2>
+      <h2 class="consent-banner__title" id="consent-titulo">{t('consent.title')}.</h2>{' '}
       <p class="consent-banner__text" id="consent-texto">
         {t('consent.text')}{' '}
         <a href={localizePath('/politica-de-cookies', locale)} class="link-gold">
@@ -32,64 +32,93 @@ const t = useTranslations(locale);
 </div>
 
 <style>
+  /* Compacto de propósito (out. 2026): na versão anterior o banner ocupava
+     um terço do ecrã do telemóvel e tapava o botão de marcação do hero —
+     precisamente o primeiro ecrã de quem chega pelos anúncios. Agora é uma
+     faixa baixa, encostada ao fundo, com as duas escolhas do mesmo peso. */
   .consent-banner {
     position: fixed;
-    left: clamp(12px, 3vw, 24px);
-    right: clamp(12px, 3vw, 24px);
-    bottom: clamp(12px, 3vw, 24px);
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
     z-index: 100;
-    padding: var(--spacing-s5);
-    border: 1px solid var(--hairline);
-    border-radius: var(--radius-lg);
-    background-color: var(--color-paper);
-    box-shadow: var(--shadow-3);
-    max-width: 760px;
+    max-width: 880px;
     margin-inline: auto;
+    padding: 14px 16px;
+    border-radius: 20px;
+    background-color: var(--color-navy-deep);
+    color: var(--color-ivory);
+    box-shadow: var(--shadow-3); /* diálogo flutuante: taste-skill-ignore */
   }
 
   .consent-banner[hidden] {
     display: none;
   }
 
+  /* Por cima da barra de contactos do telemóvel, nunca por baixo dela. */
+  @media (max-width: 767px) {
+    .consent-banner {
+      bottom: calc(76px + env(safe-area-inset-bottom));
+    }
+  }
+
   .consent-banner__inner {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-s4);
+    gap: 12px;
   }
 
   .consent-banner__title {
-    font-size: 1.125rem;
-    margin-bottom: var(--spacing-s2);
+    display: inline;
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    color: var(--color-ivory);
   }
 
   .consent-banner__text {
-    font-size: 0.875rem;
-    line-height: 1.6;
-    color: var(--color-muted);
+    display: inline;
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+  .consent-banner__text a {
+    color: inherit;
   }
 
   .consent-banner__actions {
     display: flex;
-    gap: var(--spacing-s3);
+    gap: 8px;
   }
 
   .consent-banner__actions .btn {
     flex: 1;
     min-height: 44px;
+    padding-inline: var(--spacing-s5);
     font-size: 0.9375rem;
+  }
+  .consent-banner__actions .btn-secondary {
+    background-color: color-mix(in srgb, var(--color-ivory) 16%, transparent);
+    color: var(--color-ivory);
+  }
+  .consent-banner__actions .btn-primary {
+    background-color: var(--color-ivory);
+    color: var(--color-navy-deep);
   }
 
   @media (min-width: 720px) {
+    .consent-banner {
+      bottom: 16px;
+      padding: 12px 12px 12px 24px;
+      border-radius: var(--radius-pill);
+    }
     .consent-banner__inner {
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
-      gap: var(--spacing-s6);
+      gap: var(--spacing-s5);
     }
     .consent-banner__actions {
-      flex: none;
-    }
-    .consent-banner__actions .btn {
       flex: none;
     }
   }

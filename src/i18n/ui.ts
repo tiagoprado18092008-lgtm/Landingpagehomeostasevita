@@ -235,9 +235,9 @@ const pt = {
   'contact.asideAria': 'Contactos e localização',
   'contact.whatsappSend': 'Enviar mensagem',
   'contact.errName': 'Indique o seu nome.',
-  'contact.errReason': 'Diga-nos em poucas palavras o motivo do contacto.',
-  'contact.errPhone': 'Indique um número de telemóvel português válido.',
-  'contact.errEmail': 'Indique um email válido para lhe podermos responder.',
+  'contact.errReason': 'Indique, de forma breve, o motivo do contacto.',
+  'contact.errPhone': 'Indique um número de telefone válido, para lhe ligarmos.',
+  'contact.errEmail': 'Este email não parece válido. Pode deixá-lo em branco.',
   'contact.errConsent': 'Precisamos da sua autorização para o contactarmos.',
   'contact.liveInvalid': 'O formulário tem campos por corrigir.',
   'contact.liveSending': 'A enviar o pedido.',
@@ -256,10 +256,10 @@ const pt = {
   'footer.backToTop': 'voltar ao topo',
   'footer.name': 'Homeostase Vita — Medicina Tradicional Chinesa',
   'footer.contact': 'Contacto',
-  'footer.address': 'MORADA:',
-  'footer.phone': 'TELEFONE / WHATSAPP:',
-  'footer.email': 'EMAIL:',
-  'footer.bookings': 'MARCAÇÕES:',
+  'footer.address': 'Morada:',
+  'footer.phone': 'Telefone / WhatsApp:',
+  'footer.email': 'Email:',
+  'footer.bookings': 'Marcações:',
   'footer.bookingsValue': 'Por contacto directo, telefone ou WhatsApp.',
   'footer.legalNav': 'Informação legal',
   'footer.linkContact': 'Contacto',
@@ -279,7 +279,7 @@ const pt = {
   // --- Consentimento ---
   'consent.title': 'Cookies e privacidade',
   'consent.text':
-    'Usamos cookies de medição — estatísticas de utilização e resultados dos nossos anúncios — e o mapa do Google apenas se autorizar. Sem a sua autorização, o site funciona na mesma — só não recolhemos estatísticas.',
+    'Cookies de medição (visitas e anúncios), só com a sua autorização.',
   'consent.policy': 'Política de Cookies',
   'consent.reject': 'Recusar',
   'consent.accept': 'Aceitar',
@@ -322,6 +322,63 @@ const pt = {
   'received.lead':
     'Entramos em contacto consigo em breve para confirmar o horário. Se preferir falar já connosco, use um dos contactos abaixo.',
   'received.home': 'Voltar ao início',
+
+  // --- Página de conversão (redesenho de outubro de 2026) ---
+  /* O título responde à pesquisa que trouxe a pessoa ("acupuntura Maia"),
+     não ao nome da casa — esse já está no header. */
+  'lp.nav.space': 'Onde estamos',
+  'lp.hero.title': 'Acupuntura na Maia',
+  'lp.hero.sub':
+    'Medicina Tradicional Chinesa com Teresa Morais, terapeuta com cédula profissional da ACSS. Cada tratamento é definido após uma avaliação individual.',
+  'lp.hero.whoLine': 'Cédula ACSS n.º',
+  'lp.hero.whereLine': 'Maia · consultas mediante marcação',
+
+  'lp.q.title': 'Motivo da consulta',
+  'lp.q.lead':
+    'Selecione o motivo da sua consulta. Esta informação será incluída no pedido de marcação e na mensagem de WhatsApp.',
+  'lp.q.other': 'Outro motivo',
+  'lp.q.chosen': 'Motivo selecionado',
+  'lp.q.none': 'Selecione uma das opções acima.',
+  'lp.q.book': 'Solicitar marcação',
+  'lp.q.wa': 'Enviar por WhatsApp',
+  'lp.q.waText': 'Olá! Gostaria de marcar uma consulta de Medicina Tradicional Chinesa. Motivo: ',
+  'lp.q.groupLabel': 'Motivo da consulta',
+
+  'lp.t.title': 'Os tratamentos',
+
+  'lp.p.title': 'Teresa Morais',
+  'lp.p.trainTitle': 'Formação',
+  'lp.p.practiceTitle': 'Abordagem terapêutica',
+  'lp.p.credTitle': 'Cédulas profissionais da ACSS',
+  'lp.p.book': 'Marcar consulta',
+
+  'lp.c.title': 'A primeira consulta',
+  'lp.c.s1': 'Avaliação inicial',
+  'lp.c.s1Text':
+    'A consulta inicia-se com a análise dos sintomas, dos hábitos e das características pessoais, complementada pela observação da língua e pela avaliação do pulso.',
+  'lp.c.s2': 'Tratamento personalizado',
+  'lp.c.s3': 'Consultas de seguimento',
+  'lp.c.hurtQ': 'A acupuntura dói?',
+  'lp.c.hurtA':
+    'As agulhas são muito finas e a aplicação é, geralmente, bem tolerada. Para muitas pessoas a inserção é praticamente indolor.',
+
+  'lp.s.route': 'Ver localização no Google Maps',
+  'lp.s.prev': 'Fotografia seguinte do espaço',
+
+  'lp.faq.title': 'Perguntas frequentes',
+
+  'lp.f.title': 'Marque a sua consulta',
+  'lp.f.lead':
+    'Indique o seu nome e contacto telefónico. Entraremos em contacto consigo para agendar o dia e a hora da consulta.',
+  'lp.f.phone': 'Telemóvel',
+  'lp.f.reason': 'Motivo (opcional)',
+  'lp.f.email': 'Email (opcional)',
+  'lp.f.submit': 'Solicitar marcação',
+  'lp.f.or': 'Se preferir, pode contactar-nos diretamente por telefone ou WhatsApp.',
+
+  'lp.bar.aria': 'Contactos rápidos',
+  'lp.bar.call': 'Ligar',
+  'lp.bar.book': 'Marcar',
 
   // --- Metadados das páginas ---
   'meta.homeTitle': 'Medicina Tradicional Chinesa na Maia | Acupuntura — Homeostase Vita',
@@ -556,8 +613,8 @@ const en: Record<UiKey, string> = {
   'contact.whatsappSend': 'Send a message',
   'contact.errName': 'Please enter your name.',
   'contact.errReason': 'Tell us in a few words the reason for getting in touch.',
-  'contact.errPhone': 'Please enter a valid Portuguese mobile number.',
-  'contact.errEmail': 'Please enter a valid email so we can reply to you.',
+  'contact.errPhone': 'Please enter a valid phone number so we can call you.',
+  'contact.errEmail': 'This email does not look valid. You can leave it blank.',
   'contact.errConsent': 'We need your consent in order to contact you.',
   'contact.liveInvalid': 'The form has fields that need correcting.',
   'contact.liveSending': 'Sending your request.',
@@ -576,10 +633,10 @@ const en: Record<UiKey, string> = {
   'footer.backToTop': 'back to top',
   'footer.name': 'Homeostase Vita — Traditional Chinese Medicine',
   'footer.contact': 'Contact',
-  'footer.address': 'ADDRESS:',
-  'footer.phone': 'PHONE / WHATSAPP:',
-  'footer.email': 'EMAIL:',
-  'footer.bookings': 'BOOKINGS:',
+  'footer.address': 'Address:',
+  'footer.phone': 'Phone / WhatsApp:',
+  'footer.email': 'Email:',
+  'footer.bookings': 'Appointments:',
   'footer.bookingsValue': 'By direct contact, phone or WhatsApp.',
   'footer.legalNav': 'Legal information',
   'footer.linkContact': 'Contact',
@@ -599,7 +656,7 @@ const en: Record<UiKey, string> = {
   // --- Consentimento ---
   'consent.title': 'Cookies and privacy',
   'consent.text':
-    'We use measurement cookies — usage statistics and the results of our ads — and the Google map only with your permission. Without it the site works just the same — we simply do not collect statistics.',
+    'Measurement cookies (visits and ads), only with your permission.',
   'consent.policy': 'Cookie Policy',
   'consent.reject': 'Decline',
   'consent.accept': 'Accept',
@@ -642,6 +699,61 @@ const en: Record<UiKey, string> = {
   'received.lead':
     'We will be in touch shortly to confirm a time. If you would rather speak to us now, use one of the contacts below.',
   'received.home': 'Back to the home page',
+
+  // --- Conversion page ---
+  'lp.nav.space': 'Where we are',
+  'lp.hero.title': 'Acupuncture in Maia',
+  'lp.hero.sub':
+    'Traditional Chinese Medicine with Teresa Morais, a therapist licensed by the ACSS, Portugal’s health authority. Each treatment is defined following an individual assessment.',
+  'lp.hero.whoLine': 'ACSS licence no.',
+  'lp.hero.whereLine': 'Maia · by appointment only',
+
+  'lp.q.title': 'Reason for your consultation',
+  'lp.q.lead':
+    'Select the reason for your consultation. This information will be included in the booking request and in the WhatsApp message.',
+  'lp.q.other': 'Other reason',
+  'lp.q.chosen': 'Selected reason',
+  'lp.q.none': 'Please select one of the options above.',
+  'lp.q.book': 'Request an appointment',
+  'lp.q.wa': 'Send by WhatsApp',
+  'lp.q.waText': 'Hello! I would like to book a Traditional Chinese Medicine consultation. Reason: ',
+  'lp.q.groupLabel': 'Reason for the consultation',
+
+  'lp.t.title': 'The treatments',
+
+  'lp.p.title': 'Teresa Morais',
+  'lp.p.trainTitle': 'Training',
+  'lp.p.practiceTitle': 'Therapeutic approach',
+  'lp.p.credTitle': 'ACSS professional licences',
+  'lp.p.book': 'Book a consultation',
+
+  'lp.c.title': 'The first consultation',
+  'lp.c.s1': 'Initial assessment',
+  'lp.c.s1Text':
+    'The consultation begins with an analysis of symptoms, habits and personal characteristics, complemented by observation of the tongue and assessment of the pulse.',
+  'lp.c.s2': 'Personalised treatment',
+  'lp.c.s3': 'Follow-up consultations',
+  'lp.c.hurtQ': 'Does acupuncture hurt?',
+  'lp.c.hurtA':
+    'The needles are very fine and their application is generally well tolerated. For many people insertion is practically painless.',
+
+  'lp.s.route': 'View location on Google Maps',
+  'lp.s.prev': 'Next photograph of the space',
+
+  'lp.faq.title': 'Frequently asked questions',
+
+  'lp.f.title': 'Book your consultation',
+  'lp.f.lead':
+    'Please provide your name and telephone number. We will contact you to schedule the day and time of your consultation.',
+  'lp.f.phone': 'Mobile',
+  'lp.f.reason': 'Reason (optional)',
+  'lp.f.email': 'Email (optional)',
+  'lp.f.submit': 'Request an appointment',
+  'lp.f.or': 'Alternatively, you may contact us directly by telephone or WhatsApp.',
+
+  'lp.bar.aria': 'Quick contacts',
+  'lp.bar.call': 'Call',
+  'lp.bar.book': 'Book',
 
   // --- Metadados das páginas ---
   'meta.homeTitle': 'Traditional Chinese Medicine in Maia | Acupuncture — Homeostase Vita',

@@ -43,17 +43,13 @@ const redes = [
 
 <footer class="footer">
   <div class="footer__laje">
-    <span class="footer__brilho" aria-hidden="true"></span>
-
     <div class="container footer__inner">
       <!-- O nome, em serifa, a abrir ------------------------------------ -->
       <h2 class="footer__nome">
         <a href="#topo" aria-label={`${site.name} — ${t('footer.backToTop')}`}>
-          {t('footer.name')}
+          {site.name}
         </a>
       </h2>
-
-      <p class="footer__eyebrow">{t('footer.contact')}</p>
 
       <!-- As colunas de detalhe ----------------------------------------- -->
       <div class="footer__grelha">
@@ -173,27 +169,12 @@ const redes = [
 
   .footer__laje {
     --footer-hairline: color-mix(in srgb, var(--color-ivory) 14%, transparent);
-    --footer-muted: color-mix(in srgb, var(--color-ivory) 72%, transparent);
+    --footer-muted: color-mix(in srgb, var(--color-ivory) 88%, transparent);
     position: relative;
     isolation: isolate;
     overflow: hidden;
     background-color: var(--color-navy-deep);
     color: var(--color-ivory);
-  }
-
-  .footer__brilho {
-    position: absolute;
-    z-index: -1;
-    top: -44%;
-    right: -12%;
-    width: min(880px, 76%);
-    aspect-ratio: 1;
-    background: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--color-teal) 40%, transparent) 0%,
-      transparent 62%
-    );
-    pointer-events: none;
   }
 
   .footer__inner {
@@ -203,14 +184,15 @@ const redes = [
   /* ------------------------------------------------------ O nome ------ */
   /* A peça grande da referência. Serifa, peso normal, quebra livre — o nome
      ocupa duas linhas em ecrãs largos e é isso que lhe dá a presença. */
+  /* O nome fecha a página em ponto grande, de margem a margem. */
   .footer__nome {
-    max-width: 18ch;
     margin: 0;
     font-family: var(--font-wordmark);
-    font-size: clamp(2.25rem, 6vw, 4.25rem);
-    font-weight: 400;
-    line-height: 1.06;
-    letter-spacing: -0.005em;
+    font-size: var(--t-display);
+    font-weight: 500;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
     color: var(--color-ivory);
   }
 
@@ -225,26 +207,14 @@ const redes = [
     color: var(--color-teal-soft);
   }
 
-  /* A etiqueta, também em serifa e em maiúsculas largas: é o eco pequeno do
-     nome, não um título de coluna. */
-  .footer__eyebrow {
-    margin-top: clamp(1rem, 2vw, 1.5rem);
-    font-family: var(--font-wordmark);
-    font-size: clamp(1.125rem, 2vw, 1.5rem);
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-ivory);
-  }
-
   /* ---------------------------------------------------- As colunas ---- */
   /* O vão grande entre a etiqueta e a grelha é deliberado: é o que separa o
      registo de marca do registo de informação. */
   .footer__grelha {
     display: grid;
     gap: clamp(1.75rem, 3vw, 2.5rem);
-    margin-top: clamp(1.75rem, 3.5vw, 2.75rem);
-    font-size: 0.875rem;
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    font-size: 0.9375rem;
     line-height: 1.6;
     color: var(--footer-muted);
   }
@@ -290,7 +260,7 @@ const redes = [
 
   .footer__links a,
   .footer__consent-btn {
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     font-weight: 600;
     color: var(--color-ivory);
     text-decoration: underline;
@@ -330,9 +300,7 @@ const redes = [
     border-radius: 6px;
     background-color: var(--color-ivory);
     line-height: 0;
-    transition:
-      transform var(--dur) var(--ease),
-      box-shadow var(--dur) var(--ease);
+    transition: transform var(--dur) var(--ease);
   }
 
   .footer__livro-img {
@@ -344,7 +312,6 @@ const redes = [
   .footer__livro:hover,
   .footer__livro:focus-visible {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px color-mix(in srgb, var(--color-teal-soft) 32%, transparent);
   }
 
   .footer__licencas p {
@@ -359,7 +326,7 @@ const redes = [
   .footer__aviso {
     margin-top: var(--spacing-s4);
     max-width: 46ch;
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     line-height: 1.6;
     font-style: italic;
     color: color-mix(in srgb, var(--color-ivory) 75%, transparent);
@@ -381,8 +348,8 @@ const redes = [
     justify-content: center;
     width: 42px;
     height: 42px;
-    border: 1px solid color-mix(in srgb, var(--color-teal-soft) 45%, transparent);
-    border-radius: 8px;
+    border-radius: 50%;
+    background-color: color-mix(in srgb, var(--color-ivory) 12%, transparent);
     color: var(--color-ivory);
     transition:
       background-color var(--dur) var(--ease),
@@ -404,9 +371,7 @@ const redes = [
     align-items: center;
     justify-content: space-between;
     gap: var(--spacing-s3) var(--spacing-s5);
-    margin-top: clamp(1.75rem, 3vw, 2.5rem);
-    padding-top: clamp(1rem, 2vw, 1.375rem);
-    border-top: 1px solid var(--footer-hairline);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
     /* O botão do WhatsApp é fixo ao canto inferior direito: o plinto reserva
        a altura dele (52px) mais o afastamento que ele usa, e acaba sempre
        acima. Manter em sincronia com o `.chat` do ChatWidget. */
@@ -420,7 +385,7 @@ const redes = [
     gap: 0 6px;
     margin: 0;
     min-width: 0;
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     line-height: 1.5;
     color: var(--footer-muted);
   }
@@ -432,7 +397,7 @@ const redes = [
 
   /* A assinatura de quem fez o site. O emblema da AlphaScale entra em repouso
      sem halo nenhum — é um crédito, não uma segunda marca — e só ao passar o
-     cursor acende no ciano da casa. Os dois drop-shadow existem já no estado
+     cursor acende no ciano da casa. Os dois halos existem já no estado
      parado (a raio zero e transparentes) porque um filtro só interpola entre
      listas com o mesmo número de funções. */
   .footer__by {
@@ -447,8 +412,8 @@ const redes = [
     display: block;
     height: 28px;
     width: auto;
-    filter: brightness(1) drop-shadow(0 0 0 rgb(var(--as-ciano) / 0))
-      drop-shadow(0 0 0 rgb(var(--as-ciano) / 0));
+    filter: brightness(1) drop-shadow(0 0 0 rgb(var(--as-ciano) / 0)) /* crédito AlphaScale, só ao passar: taste-skill-ignore */
+      drop-shadow(0 0 0 rgb(var(--as-ciano) / 0)); /* crédito AlphaScale, só ao passar: taste-skill-ignore */
     transition:
       transform var(--dur) var(--ease),
       filter var(--dur) var(--ease);
@@ -467,8 +432,8 @@ const redes = [
   .footer__by:hover .footer__by-logo,
   .footer__by:focus-visible .footer__by-logo {
     transform: scale(1.18);
-    filter: brightness(1.12) drop-shadow(0 0 8px rgb(var(--as-ciano) / 0.8))
-      drop-shadow(0 0 18px rgb(var(--as-ciano) / 0.4));
+    filter: brightness(1.12) drop-shadow(0 0 8px rgb(var(--as-ciano) / 0.8)) /* crédito AlphaScale, só ao passar: taste-skill-ignore */
+      drop-shadow(0 0 18px rgb(var(--as-ciano) / 0.4)); /* crédito AlphaScale, só ao passar: taste-skill-ignore */
   }
 
   .footer__by:hover .footer__by-nome,

@@ -2,48 +2,50 @@
 import { getImage } from 'astro:assets';
 import { site } from '../config/site';
 import Icon from './Icon.astro';
-import fotoLarga from '../assets/img/hero-acupuntura.jpg';
-import fotoAlta from '../assets/img/hero-acupuntura-vertical.jpg';
+import Emblem from './Emblem.astro';
+import fotoLarga from '../assets/img/hero-acupuntura.png';
+import fotoAlta from '../assets/img/hero-acupuntura-vertical.png';
+import teresa from '../assets/img/teresa.jpg';
 import { localeFromPath, type Locale } from '../i18n';
 import { useTranslations } from '../i18n/ui';
 
 const locale: Locale = localeFromPath(Astro.url.pathname);
 const t = useTranslations(locale);
 
-
-/* Arte dirigida: o mesmo momento, dois enquadramentos.
-   Em ecra largo a fotografia horizontal; no telemovel um recorte vertical
-   feito de proposito, porque a horizontal cortada a 390px so mostrava
-   desfoque e deixava de se perceber que aquilo e acupuntura. */
+/**
+ * Primeiro ecrã de uma página que recebe anúncios: a fotografia de ecrã
+ * inteiro de sempre, e por cima dela o que quem clicou quer saber — é
+ * acupuntura, é na Maia, é com quem — e as três vias de contacto.
+ *
+ * Diferenças para a versão anterior (out. 2026):
+ * - o título responde à pesquisa ("Acupuntura na Maia"), não ao nome;
+ * - o texto encosta à esquerda, onde o véu escurece, e as agulhas ficam
+ *   à vista do lado direito em vez de por baixo das letras;
+ * - telefone e WhatsApp juntam-se ao botão de marcação, e a cédula da
+ *   Teresa aparece logo ali, com a cara dela;
+ * - sem zoom na fotografia: serve-se o original a toda a largura.
+ *
+ * Arte dirigida: no telemóvel entra o recorte vertical feito de propósito,
+ * porque a horizontal cortada a 390px só mostrava desfoque. Os dois saem
+ * da versão melhorada da fotografia (1672×941); o vertical é um recorte
+ * dela à resolução nativa (583×941), sem ampliação.
+ */
 const larga = await getImage({
   src: fotoLarga,
   widths: [1080, 1440, 1920, 2600],
   format: 'webp',
-  quality: 78,
+  quality: 82,
 });
 const alta = await getImage({
   src: fotoAlta,
   widths: [480, 720, 900, 1200, 1500, 1800],
   format: 'webp',
-  quality: 78,
+  quality: 82,
 });
-
-/**
- * Hero fotográfico de ecrã inteiro, com o header transparente por cima.
- *
- * A fotografia é o assunto: agulhas finas nas costas, em foco raso. O véu
- * é navy da marca (não preto neutro) — a pele fica quente no centro e a
- * imagem arrefece nas bordas, ligando-se à paleta do resto da página.
- *
- * A composição é centrada: o bloco de texto assenta no meio do ecrã, sobre
- * a fotografia, e o véu escurece de forma simétrica a partir do centro.
- *
- * A cédula profissional não vem aqui: vive na faixa `Credentials`, logo
- * a seguir, e repeti-la seria ruído.
- */
+const retrato = await getImage({ src: teresa, width: 144, format: 'webp', quality: 80 });
 ---
 
-<section class="hero" id="topo">
+<section class="hero" id="topo" aria-labelledby="hero-titulo">
   <div class="hero__foto">
     <picture>
       <source
@@ -58,294 +60,245 @@ const alta = await getImage({
         src={alta.src}
         srcset={alta.srcSet.attribute}
         sizes="100vw"
-        width="1800"
-        height="2903"
+        width={alta.attributes.width}
+        height={alta.attributes.height}
         alt={t('hero.imgAlt')}
         loading="eager"
         fetchpriority="high"
-        decoding="sync"
+        decoding="async"
       />
     </picture>
     <div class="hero__veu" aria-hidden="true"></div>
   </div>
 
-  <div class="hero__conteudo">
-    <div class="hero__texto">
-      <p class="hero__kicker">
-        <span class="hero__filete" aria-hidden="true"></span>
-        {t('hero.kicker')} · {site.city}
-      </p>
+  <div class="hero__texto">
+    <h1 id="hero-titulo">
+      <span class="hero__marca">
+        <Emblem size={52} loading="eager" class="hero__emblema" />
+        <span class="hero__nome">{site.name}</span>
+      </span>
+      <span class="sr-only"> — </span>
+      <span class="hero__titulo">{t('lp.hero.title')}</span>
+    </h1>
+    <p class="hero__sub">{t('lp.hero.sub')}</p>
 
-      <h1 class="hero__titulo">
-        {t('hero.titleA')}{t('hero.titleB')}
-      </h1>
-
-      <p class="hero__sub">{t('hero.sub')}</p>
-
-      <div class="hero__acoes">
-        <a href="#marcacao" class="btn hero__btn">{t('common.book')}</a>
-        <a href={`tel:${site.phone.tel}`} class="btn hero__tel">
-          <Icon name="phone" size={17} />
-          {site.phone.display}
-        </a>
-      </div>
+    <div class="hero__acoes">
+      <a href="#marcacao" class="btn hero__marcar">{t('common.book')}</a>
+      <a href={`tel:${site.phone.tel}`} class="btn hero__tel">
+        <Icon name="phone" size={18} />
+        {site.phone.display}
+      </a>
+      <a href={site.phone.whatsapp} class="btn btn-whatsapp" rel="noopener">
+        <Icon name="whatsapp" size={18} />
+        WhatsApp
+      </a>
     </div>
-  </div>
 
-  <a class="hero__descer" href="#servicos" aria-label={t('hero.scroll')}>
-    <span class="hero__descer-linha" aria-hidden="true"></span>
-  </a>
+    <a class="hero__quem" href="#terapeuta">
+      <img
+        src={retrato.src}
+        width="72"
+        height="72"
+        alt=""
+        class="hero__retrato"
+        loading="eager"
+        decoding="async"
+      />
+      <span>
+        <strong>{site.practitioner.firstName} {site.practitioner.lastName}</strong>
+        <span class="hero__quem-linha">
+          {t('lp.hero.whoLine')}&nbsp;{site.credentials.acss} · {t('lp.hero.whereLine')}
+        </span>
+      </span>
+    </a>
+  </div>
 </section>
 
 <style>
-  /* -----------------------------------------------------------------------
-     Caixa
-     O header é sticky e está em fluxo, por isso o hero começa mesmo por
-     baixo dele: basta descontar a sua altura para encher o ecrã. O tecto de
-     880px evita o hero interminável num monitor 4K ao alto; o piso de 520px
-     salva o telemóvel deitado.
-     -------------------------------------------------------------------- */
-  /* O header é `fixed` e já não ocupa espaço no fluxo: o hero enche o ecrã
-     todo e reserva a altura dele no próprio padding-top. Cinematográfico de
-     propósito — 100svh, sem tecto: a fotografia é o assunto, e cortá-la a
-     880px tirava-lhe a escala. */
   .hero {
     position: relative;
     isolation: isolate;
     display: grid;
-    align-content: center;
-    min-height: max(560px, 100svh);
-    padding-block: calc(var(--header-h) + clamp(2rem, 6vh, 4rem))
-      clamp(4.5rem, 12vh, 8.5rem);
+    align-items: end;
+    min-height: max(600px, 100svh);
+    padding-top: var(--header-h);
+    overflow: clip;
     /* Média da fotografia, escurecida: se a imagem tardar, não há flash. */
     background-color: #2e2019;
-    overflow: hidden;
+    color: var(--color-ivory);
   }
 
   /* --- Fotografia ------------------------------------------------------ */
   .hero__foto {
     position: absolute;
-    inset: 0;
+    inset: var(--header-h) 0 0;
     z-index: -1;
   }
-
   .hero__foto picture {
     display: block;
     width: 100%;
     height: 100%;
   }
-
   .hero__img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* O enquadramento sobe: as mãos e as agulhas caem no terço inferior,
-       por baixo do texto, em vez de ficarem tapadas por ele. */
-    object-position: 50% 42%;
-    animation: hv-assentar 2600ms var(--ease) both;
+    object-position: 50% 72%;
+    animation: hero-entrar 1400ms var(--ease) both;
   }
 
-  /* Duas camadas: um radial que assenta o texto no centro sem apagar os
-     cantos da fotografia, e um gradiente vertical que encosta ao header em
-     cima e entrega à faixa clara em baixo. */
+  /* Véu neutro só onde há texto. No telemóvel o texto vai em cima — os
+     botões têm de caber no primeiro ecrã, acima do banner de cookies — e
+     o véu aclara para baixo, onde as agulhas ficam à vista. */
   .hero__veu {
     position: absolute;
     inset: 0;
-    background:
-      radial-gradient(
-        130% 100% at 50% 50%,
-        rgba(3, 18, 42, 0.34) 0%,
-        rgba(3, 18, 42, 0.58) 55%,
-        rgba(3, 18, 42, 0.76) 100%
-      ),
-      linear-gradient(
-        180deg,
-        rgba(3, 18, 42, 0.46) 0%,
-        rgba(3, 18, 42, 0.08) 30%,
-        rgba(3, 18, 42, 0.08) 62%,
-        rgba(3, 18, 42, 0.55) 100%
-      );
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.78) 0%,
+      rgba(0, 0, 0, 0.72) 55%,
+      rgba(0, 0, 0, 0.25) 85%,
+      rgba(0, 0, 0, 0.1) 100%
+    );
   }
 
-  /* --- Conteúdo -------------------------------------------------------- */
-  /* Bloco centrado no eixo do ecrã: título, subtítulo e botões partilham o
-     mesmo eixo, e a fotografia respira à volta em vez de por um lado só. */
-  .hero__conteudo {
-    position: relative;
-    z-index: 1;
-    display: grid;
+  /* --- Texto ----------------------------------------------------------- */
+  .hero {
+    align-items: start;
+  }
+  .hero__texto {
     width: 100%;
     max-width: var(--container);
     margin-inline: auto;
-    padding-inline: var(--gutter);
-    justify-items: center;
-    text-align: center;
-    color: var(--color-ivory);
+    padding: clamp(1.75rem, 5vh, 3rem) var(--gutter) clamp(2rem, 6vh, 3.5rem);
   }
 
-  .hero__texto {
-    max-width: 62rem;
-  }
-
-  /* Assinatura: um filete curto antes da linha de contexto. */
-  .hero__kicker {
-    display: none;
+  /* O nome da clínica, como no logótipo: emblema e capitulares espaçadas. */
+  .hero__marca {
+    display: flex;
     align-items: center;
     gap: var(--spacing-s3);
-    margin: 0 0 clamp(1.25rem, 2.4vw, 1.75rem);
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: var(--tracking-caps);
+    margin-bottom: clamp(1rem, 2.5vw, 1.75rem);
+  }
+  .hero__marca :global(.hero__emblema) {
+    width: clamp(40px, 4vw, 52px);
+    height: auto;
+  }
+  .hero__nome {
+    font-family: var(--font-wordmark);
+    font-size: clamp(1.25rem, 2vw, 1.75rem);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    line-height: 1;
     text-transform: uppercase;
-    color: color-mix(in srgb, var(--color-ivory) 88%, transparent);
-  }
-
-  .hero__filete {
-    width: clamp(28px, 5vw, 56px);
-    height: 1px;
-    flex: none;
-    background: var(--color-teal-soft);
-  }
-
-  /* A ousadia gasta-se toda aqui: a serifa da marca em tamanho de cartaz,
-     leve, com a entrelinha fechada para as duas linhas formarem bloco. */
-  .hero__titulo {
-    font-family: var(--font-serif);
-    font-weight: 500;
-    font-size: clamp(2.75rem, 7.4vw, 6.5rem);
-    line-height: 0.98;
-    letter-spacing: -0.008em;
-    text-wrap: balance;
-    text-align: center;
     color: var(--color-ivory);
-    text-shadow: 0 2px 44px rgba(3, 18, 42, 0.45);
+  }
+
+  .hero__titulo {
+    display: block;
+    max-width: 8ch;
+    font-size: clamp(2.75rem, 12vw, 4.5rem);
+    font-weight: 500;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    color: var(--color-ivory);
   }
 
   .hero__sub {
-    max-width: 42ch;
-    margin: clamp(1.5rem, 2.8vw, 2.25rem) auto 0;
-    font-size: clamp(1.0625rem, 0.5vw + 0.95rem, 1.1875rem);
-    line-height: 1.6;
-    color: color-mix(in srgb, var(--color-ivory) 93%, transparent);
-    text-shadow: 0 1px 24px rgba(3, 18, 42, 0.6);
+    max-width: 38ch;
+    margin-top: clamp(1.25rem, 3vw, 2rem);
+    font-size: var(--t-lead);
+    line-height: 1.45;
+    color: var(--color-ivory);
   }
 
   .hero__acoes {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
     gap: var(--spacing-s3);
-    margin-top: clamp(2rem, 3.4vw, 3rem);
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
   }
 
-  /* --- Convite a descer: uma linha fina que pulsa devagar. --- */
-  .hero__descer {
-    position: absolute;
-    z-index: 1;
-    left: 50%;
-    bottom: clamp(1.25rem, 3vh, 2rem);
-    translate: -50% 0;
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-  }
-
-  .hero__descer-linha {
-    width: 1px;
-    height: 34px;
-    background: linear-gradient(
-      180deg,
-      transparent,
-      color-mix(in srgb, var(--color-ivory) 78%, transparent)
-    );
-    transform-origin: top;
-    animation: hv-descer 2600ms var(--ease) infinite;
-  }
-
-  @keyframes hv-descer {
-    0%,
-    100% {
-      scale: 1 0.4;
-      opacity: 0.35;
-    }
-    50% {
-      scale: 1 1;
-      opacity: 1;
-    }
-  }
-
-  @media (max-width: 899px) {
-    .hero__descer {
-      display: none;
-    }
-  }
-
-  .hero__btn {
-    padding-inline: clamp(var(--spacing-s7), 5vw, 3.5rem);
+  /* Sobre a fotografia o botão principal é claro: é a coisa mais luminosa
+     do ecrã, e é para lá que o olho vai. */
+  .hero__marcar {
     background-color: var(--color-ivory);
     color: var(--color-navy-deep);
-    box-shadow: 0 18px 44px -20px rgba(3, 18, 42, 0.85);
   }
-  .hero__btn:hover {
+  .hero__marcar:hover {
     background-color: #fff;
-    --btn-y: -2px;
   }
-  .hero__btn:active {
-    --btn-y: 0px;
-  }
-
   .hero__tel {
-    border-color: color-mix(in srgb, var(--color-ivory) 45%, transparent);
+    background-color: rgba(247, 247, 244, 0.16);
     color: var(--color-ivory);
-    font-weight: 500;
-    backdrop-filter: blur(2px);
   }
   .hero__tel:hover {
-    border-color: var(--color-ivory);
-    background-color: color-mix(in srgb, var(--color-ivory) 12%, transparent);
-    --btn-y: -2px;
+    background-color: rgba(247, 247, 244, 0.26);
   }
 
-  .hero :global(:focus-visible) {
+  .hero__quem {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s4);
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+    font-size: var(--t-small);
+    line-height: 1.45;
+    color: var(--color-ivory);
+    text-decoration: none;
+  }
+  .hero__quem strong {
+    display: block;
+    font-size: var(--t-body);
+  }
+  .hero__quem:hover strong {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .hero__retrato {
+    flex: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: 50% 25%;
+    background-color: var(--color-step);
+    transition: scale var(--dur) var(--ease);
+  }
+  .hero__quem:hover .hero__retrato {
+    scale: 1.06;
+  }
+
+  :global(.hero :focus-visible) {
     outline-color: var(--color-ivory);
     outline-offset: 3px;
   }
 
-  /* --- O momento único de movimento -------------------------------------
-     A fotografia assenta devagar enquanto as três peças de texto sobem em
-     cascata. Uma vez, na carga da página, e mais nada. */
+  /* --- Movimento: a fotografia aparece, o texto sobe em cascata. -------- */
   .hero__texto > * {
-    animation: hv-subir 900ms var(--ease) both;
-  }
-  .hero__kicker {
-    animation-delay: 120ms;
-  }
-  .hero__titulo {
-    animation-delay: 220ms;
+    animation: hero-subir 800ms var(--ease) both;
   }
   .hero__sub {
-    animation-delay: 400ms;
+    animation-delay: 90ms;
   }
   .hero__acoes {
-    animation-delay: 540ms;
+    animation-delay: 170ms;
   }
-
-  @keyframes hv-assentar {
-    from {
-      transform: scale(1.07);
-    }
-    to {
-      transform: scale(1);
-    }
+  .hero__quem {
+    animation-delay: 250ms;
   }
-
-  @keyframes hv-subir {
+  @keyframes hero-entrar {
     from {
       opacity: 0;
-      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes hero-subir {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
     }
     to {
       opacity: 1;
@@ -353,52 +306,52 @@ const alta = await getImage({
     }
   }
 
-  /* --- Ecrãs estreitos --------------------------------------------------
-     A quebra forçada só serve o título de duas linhas largas; abaixo de
-     768px o texto reparte-se sozinho, com equilíbrio. */
-  /* No telemóvel a fotografia ocupa a metade de cima, onde as agulhas se
-     veem inteiras, e o véu sobe como uma maré para o texto ler em baixo. */
-  @media (max-width: 767px), (max-aspect-ratio: 4 / 5) {
-    .hero {
-      padding-block: calc(var(--header-h) + clamp(1.5rem, 5vh, 3rem))
-        clamp(3rem, 8vh, 4.5rem);
-    }
-
-    .hero__img {
-      object-position: 50% 16%;
-    }
-
-    .hero__veu {
-      background: linear-gradient(
-        180deg,
-        rgba(3, 18, 42, 0.44) 0%,
-        rgba(3, 18, 42, 0.12) 20%,
-        rgba(3, 18, 42, 0.5) 40%,
-        rgba(3, 18, 42, 0.74) 56%,
-        rgba(3, 18, 42, 0.88) 76%,
-        rgba(3, 18, 42, 0.92) 100%
-      );
-    }
-
+  @media (max-width: 767px) {
     .hero__sub {
-      max-width: 38ch;
+      font-size: var(--t-body);
     }
-
+    .hero__acoes .btn {
+      flex: 1 1 calc(50% - 6px);
+      padding-inline: var(--spacing-s4);
+    }
+    .hero__acoes .hero__marcar {
+      flex-basis: 100%;
+    }
   }
 
-  /* Só onde os dois botões deixam de caber lado a lado é que o principal
-     ocupa a linha toda — num tablet ao alto uma pílula de 750px seria
-     estranha. */
-  @media (max-width: 520px) {
-    .hero__acoes .hero__btn {
-      flex: 1 1 100%;
+  /* --- Ecrã largo: fotografia horizontal; o texto à esquerda, sobre um
+     véu que escurece desse lado, e as agulhas limpas à direita. -------- */
+  @media (min-width: 768px) and (min-aspect-ratio: 4 / 5) {
+    .hero {
+      align-items: center;
+    }
+    .hero__img {
+      object-position: 62% 40%;
+    }
+    .hero__veu {
+      background: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.82) 0%,
+        rgba(0, 0, 0, 0.66) 34%,
+        rgba(0, 0, 0, 0.18) 62%,
+        rgba(0, 0, 0, 0) 80%
+      );
+    }
+    .hero__texto {
+      padding-block: clamp(2.5rem, 7vh, 5rem);
+    }
+    .hero__texto > * {
+      max-width: min(36rem, 46vw);
+    }
+    .hero__titulo {
+      max-width: 8ch;
+      font-size: clamp(3.5rem, 7vw, 6.75rem);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .hero__img,
-    .hero__texto > *,
-    .hero__descer-linha {
+    .hero__texto > * {
       animation: none;
     }
   }

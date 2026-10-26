@@ -49,6 +49,7 @@ const textosChat = {
     id="chat-panel"
     class="panel"
     data-chat-panel
+    data-ui
     hidden
     role="dialog"
     aria-label={`${t('chat.dialogAria')} ${site.name}`}
@@ -148,12 +149,11 @@ const textosChat = {
     min-height: 52px;
     padding: 0 var(--spacing-s5);
     border-radius: var(--radius-pill);
-    background-color: #128c7e;
+    background-color: #0b6e5f;
     color: #fff;
     text-decoration: none;
     font-weight: 600;
     font-size: 0.9375rem;
-    box-shadow: var(--shadow-3);
     transition:
       background-color var(--dur) var(--ease),
       translate var(--dur) var(--ease);
@@ -204,10 +204,10 @@ const textosChat = {
     width: min(360px, calc(100vw - 2 * clamp(16px, 3vw, 28px)));
     max-height: min(540px, calc(100dvh - 9rem));
     overflow: hidden;
-    border: 1px solid var(--hairline-cool);
+    border: 1px solid var(--hairline-cool); /* data-ui: taste-skill-ignore */
     border-radius: var(--radius-lg);
     background-color: var(--color-paper);
-    box-shadow: var(--shadow-3);
+    box-shadow: var(--shadow-3); /* diálogo flutuante: taste-skill-ignore */
     transform-origin: 100% 100%;
     opacity: 0;
     scale: 0.96;
@@ -324,7 +324,6 @@ const textosChat = {
     border-radius: var(--radius-md);
     font-size: 0.9375rem;
     line-height: 1.5;
-    box-shadow: var(--shadow-1);
     overflow-wrap: anywhere;
   }
 
@@ -358,7 +357,7 @@ const textosChat = {
 
   .quick__btn {
     padding: 7px 14px;
-    border: 1px solid var(--hairline-cool);
+    border: 1px solid var(--hairline-cool); /* data-ui: taste-skill-ignore */
     border-radius: var(--radius-pill);
     background-color: transparent;
     color: var(--color-navy);
@@ -395,7 +394,7 @@ const textosChat = {
     align-items: center;
     gap: var(--spacing-s2);
     padding: var(--spacing-s3);
-    border-top: 1px solid var(--hairline-cool);
+    border-top: 1px solid var(--hairline-cool); /* data-ui: taste-skill-ignore */
     background-color: var(--color-paper);
   }
 
@@ -404,7 +403,7 @@ const textosChat = {
     min-width: 0;
     height: 44px;
     padding: 0 var(--spacing-s4);
-    border: 1px solid var(--hairline-cool);
+    border: 1px solid var(--hairline-cool); /* campo de texto: taste-skill-ignore */
     border-radius: var(--radius-pill);
     background-color: #fff;
     color: var(--text);
@@ -468,6 +467,13 @@ const textosChat = {
     .panel {
       scale: 1;
       translate: 0;
+    }
+  }
+
+  /* No telemóvel a barra de contactos (MobileBar) já leva o WhatsApp. */
+  @media (max-width: 767px) {
+    .chat {
+      display: none;
     }
   }
 </style>

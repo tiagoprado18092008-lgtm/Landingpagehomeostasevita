@@ -1,0 +1,296 @@
+---
+import { Image } from 'astro:assets';
+import { site } from '../config/site';
+import Icon from './Icon.astro';
+import foto from '../assets/img/avaliacao.jpg';
+import { localeFromPath, type Locale } from '../i18n';
+import { useTranslations } from '../i18n/ui';
+import { getConcerns } from '../i18n/content';
+
+const locale: Locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+
+/**
+ * "Isto serve para o que eu tenho?" — a primeira pergunta de quem chega por
+ * um anúncio. As áreas são as que a clínica indicou; escolher uma escreve-a
+ * no pedido de marcação e na mensagem de WhatsApp, para que o passo seguinte
+ * já venha meio dado.
+ *
+ * A escolha nunca sai para a medição: é dado de saúde. O evento conta só que
+ * houve uma escolha, não qual.
+ *
+ * Sem JavaScript as opções ficam como lista e os dois botões levam ao
+ * formulário e ao WhatsApp de sempre.
+ */
+const queixas = [...getConcerns(locale).map((c) => c.title), t('lp.q.other')];
+const cores = ['verde', 'teal', 'navy'];
+const waBase = `${site.phone.whatsapp}?text=${encodeURIComponent(t('chat.quick1Text'))}`;
+---
+
+<section
+  class="section queixas"
+  id="areas"
+  aria-labelledby="queixas-titulo"
+  data-queixas
+  data-wa={site.phone.whatsapp}
+  data-wa-texto={t('lp.q.waText')}
+  data-outro={t('lp.q.other')}
+>
+  <div class="queixas__foto reveal">
+    <Image
+      src={foto}
+      alt={t('approach.imgAlt')}
+      widths={[480, 800, 1100]}
+      sizes="(min-width: 900px) 42vw, 100vw"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+
+  <div class="queixas__corpo">
+    <h2 class="queixas__titulo reveal" id="queixas-titulo">{t('lp.q.title')}</h2>
+    <p class="queixas__lead reveal">{t('lp.q.lead')}</p>
+
+    <ul class="queixas__lista" role="list" aria-label={t('lp.q.groupLabel')} data-stagger="60">
+      {
+        queixas.map((q, i) => (
+          <li class="reveal">
+            <button
+              type="button"
+              class={`queixa queixa--${cores[i % 3]}`}
+              aria-pressed="false"
+              data-queixa={q}
+            >
+              <span class="queixa__ponto" aria-hidden="true" />
+              {q}
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="queixas__pedido reveal" aria-live="polite">
+      <p class="queixas__escolha">
+        <span class="queixas__rotulo">{t('lp.q.chosen')}:</span>
+        <strong data-escolha-texto>{t('lp.q.none')}</strong>
+      </p>
+      <div class="queixas__acoes">
+        <a href="#marcacao" class="btn btn-primary" data-pedir>{t('lp.q.book')}</a>
+        <a href={waBase} class="btn btn-whatsapp" rel="noopener" data-wa-link data-base={waBase}>
+          <Icon name="whatsapp" size={18} />
+          {t('lp.q.wa')}
+        </a>
+      </div>
+    </div>
+
+    <p class="queixas__aviso reveal">{t('common.complementaryNotice')}</p>
+  </div>
+</section>
+
+<style>
+  .queixas {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+    overflow: clip;
+    background-color: var(--color-paper);
+  }
+
+  /* A fotografia encosta à borda esquerda do ecrã, em retângulo, perto da
+     proporção do original para não se perder o pulso nem as mãos. */
+  .queixas__foto {
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    margin-inline: var(--gutter);
+    border-radius: var(--radius-foto);
+    background-color: var(--color-step);
+  }
+  .queixas__foto :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 50%;
+  }
+
+  .queixas__corpo {
+    padding-inline: var(--gutter);
+  }
+
+  .queixas__titulo {
+    font-size: var(--t-h2);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    color: var(--color-navy-deep);
+  }
+
+  .queixas__lead {
+    max-width: 44ch;
+    margin-top: var(--spacing-s5);
+    font-size: var(--t-body);
+    color: var(--color-navy-ink);
+  }
+
+  .queixas__lista {
+    display: grid;
+    gap: var(--spacing-s2);
+    margin: clamp(2rem, 4vw, 3rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Cada queixa é um botão em cápsula, um degrau de tom acima do chão; o
+     ponto à esquerda é o círculo da página em ponto de texto. */
+  .queixa {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s3);
+    width: 100%;
+    min-height: 56px;
+    padding: var(--spacing-s3) var(--spacing-s5);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-step);
+    color: var(--color-navy-deep);
+    font-size: var(--t-body);
+    font-weight: 500;
+    line-height: 1.3;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background-color var(--dur) var(--ease),
+      color var(--dur) var(--ease),
+      scale var(--dur-fast) var(--ease);
+  }
+  .queixa:hover {
+    background-color: var(--color-step-2);
+  }
+  .queixa:active {
+    scale: 0.98;
+  }
+
+  .queixa__ponto {
+    flex: none;
+    width: 0.8em;
+    height: 0.8em;
+    border-radius: 50%;
+    background-color: var(--ponto);
+    transition: scale var(--dur) var(--ease);
+  }
+  .queixa--verde {
+    --ponto: var(--color-green-deep);
+  }
+  .queixa--teal {
+    --ponto: var(--color-teal);
+  }
+  .queixa--navy {
+    --ponto: var(--color-navy);
+  }
+
+  .queixa[aria-pressed='true'] {
+    background-color: var(--color-navy-deep);
+    color: var(--color-ivory);
+  }
+  .queixa[aria-pressed='true'] .queixa__ponto {
+    scale: 1.3;
+    background-color: var(--color-ivory);
+  }
+
+  .queixas__pedido {
+    margin-top: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .queixas__escolha {
+    font-size: var(--t-body);
+    color: var(--color-navy-ink);
+  }
+  .queixas__escolha strong {
+    color: var(--color-navy-deep);
+  }
+
+  .queixas__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-s3);
+    margin-top: var(--spacing-s4);
+  }
+
+  .queixas__aviso {
+    max-width: 52ch;
+    margin-top: clamp(1.5rem, 3vw, 2rem);
+    font-size: var(--t-small);
+    color: var(--color-navy-ink);
+  }
+
+  @media (max-width: 599px) {
+    .queixas__acoes .btn {
+      flex: 1 1 100%;
+    }
+  }
+
+  @media (min-width: 600px) {
+    .queixas__lista {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* Colunas 1–5 o círculo, 7–12 o texto. */
+  @media (min-width: 900px) {
+    .queixas {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      align-items: center;
+      gap: 0;
+    }
+    .queixas__foto {
+      margin: 0 clamp(2rem, 5vw, 5rem) 0 0;
+      /* Encosta à borda esquerda do ecrã: só os cantos de dentro arredondam. */
+      border-radius: 0 var(--radius-foto) var(--radius-foto) 0;
+    }
+    .queixas__corpo {
+      padding-left: 0;
+      padding-right: max(var(--gutter), (100vw - var(--container)) / 2 + var(--gutter));
+    }
+  }
+</style>
+
+<script>
+  const raiz = document.querySelector<HTMLElement>('[data-queixas]');
+
+  if (raiz) {
+    const botoes = [...raiz.querySelectorAll<HTMLButtonElement>('[data-queixa]')];
+    const texto = raiz.querySelector<HTMLElement>('[data-escolha-texto]')!;
+    const wa = raiz.querySelector<HTMLAnchorElement>('[data-wa-link]')!;
+    const pedir = raiz.querySelector<HTMLAnchorElement>('[data-pedir]')!;
+    const base = raiz.dataset.wa ?? '';
+    const frase = raiz.dataset.waTexto ?? '';
+    const outro = raiz.dataset.outro ?? '';
+    let escolha = '';
+
+    /** Escreve a escolha no "Motivo" do formulário, sem apagar o que a
+     *  pessoa lá tenha escrito pela própria mão. */
+    const preencherFormulario = () => {
+      const motivo = document.querySelector<HTMLTextAreaElement>('#motivo');
+      if (!motivo || !escolha || escolha === outro) return;
+      if (motivo.value && motivo.dataset.preenchido !== motivo.value) return;
+      motivo.value = escolha;
+      motivo.dataset.preenchido = escolha;
+      motivo.dispatchEvent(new Event('input', { bubbles: true }));
+    };
+
+    botoes.forEach((b) =>
+      b.addEventListener('click', () => {
+        escolha = b.dataset.queixa ?? '';
+        botoes.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        texto.textContent = escolha;
+        // "Outro motivo" volta à mensagem de sempre, sem um "Motivo:" vazio.
+        wa.href =
+          escolha === outro
+            ? wa.dataset.base!
+            : `${base}?text=${encodeURIComponent(frase + escolha.toLowerCase())}`;
+        preencherFormulario();
+        // Conta a escolha, nunca o conteúdo.
+        (window as any).hvTrack?.event('escolha_queixa', '', { method: 'queixas' });
+      }),
+    );
+
+    pedir.addEventListener('click', preencherFormulario);
+  }
+</script>

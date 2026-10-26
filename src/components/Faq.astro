@@ -5,18 +5,19 @@ import { getFaq } from '../i18n/content';
 
 const locale: Locale = localeFromPath(Astro.url.pathname);
 const t = useTranslations(locale);
-const faq = getFaq(locale);
 
 /**
- * Acordeão nativo (details/summary): funciona sem JS e já traz a semântica
- * de expansão. Linhas finas, um "+" que vira "−" — o gesto mais discreto
- * possível para uma lista de perguntas.
- *
- * As respostas ainda por confirmar não entram nos dados estruturados: não se
- * publica um placeholder como se fosse conteúdo.
+ * Acordeão nativo (details/summary com `name` partilhado: abre um de cada
+ * vez, sem JS). As perguntas que travam a marcação vêm primeiro — dói,
+ * quantas sessões, como é a consulta — e só depois as de enquadramento.
+ * A ordem é por índice do JSON, para servir as duas línguas.
  */
-/* As respostas vêm do espaço em vários parágrafos. Nos dados estruturados
-   juntam-se num texto só, que é o que o schema.org espera. */
+const ORDEM = [3, 4, 2, 1, 0, 5];
+const todas = getFaq(locale);
+const faq = ORDEM.map((i) => todas[i]).filter(Boolean);
+
+/* As respostas ainda por confirmar não entram nos dados estruturados: não se
+   publica um placeholder como se fosse conteúdo. */
 const answered = faq.filter((item) => !item.a.join(' ').includes('⟨TODO'));
 
 const faqSchema = {
@@ -31,19 +32,16 @@ const faqSchema = {
 ---
 
 <section class="section faq" id="faq" aria-labelledby="faq-titulo">
-  <div class="container-narrow">
-    <div class="section-head">
-      <p class="eyebrow reveal">{t('faq.eyebrow')}</p>
-      <h2 class="h2 reveal" id="faq-titulo">{t('faq.title')}</h2>
-    </div>
+  <div class="container faq__grelha">
+    <h2 class="faq__titulo reveal" id="faq-titulo">{t('lp.faq.title')}</h2>
 
-    <div class="faq__lista">
+    <div class="faq__lista" data-stagger="50">
       {
-        faq.map((item, i) => (
-          <details class="faq__item reveal" style={`--reveal-delay:${i * 45}ms`} name="faq">
+        faq.map((item) => (
+          <details class="faq__item reveal" name="faq">
             <summary class="faq__pergunta">
-              <span class="faq__mais" aria-hidden="true" />
               <span>{item.q}</span>
+              <span class="faq__mais" aria-hidden="true" />
             </summary>
             <div class="faq__resposta">
               {item.a.map((paragrafo) => (
@@ -64,101 +62,98 @@ const faqSchema = {
 </section>
 
 <style>
-  /* Mesma superficie da faixa de marcacao que vem a seguir, para que a costura
-     entre as duas seccoes nao se veja. No topo, uma rampa longa a partir do
-     bege da seccao do terapeuta: a mudanca de fundo passa a ser um degrade
-     lento em vez de uma linha. */
   .faq {
-    background-color: var(--color-mosaico);
-    background-image: linear-gradient(
-      to bottom,
-      var(--color-cloud) 0,
-      var(--color-mosaico) clamp(6rem, 14vw, 11rem)
-    );
+    background-color: var(--color-paper);
+  }
+
+  .faq__grelha {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+
+  .faq__titulo {
+    font-size: var(--t-h2);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    color: var(--color-navy-deep);
   }
 
   .faq__lista {
-    border-radius: var(--radius-lg);
-    background-color: var(--color-navy);
-    overflow: hidden;
+    display: grid;
+    gap: 8px;
   }
 
-  .faq__item + .faq__item {
-    border-top: 1px solid color-mix(in srgb, #fff 14%, transparent);
+  .faq__item {
+    background-color: var(--color-step);
+    transition: background-color var(--dur) var(--ease);
+  }
+  .faq__item:hover {
+    background-color: var(--color-step-2);
+  }
+  .faq__item[open] {
+    background-color: var(--color-navy-deep);
+    color: var(--color-ivory);
   }
 
   .faq__pergunta {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: var(--spacing-s4);
-    min-height: 56px;
+    min-height: 72px;
     padding: var(--spacing-s4) var(--spacing-s5);
     cursor: pointer;
     list-style: none;
-    font-size: clamp(0.9375rem, 1.2vw, 1.0625rem);
-    font-weight: 500;
-    letter-spacing: var(--tracking-h3);
-    color: #fff;
-    transition: color var(--dur) var(--ease);
+    font-size: var(--t-body);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-navy-deep);
+  }
+  .faq__item[open] .faq__pergunta {
+    color: var(--color-ivory);
   }
 
   .faq__pergunta::-webkit-details-marker {
     display: none;
   }
 
-  .faq__pergunta:hover {
-    color: color-mix(in srgb, #fff 78%, var(--color-teal));
-  }
-
-  /* O "+" que vira "−": duas barras, uma delas some quando abre. */
+  /* O "+" desenhado com duas barras de 3px; a vertical deita-se ao abrir. */
   .faq__mais {
     position: relative;
     flex: none;
     width: 16px;
     height: 16px;
-    color: color-mix(in srgb, #fff 70%, transparent);
   }
-
   .faq__mais::before,
   .faq__mais::after {
     content: '';
     position: absolute;
     left: 50%;
     top: 50%;
+    width: 16px;
+    height: 3px;
+    border-radius: 2px;
     background-color: currentColor;
     translate: -50% -50%;
-    transition:
-      rotate var(--dur) var(--ease),
-      opacity var(--dur) var(--ease);
+    transition: rotate var(--dur) var(--ease);
   }
-
-  .faq__mais::before {
-    width: 14px;
-    height: 1.5px;
-  }
-
   .faq__mais::after {
-    width: 1.5px;
-    height: 14px;
-  }
-
-  .faq__item[open] .faq__mais::after {
-    opacity: 0;
     rotate: 90deg;
+  }
+  .faq__item[open] .faq__mais::after {
+    rotate: 0deg;
   }
 
   .faq__resposta {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-s3);
-    padding: 0 var(--spacing-s5) var(--spacing-s5) calc(var(--spacing-s5) + 16px + var(--spacing-s4));
-    max-width: 62ch;
-    font-size: 1rem;
-    line-height: 1.75;
-    color: color-mix(in srgb, #fff 88%, transparent);
+    max-width: 58ch;
+    padding: 0 var(--spacing-s5) var(--spacing-s5);
+    font-size: var(--t-body);
+    line-height: 1.6;
   }
 
-  /* Animação de altura onde o motor a suporta; noutros abre de imediato. */
   @supports (interpolate-size: allow-keywords) {
     .faq__item::details-content {
       block-size: 0;
@@ -169,10 +164,21 @@ const faqSchema = {
         content-visibility var(--dur) var(--ease) allow-discrete,
         opacity var(--dur) var(--ease);
     }
-
     .faq__item[open]::details-content {
       block-size: auto;
       opacity: 1;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .faq__grelha {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      align-items: start;
+      gap: clamp(2rem, 5vw, 5rem);
+    }
+    .faq__titulo {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
     }
   }
 </style>

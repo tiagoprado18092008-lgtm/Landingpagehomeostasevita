@@ -1,6 +1,5 @@
 ---
 import { site } from '../config/site';
-import Ambient from './Ambient.astro';
 import Icon from './Icon.astro';
 import { localeFromPath, localizePath, type Locale } from '../i18n';
 import { useTranslations } from '../i18n/ui';
@@ -31,7 +30,7 @@ const proximaPagina = new URL(localizePath('/pedido-recebido', locale), Astro.si
    cliente num só atributo. Assim o script não tem literais de língua nenhuma
    e a versão inglesa não cai em português a meio de um erro. */
 const textos = {
-  submit: t('contact.submit'),
+  submit: t('lp.f.submit'),
   submitBusy: t('contact.submitBusy'),
   errName: t('contact.errName'),
   errReason: t('contact.errReason'),
@@ -54,23 +53,40 @@ const textos = {
 };
 ---
 
-<section class="section surface-ivory contact tem-ambiente" id="marcacao" aria-labelledby="marcacao-titulo">
-  <Ambient variant="duplo" opacity={0.5} />
+<section class="section marcacao" id="marcacao" aria-labelledby="marcacao-titulo">
+  <div class="container marcacao__container">
+    <div class="cupao reveal">
+      <span class="cupao__entalhe cupao__entalhe--a" aria-hidden="true"></span>
+      <span class="cupao__entalhe cupao__entalhe--b" aria-hidden="true"></span>
 
-  <div class="container">
-    <div class="contact__head">
-      <p class="eyebrow reveal">{t('contact.eyebrow')}</p>
-      <h2 class="h2 reveal" id="marcacao-titulo">
-        {t('contact.titleA')}<br />
-        <span class="accent-line">{t('contact.titleB')}</span>
-      </h2>
-    </div>
+      <!-- --------------------------------------- Lado esquerdo: o convite -->
+      <div class="cupao__convite">
+        <div>
+          <h2 class="cupao__titulo" id="marcacao-titulo">{t('lp.f.title')}</h2>
+          <p class="cupao__lead">{t('lp.f.lead')}</p>
+        </div>
 
-    <div class="contact__grid">
-      <!-- ---------------------------------------------------- Formulário -->
-      <div class="contact__form-wrap reveal reveal--left">
-        <p class="contact__form-intro">{t('contact.formIntro')}</p>
+        <div class="cupao__direto">
+          <a class="cupao__tel" href={`tel:${site.phone.tel}`}>
+            <Icon name="phone" size={28} />
+            {site.phone.display}
+          </a>
+          <p class="cupao__ou">{t('lp.f.or')}</p>
+          <a href={site.phone.whatsapp} class="btn btn-whatsapp" rel="noopener">
+            <Icon name="whatsapp" size={18} />
+            {t('contact.whatsappTalk')}
+          </a>
+          <p class="cupao__morada">
+            {site.address.street}, {site.address.postalCode}&nbsp;{site.address.locality} ·
+            {' '}<a href={`mailto:${site.email}`}>{site.email}</a>
+          </p>
+        </div>
+      </div>
 
+      <span class="cupao__picotado" aria-hidden="true"></span>
+
+      <!-- ---------------------------------------- Lado direito: o pedido -->
+      <div class="cupao__form-wrap">
         <form
           class="contact__form"
           data-form
@@ -81,7 +97,7 @@ const textos = {
           method="post"
         >
           <div class="field">
-            <label for="nome">{t('contact.name')}<span aria-hidden="true">*</span></label>
+            <label for="nome">{t('contact.name')}</label>
             <input
               id="nome"
               name="nome"
@@ -95,57 +111,44 @@ const textos = {
           </div>
 
           <div class="field">
-            <label for="motivo">
-              {t('contact.reason')}<span aria-hidden="true">*</span>
-            </label>
+            <label for="contacto">{t('lp.f.phone')}</label>
+            <input
+              id="contacto"
+              name="contacto"
+              type="tel"
+              inputmode="tel"
+              autocomplete="tel"
+              required
+              placeholder="912 345 678"
+              aria-describedby="contacto-erro"
+            />
+            <p class="field__error" id="contacto-erro" data-error-for="contacto"></p>
+          </div>
+
+          <div class="field">
+            <label for="motivo">{t('lp.f.reason')}</label>
             <textarea
               id="motivo"
               name="motivo"
-              rows="3"
-              required
-              minlength="4"
-              placeholder={t('contact.reasonPlaceholder')}
-              aria-describedby="motivo-erro"></textarea>
-            <p class="field__error" id="motivo-erro" data-error-for="motivo"></p>
+              rows="2"
+              placeholder={t('contact.reasonPlaceholder')}></textarea>
           </div>
 
-          <div class="field-row">
-            <div class="field">
-              <label for="contacto">
-                {t('contact.phone')}<span aria-hidden="true">*</span>
-              </label>
-              <input
-                id="contacto"
-                name="contacto"
-                type="tel"
-                inputmode="tel"
-                autocomplete="tel"
-                required
-                placeholder="912 345 678"
-                aria-describedby="contacto-erro"
-              />
-              <p class="field__error" id="contacto-erro" data-error-for="contacto"></p>
-            </div>
-
-            <div class="field">
-              <label for="email">{t('contact.email')}<span aria-hidden="true">*</span></label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autocomplete="email"
-                required
-                aria-describedby="email-erro"
-              />
-              <p class="field__error" id="email-erro" data-error-for="email"></p>
-            </div>
+          <div class="field">
+            <label for="email">{t('lp.f.email')}</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              aria-describedby="email-erro"
+            />
+            <p class="field__error" id="email-erro" data-error-for="email"></p>
           </div>
 
           <!--
             Honeypot: invisível para pessoas, tentador para bots.
-            O nome "_gotcha" é a convenção nativa do Formspree — o próprio
-            Formspree descarta o envio se este campo vier preenchido, além
-            da verificação que já fazemos aqui em JavaScript.
+            O nome "_gotcha" é a convenção nativa do Formspree.
           -->
           <div class="honeypot" aria-hidden="true">
             <label for="_gotcha">{t('contact.honeypot')}</label>
@@ -155,17 +158,9 @@ const textos = {
           {
             configured && (
               <>
-                {/* Assunto do email que chega ao espaço. O nome do campo é
-                    `_subject` — é essa a convenção do Formspree; qualquer
-                    outra passa a ser tratada como um campo normal do
-                    formulário e o email chega com o assunto por omissão. */}
-                <input
-                  type="hidden"
-                  name="_subject"
-                  value={t('contact.subject')}
-                />
-                {/* Só serve o envio nativo, sem JavaScript: com JS o envio é
-                    feito por fetch e esta redirecção nunca acontece. */}
+                {/* Assunto do email que chega ao espaço (convenção do Formspree). */}
+                <input type="hidden" name="_subject" value={t('contact.subject')} />
+                {/* Só serve o envio nativo, sem JavaScript. */}
                 <input type="hidden" name="_next" value={proximaPagina} />
               </>
             )
@@ -179,54 +174,37 @@ const textos = {
                 {t('contact.consentA')}<a
                   href={localizePath('/politica-de-privacidade', locale)}
                   class="link-gold">{t('contact.consentLink')}</a
-                >{t('contact.consentB')}<span aria-hidden="true">*</span>
+                >{t('contact.consentB')}
               </span>
             </label>
             <p class="field__error" id="consentimento-erro" data-error-for="consentimento"></p>
           </div>
 
           {
-            !configured && (
-              <p class="contact__demo">
-                <Icon name="alert" size={18} class="contact__demo-icon" />
-                <span>{t('contact.demoNotice')}</span>
-              </p>
-            )
-          }
-
-          {
             configured ? (
-              /* Sem `data-js-only`: sem JavaScript o botão faz o POST nativo
-                 para o Formspree, que devolve a pessoa a /pedido-recebido. O
-                 pedido chega à mesma — antes, quem tivesse o JS desligado
-                 ficava simplesmente sem forma de o enviar. */
-              <button type="submit" class="btn btn-primary btn-full" data-submit>
-                <span data-submit-label>{t('contact.submit')}</span>
+              <button type="submit" class="btn btn-full cupao__enviar" data-submit>
+                <span data-submit-label>{t('lp.f.submit')}</span>
                 <span class="spinner" data-spinner aria-hidden="true"></span>
               </button>
             ) : (
-              /* Sem serviço ligado não há botão de enviar. Um botão que não
-                 envia nada é pior do que botão nenhum: dá o pedido por feito. */
+              /* Sem serviço ligado não há botão de enviar: um botão que não
+                 envia nada dá o pedido por feito. */
               <div class="contact__error-actions">
+                <p class="contact__demo">{t('contact.demoNotice')}</p>
                 <a href={site.phone.whatsapp} class="btn btn-whatsapp" rel="noopener">
                   <Icon name="whatsapp" size={18} />
                   {t('contact.whatsappTalk')}
-                </a>
-                <a href={`tel:${site.phone.tel}`} class="btn btn-secondary">
-                  <Icon name="phone" size={18} />
-                  {site.phone.display}
                 </a>
               </div>
             )
           }
 
-          <p class="note contact__minimise" data-js-only>{t('contact.minimise')}</p>
+          <p class="contact__minimise" data-js-only>{t('contact.minimise')}</p>
         </form>
 
         <!-- Sucesso: substitui o formulário -->
         <div class="contact__result" data-success hidden role="status">
-          <span class="medallion" aria-hidden="true"><Icon name="check" /></span>
-          <h3 class="h3">{t('contact.successTitle')}</h3>
+          <h3 class="contact__result-titulo">{t('contact.successTitle')}</h3>
           <p>{t('contact.successText')}</p>
           <a href={site.phone.whatsapp} class="btn btn-whatsapp" rel="noopener">
             <Icon name="whatsapp" size={18} />
@@ -234,18 +212,13 @@ const textos = {
           </a>
         </div>
 
-        <!-- Erro de envio. Não é um beco: o que a pessoa escreveu fica
-             guardado, e o botão do WhatsApp leva a mensagem já redigida com
-             esses dados. Se o Formspree estiver em baixo, o contacto chega
-             na mesma — por outra via. -->
+        <!-- Erro de envio: o que a pessoa escreveu fica guardado, e o
+             WhatsApp leva a mensagem já redigida com esses dados. -->
         <div class="contact__error" data-error-panel hidden role="alert">
-          <p class="contact__error-title">
-            <Icon name="alert" size={18} class="contact__demo-icon" />
-            {t('contact.errorTitle')}
-          </p>
-          <p class="note">{t('contact.errorText')}</p>
+          <p class="contact__result-titulo">{t('contact.errorTitle')}</p>
+          <p>{t('contact.errorText')}</p>
           <div class="contact__error-actions">
-            <button type="button" class="btn btn-primary" data-retry>
+            <button type="button" class="btn cupao__enviar" data-retry>
               {t('contact.retry')}
             </button>
             <a
@@ -257,112 +230,116 @@ const textos = {
               <Icon name="whatsapp" size={18} />
               {t('contact.sendWhatsapp')}
             </a>
-            <a href={`tel:${site.phone.tel}`} class="btn btn-secondary">
-              <Icon name="phone" size={18} />
-              {site.phone.display}
-            </a>
           </div>
         </div>
 
         <p class="sr-only" role="status" aria-live="polite" data-live></p>
       </div>
-
-      <!-- ------------------------------------------- Painel de contactos -->
-      <aside class="contact__aside reveal reveal--right" style="--reveal-delay:120ms" aria-label={t('contact.asideAria')}>
-        <!-- O painel do flyer: círculos dourados sólidos, telefone em destaque -->
-        <div class="painel">
-          <a class="painel__linha painel__linha--destaque" href={`tel:${site.phone.tel}`}>
-            <span class="painel__disco"><Icon name="phone" size={22} /></span>
-            <span class="painel__valor painel__valor--tel">{site.phone.display}</span>
-          </a>
-
-          <a class="painel__linha" href={site.phone.whatsapp} rel="noopener">
-            <span class="painel__disco"><Icon name="whatsapp" size={20} /></span>
-            <span class="painel__texto">
-              <span class="painel__rotulo">WhatsApp</span>
-              <span class="painel__valor">{t('contact.whatsappSend')}</span>
-            </span>
-          </a>
-
-          <a class="painel__linha" href={`mailto:${site.email}`}>
-            <span class="painel__disco"><Icon name="mail" size={20} /></span>
-            <span class="painel__texto">
-              <span class="painel__rotulo">Email</span>
-              <span class="painel__valor">{site.email}</span>
-            </span>
-          </a>
-
-          <div class="painel__linha">
-            <span class="painel__disco"><Icon name="pin" size={20} /></span>
-            <span class="painel__texto">
-              <span class="painel__rotulo">{t('local.address')}</span>
-              <span class="painel__valor">
-                {site.address.street}<br />
-                {site.address.postalCode}&nbsp;{site.address.locality}
-              </span>
-            </span>
-          </div>
-
-          <div class="painel__linha">
-            <span class="painel__disco"><Icon name="clock" size={20} /></span>
-            <span class="painel__texto">
-              <span class="painel__rotulo">{t('local.consultations')}</span>
-              <span class="painel__valor">{t('local.byAppointment')}</span>
-            </span>
-          </div>
-        </div>
-
-        <p class="contact__social note">
-          <a href={site.social.instagram} class="link-gold" rel="noopener">
-            {site.social.instagramHandle}
-          </a>
-          <span aria-hidden="true">·</span>
-          <a href={site.social.facebook} class="link-gold" rel="noopener">Facebook</a>
-        </p>
-      </aside>
     </div>
   </div>
 </section>
 
 <style>
-  .contact__head {
-    max-width: 40ch;
+  /* O pedido de marcação como um cupão para destacar: um cartão navy com
+     dois entalhes redondos e um picotado de pontos — o círculo da página,
+     outra vez — entre o convite e o formulário. */
+  .marcacao {
+    background-color: var(--color-paper);
   }
 
-  .contact__head .eyebrow {
-    margin-bottom: var(--spacing-s3);
-  }
-
-  .contact__grid {
+  .cupao {
+    --entalhe: 28px;
+    position: relative;
     display: grid;
-    gap: clamp(2rem, 4vw, 3.5rem);
-    margin-top: clamp(2.5rem, 5vw, 3.5rem);
-    align-items: start;
+    background-color: var(--color-navy-deep);
+    color: var(--color-ivory);
   }
 
-  /* --- Formulário --- */
-  .contact__form-wrap {
-    padding: clamp(1.5rem, 3vw, 2.5rem);
-    background-color: #fff;
-    border: 1px solid var(--hairline-cool);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-2);
+  .cupao__entalhe {
+    position: absolute;
+    width: var(--entalhe);
+    height: var(--entalhe);
+    border-radius: 50%;
+    background-color: var(--color-paper);
   }
 
-  .contact__form-intro {
-    margin-bottom: var(--spacing-s5);
-    padding-bottom: var(--spacing-s5);
-    border-bottom: 1px solid var(--hairline-cool);
-    font-size: 0.9375rem;
-    color: var(--color-muted);
+  .cupao__convite {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: clamp(2rem, 4vw, 3rem);
+    padding: clamp(2rem, 4vw, 3rem) clamp(1.25rem, 4vw, 3rem);
   }
 
+  .cupao__titulo {
+    max-width: 12ch;
+    font-size: var(--t-h2);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    color: var(--color-ivory);
+  }
+
+  .cupao__lead {
+    max-width: 34ch;
+    margin-top: var(--spacing-s5);
+    font-size: var(--t-body);
+  }
+
+  .cupao__direto {
+    display: grid;
+    gap: var(--spacing-s3);
+    justify-items: start;
+  }
+  .cupao__ou {
+    max-width: 34ch;
+    font-size: var(--t-body);
+  }
+  .cupao__tel {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-s3);
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 3.6vw, 3.25rem);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: var(--color-ivory);
+    text-decoration: none;
+  }
+  .cupao__tel:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    text-decoration-thickness: 2px;
+  }
+  .cupao__morada {
+    margin-top: var(--spacing-s2);
+    font-size: var(--t-small);
+  }
+  .cupao__morada a {
+    color: inherit;
+  }
+
+  /* O picotado: uma fila de pontos redondos da cor do chão, desenhada
+     com elementos e não com gradiente. */
+  .cupao__picotado {
+    display: block;
+    margin-inline: calc(var(--entalhe) / 2 + 6px);
+    height: 6px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='6'%3E%3Ccircle cx='3' cy='3' r='3' fill='%23f3f4f2'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-position: center;
+  }
+
+  .cupao__form-wrap {
+    padding: clamp(2rem, 4vw, 3rem) clamp(1.25rem, 4vw, 3rem);
+  }
+
+  /* --- Campos: blocos chapados num tom acima do cartão. --- */
   .contact__form {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-s5);
+    gap: var(--spacing-s4);
   }
-
   .contact__form[hidden] {
     display: none;
   }
@@ -370,207 +347,142 @@ const textos = {
   .field {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-s2);
+    gap: 6px;
   }
 
   .field label {
-    font-size: 0.875rem;
+    font-size: var(--t-small);
     font-weight: 600;
-    color: var(--color-navy);
-  }
-
-  .field label span[aria-hidden] {
-    color: var(--color-teal-deep);
-    margin-left: 2px;
   }
 
   .field input:not([type='checkbox']),
   .field textarea {
     width: 100%;
-    min-height: 48px;
+    min-height: 54px;
     padding: var(--spacing-s3) var(--spacing-s4);
-    border: 1px solid var(--hairline-cool);
-    border-radius: var(--radius-sm);
-    background-color: var(--color-paper);
-    font-size: 1rem;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    background-color: color-mix(in srgb, var(--color-ivory) 12%, var(--color-navy-deep));
+    color: var(--color-ivory);
+    font-size: var(--t-body);
     transition:
       border-color var(--dur) var(--ease),
-      box-shadow var(--dur) var(--ease);
+      background-color var(--dur) var(--ease);
   }
-
   .field textarea {
     resize: vertical;
-    line-height: 1.6;
+    line-height: 1.5;
   }
-
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: color-mix(in srgb, var(--color-ivory) 62%, transparent);
+  }
+  .field input:hover,
+  .field textarea:hover {
+    background-color: color-mix(in srgb, var(--color-ivory) 16%, var(--color-navy-deep));
+  }
   .field input:focus,
   .field textarea:focus {
     outline: none;
-    border-color: var(--color-teal);
-    box-shadow: 0 0 0 3px rgba(24, 144, 160, 0.12);
-  }
-
-  .field input:focus-visible,
-  .field textarea:focus-visible {
-    outline: 2px solid var(--color-teal);
-    outline-offset: 1px;
+    border-color: var(--color-teal-soft);
   }
 
   .field[data-invalid] input,
   .field[data-invalid] textarea {
-    border-color: var(--color-danger);
+    border-color: #ffb4a3;
   }
 
   .field__error {
+    font-size: var(--t-small);
+    font-weight: 600;
+    color: #ffc9bd;
+  }
+  .field__error:empty {
     display: none;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.8125rem;
-    color: var(--color-danger);
-  }
-
-  .field__error::before {
-    content: '!';
-    display: grid;
-    place-items: center;
-    flex: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background-color: var(--color-danger);
-    color: #fff;
-    font-size: 0.6875rem;
-    font-weight: 700;
-  }
-
-  .field[data-invalid] .field__error {
-    display: flex;
-  }
-
-  .field-row {
-    display: grid;
-    gap: var(--spacing-s5);
   }
 
   .consent {
     display: flex;
     align-items: flex-start;
     gap: var(--spacing-s3);
-    font-size: 0.875rem;
-    font-weight: 400;
-    line-height: 1.55;
-    color: var(--color-navy-ink);
+    font-size: var(--t-small);
+    line-height: 1.5;
     cursor: pointer;
   }
-
+  .field .consent {
+    font-weight: 400;
+  }
+  .consent a {
+    color: inherit;
+  }
   .consent input {
     flex: none;
-    width: 20px;
-    height: 20px;
-    margin-top: 2px;
-    accent-color: var(--color-navy);
-    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    margin-top: 1px;
+    accent-color: var(--color-teal-soft);
   }
 
+  /* Escondido no lugar, não atirado para fora do ecrã: a -9999px alargava
+     a página para quem a mede. */
   .honeypot {
     position: absolute;
-    left: -9999px;
     width: 1px;
-    height: 1px;
+    height: 1px; /* campo invisível, não é um filete: taste-skill-ignore */
     overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
+  .cupao__enviar {
+    min-height: 58px;
+    background-color: var(--color-ivory);
+    color: var(--color-navy-deep);
+  }
+  .cupao__enviar:hover {
+    background-color: #fff;
+  }
+
+  .contact__minimise,
   .contact__demo {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--spacing-s3);
-    padding: var(--spacing-s4);
-    border: 1px dashed var(--hairline);
-    border-radius: var(--radius-sm);
-    background-color: var(--color-ivory);
-    font-size: 0.8125rem;
-    color: var(--color-teal-deep);
-  }
-
-  .contact__demo :global(.contact__demo-icon),
-  .contact__error-title :global(.contact__demo-icon),
-  .contact__nojs-title :global(.contact__demo-icon) {
-    flex: none;
-  }
-
-  .contact__minimise {
-    text-align: center;
-  }
-
-  /* Só aparece quando o <noscript> do BaseLayout entra em ação. */
-  .contact__nojs {
-    display: none;
-    flex-direction: column;
-    gap: var(--spacing-s2);
-    padding: var(--spacing-s5);
-    border: 1px solid var(--hairline);
-    border-radius: var(--radius-md);
-    background-color: var(--color-ivory);
-  }
-
-  .contact__nojs-title {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-s2);
-    font-weight: 600;
-    color: var(--color-navy);
+    font-size: var(--t-small);
   }
 
   .spinner {
     display: none;
     width: 18px;
     height: 18px;
-    border: 2px solid color-mix(in srgb, var(--color-ivory) 40%, transparent);
-    border-top-color: var(--color-ivory);
     border-radius: 50%;
-    animation: spin 700ms linear infinite;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    animation: girar 700ms linear infinite;
   }
-
   [aria-busy='true'] .spinner {
-    display: block;
+    display: inline-block;
   }
-
-  @keyframes spin {
+  @keyframes girar {
     to {
-      rotate: 360deg;
+      rotate: 1turn;
     }
   }
 
   .contact__result,
   .contact__error {
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: var(--spacing-s4);
+    justify-items: start;
+    font-size: var(--t-body);
   }
-
-  .contact__result {
-    align-items: center;
-    text-align: center;
-    padding-block: var(--spacing-s5);
-  }
-
   .contact__result[hidden],
   .contact__error[hidden] {
     display: none;
   }
-
-  .contact__result-demo {
-    font-size: 0.8125rem;
-    font-style: italic;
-    color: var(--color-teal-deep);
-  }
-
-  .contact__error-title {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-s2);
+  .contact__result-titulo {
+    font-family: var(--font-serif);
+    font-size: clamp(1.75rem, 2.6vw, 2.25rem);
     font-weight: 600;
-    color: var(--color-danger);
+    line-height: 1.1;
+    color: var(--color-ivory);
   }
 
   .contact__error-actions {
@@ -579,99 +491,69 @@ const textos = {
     gap: var(--spacing-s3);
   }
 
-  /* =====================================================================
-     O painel de contactos do flyer
-     ===================================================================== */
-  .contact__aside {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-s5);
-  }
-
-  .painel {
-    display: flex;
-    flex-direction: column;
-    padding: var(--spacing-s3) var(--spacing-s5);
-    border-radius: var(--radius-lg);
-    background-color: #fff;
-    box-shadow: var(--shadow-1);
-  }
-
-  .painel__linha {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-s4);
-    padding-block: var(--spacing-s4);
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .painel__linha + .painel__linha {
-    border-top: 1px solid var(--hairline-cool);
-  }
-
-  /* O disco dourado sólido do impresso */
-  .painel__disco {
-    display: grid;
-    place-items: center;
-    flex: none;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background-color: var(--color-teal);
-    color: #fff;
-    transition: background-color var(--dur) var(--ease);
-  }
-
-  a.painel__linha:hover .painel__disco {
-    background-color: var(--color-teal-deep);
-  }
-
-  .painel__texto {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    min-width: 0;
-  }
-
-  .painel__rotulo {
-    font-size: 0.625rem;
-    font-weight: 600;
-    letter-spacing: var(--tracking-caps);
-    text-transform: uppercase;
-    color: var(--color-muted);
-  }
-
-  .painel__valor {
-    font-size: 0.9375rem;
-    font-weight: 500;
-    line-height: 1.45;
-    color: var(--color-navy);
-    overflow-wrap: anywhere;
-  }
-
-  /* O telefone é o que mais se lê no flyer — e aqui também. */
-  .painel__valor--tel {
-    font-size: clamp(1.5rem, 2.6vw, 1.875rem);
-    font-weight: 600;
-    letter-spacing: var(--tracking-h3);
-  }
-
-  .contact__social {
-    display: flex;
-    gap: var(--spacing-s3);
-    justify-content: center;
-  }
-
-  @media (min-width: 560px) {
-    .field-row {
-      grid-template-columns: repeat(2, 1fr);
+  /* Telemóvel: cupão de pé; o picotado deita-se entre as duas metades e os
+     entalhes vão para as bordas esquerda e direita. */
+  @media (max-width: 899px) {
+    .marcacao__container {
+      padding-inline: 12px;
+    }
+    .cupao {
+      grid-template-rows: auto var(--entalhe) auto;
+    }
+    .cupao__convite {
+      grid-row: 1;
+    }
+    .cupao__picotado {
+      grid-row: 2;
+      align-self: center;
+    }
+    .cupao__form-wrap {
+      grid-row: 3;
+    }
+    .cupao__entalhe {
+      position: relative;
+      grid-row: 2;
+      grid-column: 1;
+      align-self: center;
+    }
+    .cupao__entalhe--a {
+      justify-self: start;
+      margin-left: calc(var(--entalhe) / -2);
+    }
+    .cupao__entalhe--b {
+      justify-self: end;
+      margin-right: calc(var(--entalhe) / -2);
+    }
+    .cupao > * {
+      grid-column: 1;
     }
   }
 
-  @media (min-width: 960px) {
-    .contact__grid {
-      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  /* Ecrã largo: convite à esquerda, picotado vertical a 46%, formulário à
+     direita; os entalhes no topo e na base do cartão. */
+  @media (min-width: 900px) {
+    .cupao {
+      grid-template-columns: minmax(0, 46fr) auto minmax(0, 54fr);
+    }
+    .cupao__entalhe {
+      left: calc(46% - var(--entalhe) / 2);
+    }
+    .cupao__entalhe--a {
+      top: calc(var(--entalhe) / -2);
+    }
+    .cupao__entalhe--b {
+      bottom: calc(var(--entalhe) / -2);
+    }
+    .cupao__picotado {
+      width: 6px;
+      height: auto;
+      margin: calc(var(--entalhe) / 2 + 6px) 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='16'%3E%3Ccircle cx='3' cy='3' r='3' fill='%23f3f4f2'/%3E%3C/svg%3E");
+      background-repeat: repeat-y;
+    }
+    .cupao__convite,
+    .cupao__form-wrap {
+      padding: clamp(2.5rem, 4vw, 3.5rem);
     }
   }
 </style>
@@ -698,17 +580,19 @@ const textos = {
         test: (v) => v.trim().length >= 2,
         message: T.errName,
       },
-      motivo: {
-        test: (v) => v.trim().length >= 4,
-        message: T.errReason,
-      },
       contacto: {
-        // Aceita 9 dígitos nacionais, com ou sem indicativo e espaços.
-        test: (v) => /^(\+?351)?[\s.-]?9\d{2}[\s.-]?\d{3}[\s.-]?\d{3}$/.test(v.trim()),
+        // Fixo ou telemóvel português (9 dígitos a começar por 2 ou 9, com ou
+        // sem +351), ou um número estrangeiro com indicativo. Antes só passava
+        // telemóvel português, e quem estava na versão inglesa ficava preso.
+        test: (v) => {
+          const n = v.replace(/[\s().-]/g, '');
+          return /^(\+?351)?[29]\d{8}$/.test(n) || /^(\+|00)\d{8,15}$/.test(n);
+        },
         message: T.errPhone,
       },
+      // Motivo e email são opcionais: o email só se valida se vier escrito.
       email: {
-        test: (v) => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v.trim()),
+        test: (v) => !v.trim() || /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v.trim()),
         message: T.errEmail,
       },
       consentimento: {
