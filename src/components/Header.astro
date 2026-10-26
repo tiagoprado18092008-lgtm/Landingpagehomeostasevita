@@ -8,12 +8,14 @@ import { useTranslations } from '../i18n/ui';
 
 interface Props {
   /**
-   * Mantido por compatibilidade com as páginas legais. O header deixou de
-   * ficar transparente por cima do hero: é sempre sólido.
+   * Barra transparente por cima da fotografia do hero até o visitante
+   * rolar. Por omissão só na página inicial; as páginas legais passam
+   * `false` e têm a barra sólida desde o início.
    */
   sobreFoto?: boolean;
 }
 
+const { sobreFoto } = Astro.props;
 const locale: Locale = localeFromPath(Astro.url.pathname);
 const t = useTranslations(locale);
 
@@ -31,6 +33,8 @@ const brandHref = estaNaHome ? '#topo' : home;
    legais o link tem de levar lá primeiro e só depois saltar para a âncora. */
 const secaoHref = (id: string) => (estaNaHome ? `#${id}` : `${home}#${id}`);
 
+const transparente = sobreFoto ?? estaNaHome;
+
 /** Navegação principal — pela ordem da página. */
 const nav = [
   { id: 'servicos', label: t('nav.treatments') },
@@ -41,7 +45,7 @@ const nav = [
 ];
 ---
 
-<header class="site-header" data-header>
+<header class="site-header" data-header data-sobre-foto={transparente ? '' : undefined}>
   <div class="site-header__inner">
     <a href={brandHref} class="brand" aria-label={`${site.name} — ${t('common.homeAria')}`}>
       <Emblem size={44} loading="eager" class="brand__mark" />
@@ -136,6 +140,52 @@ const nav = [
   /* Ao rolar, um degrau de tom separa a barra do que passa por baixo. */
   .site-header[data-rolou='true'] {
     background-color: var(--color-step);
+  }
+
+  /* --- Sobre a fotografia do hero (página inicial, antes de rolar) ----
+     A barra fica transparente e o texto passa a marfim; ao rolar, ou com o
+     menu mobile aberto (que tem fundo claro), volta à barra sólida. */
+  .site-header[data-sobre-foto]:not([data-rolou='true']):not([data-menu-aberto]) {
+    background-color: transparent;
+  }
+  .site-header[data-sobre-foto]:not([data-rolou='true']):not([data-menu-aberto]) .brand__name,
+  .site-header[data-sobre-foto]:not([data-rolou='true']):not([data-menu-aberto]) .nav__link,
+  .site-header[data-sobre-foto]:not([data-rolou='true']):not([data-menu-aberto]) .header-tel,
+  .site-header[data-sobre-foto]:not([data-rolou='true']):not([data-menu-aberto]) .menu-toggle,
+  .site-header[data-sobre-foto]:not([data-rolou='true']):not([data-menu-aberto]) :global(.lang) {
+    color: var(--color-ivory);
+  }
+  .site-header[data-sobre-foto]:not([data-rolou='true']):not([data-menu-aberto]) .nav__link:hover,
+  .site-header[data-sobre-foto]:not([data-rolou='true']):not([data-menu-aberto]) .nav__link:focus-visible,
+  .site-header[data-sobre-foto]:not([data-rolou='true']):not([data-menu-aberto]) .nav__link[aria-current='true'] {
+    color: #fff;
+  }
+  .site-header[data-sobre-foto]:not([data-rolou='true']):not([data-menu-aberto]) .header-tel:hover,
+  .site-header[data-sobre-foto]:not([data-rolou='true']):not([data-menu-aberto]) .menu-toggle:hover,
+  .site-header[data-sobre-foto]:not([data-rolou='true']):not([data-menu-aberto]) :global(.lang:hover) {
+    background-color: rgba(247, 247, 244, 0.16);
+  }
+  /* No telemóvel o telefone é um disco; no desktop é só o número. */
+  @media (max-width: 767px) {
+    .site-header[data-sobre-foto]:not([data-rolou='true']):not([data-menu-aberto]) .header-tel {
+      background-color: rgba(247, 247, 244, 0.16);
+    }
+  }
+  /* Como no hero: o botão principal é o elemento mais claro do ecrã. */
+  .site-header[data-sobre-foto]:not([data-rolou='true']):not([data-menu-aberto]) .header-cta {
+    background-color: var(--color-ivory);
+    color: var(--color-navy-deep);
+  }
+  .site-header[data-sobre-foto]:not([data-rolou='true']):not([data-menu-aberto]) .header-cta:hover {
+    background-color: #fff;
+  }
+  .site-header[data-sobre-foto]:not([data-rolou='true']):not([data-menu-aberto]) :global(:focus-visible) {
+    outline-color: var(--color-ivory);
+  }
+
+  /* A cor do texto muda com o fundo: anima as duas juntas. */
+  .brand__name {
+    transition: color var(--dur) var(--ease);
   }
 
   .site-header__inner {
@@ -237,6 +287,7 @@ const nav = [
     text-decoration: none;
     white-space: nowrap;
     transition:
+      color var(--dur) var(--ease),
       background-color var(--dur) var(--ease),
       scale var(--dur-fast) var(--ease);
   }
@@ -268,7 +319,9 @@ const nav = [
     border-radius: var(--radius-pill);
     color: var(--color-navy);
     cursor: pointer;
-    transition: background-color var(--dur) var(--ease);
+    transition:
+      color var(--dur) var(--ease),
+      background-color var(--dur) var(--ease);
   }
   .menu-toggle:hover {
     background-color: var(--color-step);
@@ -433,6 +486,8 @@ const nav = [
       toggle.setAttribute('aria-expanded', String(open));
       panel.hidden = !open;
       document.body.style.overflow = open ? 'hidden' : '';
+      // O painel é claro: com ele aberto a barra deixa de ser transparente.
+      header?.toggleAttribute('data-menu-aberto', open);
       // Os rótulos vêm do HTML (traduzidos no servidor), não de literais aqui.
       const rotulo = open ? toggle.dataset.labelClose : toggle.dataset.labelOpen;
       if (rotulo) toggle.querySelector('.sr-only')!.textContent = rotulo;

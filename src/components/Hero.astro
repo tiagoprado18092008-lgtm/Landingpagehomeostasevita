@@ -2,7 +2,6 @@
 import { getImage } from 'astro:assets';
 import { site } from '../config/site';
 import Icon from './Icon.astro';
-import Emblem from './Emblem.astro';
 import fotoLarga from '../assets/img/hero-acupuntura.png';
 import fotoAlta from '../assets/img/hero-acupuntura-vertical.png';
 import teresa from '../assets/img/teresa.jpg';
@@ -72,14 +71,7 @@ const retrato = await getImage({ src: teresa, width: 144, format: 'webp', qualit
   </div>
 
   <div class="hero__texto">
-    <h1 id="hero-titulo">
-      <span class="hero__marca">
-        <Emblem size={52} loading="eager" class="hero__emblema" />
-        <span class="hero__nome">{site.name}</span>
-      </span>
-      <span class="sr-only"> — </span>
-      <span class="hero__titulo">{t('lp.hero.title')}</span>
-    </h1>
+    <h1 id="hero-titulo" class="hero__titulo">{t('lp.hero.title')}</h1>
     <p class="hero__sub">{t('lp.hero.sub')}</p>
 
     <div class="hero__acoes">
@@ -129,9 +121,11 @@ const retrato = await getImage({ src: teresa, width: 144, format: 'webp', qualit
   }
 
   /* --- Fotografia ------------------------------------------------------ */
+  /* A fotografia começa no topo do ecrã: a barra assenta transparente por
+     cima dela até o visitante rolar (ver Header.astro). */
   .hero__foto {
     position: absolute;
-    inset: var(--header-h) 0 0;
+    inset: 0;
     z-index: -1;
   }
   .hero__foto picture {
@@ -173,29 +167,8 @@ const retrato = await getImage({ src: teresa, width: 144, format: 'webp', qualit
     padding: clamp(1.75rem, 5vh, 3rem) var(--gutter) clamp(2rem, 6vh, 3.5rem);
   }
 
-  /* O nome da clínica, como no logótipo: emblema e capitulares espaçadas. */
-  .hero__marca {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-s3);
-    margin-bottom: clamp(1rem, 2.5vw, 1.75rem);
-  }
-  .hero__marca :global(.hero__emblema) {
-    width: clamp(40px, 4vw, 52px);
-    height: auto;
-  }
-  .hero__nome {
-    font-family: var(--font-wordmark);
-    font-size: clamp(1.25rem, 2vw, 1.75rem);
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    line-height: 1;
-    text-transform: uppercase;
-    color: var(--color-ivory);
-  }
-
+  /* A marca já está na barra, por cima da fotografia: o título abre o hero. */
   .hero__titulo {
-    display: block;
     max-width: 8ch;
     font-size: clamp(2.75rem, 12vw, 4.5rem);
     font-weight: 500;
@@ -328,8 +301,12 @@ const retrato = await getImage({ src: teresa, width: 144, format: 'webp', qualit
     .hero__img {
       object-position: 62% 40%;
     }
+    /* A primeira camada escurece só a faixa da barra, para os links e o
+       telefone se lerem por cima das mãos claras do lado direito. */
     .hero__veu {
-      background: linear-gradient(
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0, rgba(0, 0, 0, 0) calc(var(--header-h) + 60px)),
+        linear-gradient(
         90deg,
         rgba(0, 0, 0, 0.82) 0%,
         rgba(0, 0, 0, 0.66) 34%,
