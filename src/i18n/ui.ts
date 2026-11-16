@@ -333,6 +333,7 @@ const pt = {
     'Medicina Tradicional Chinesa com Teresa Morais, terapeuta com cédula profissional da ACSS. Cada tratamento é definido após uma avaliação individual.',
   'lp.hero.whoLine': 'Cédula ACSS n.º',
   'lp.hero.whereLine': 'Maia · consultas mediante marcação',
+  'lp.hero.ersLine': 'ERS n.º',
 
   'lp.q.title': 'Motivo da consulta',
   'lp.q.lead':
@@ -709,6 +710,7 @@ const en: Record<UiKey, string> = {
     'Traditional Chinese Medicine with Teresa Morais, a therapist licensed by the ACSS, Portugal’s health authority. Each treatment is defined following an individual assessment.',
   'lp.hero.whoLine': 'ACSS licence no.',
   'lp.hero.whereLine': 'Maia · by appointment only',
+  'lp.hero.ersLine': 'ERS no.',
 
   'lp.q.title': 'Reason for your consultation',
   'lp.q.lead':
